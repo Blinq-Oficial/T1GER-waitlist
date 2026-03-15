@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <title>T1GER | APEX WAITLIST</title>
+  <style>
+    /* CSS_INJECT */
+    
+    /* Extra Utility Scripts for Vanilla HTML missing from React */
+    .reveal-hidden { opacity: 0; transform: translateY(32px) scale(0.97); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal-visible { opacity: 1; transform: translateY(0) scale(1); }
+    
+    .modal-hidden { opacity: 0; pointer-events: none; }
+    .modal-visible { opacity: 1; pointer-events: auto; }
+    .modal-content-hidden { opacity: 0; transform: scale(0.95) translateY(10px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .modal-content-visible { opacity: 1; transform: scale(1) translateY(0); }
+    
+    #manifesto-box { transition: transform 0.1s ease-out; transform-style: preserve-3d; }
+  </style>
+</head>
+<body class="text-slate-50 selection:bg-[#E8952A]/30 scrollbar-hide overflow-x-hidden bg-[#050508]">
+
+  <!-- Global Atmospheric Light Sources -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden text-slate-50">
+    <div class="absolute top-[-10%] left-[10%] w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[#0E3547]/40 rounded-full blur-[120px] mix-blend-screen"></div>
+    <div class="absolute top-[35%] right-[-10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[#E8952A]/10 rounded-full blur-[150px] mix-blend-screen"></div>
+    <div class="absolute top-[60%] left-[-20%] w-[70vw] h-[70vw] max-w-[800px] max-h-[800px] bg-[#0A1A2A]/20 rounded-full blur-[140px] mix-blend-screen"></div>
+  </div>
+
+  <div class="relative z-10 w-full flex flex-col">
+    <!-- Navbar -->
+    <nav>
+      <!-- Floating Logo -->
+      <div class="fixed top-6 left-6 md:left-12 z-50 flex items-center gap-3 rounded-full px-6 py-3 pointer-events-auto glass-pill" style="--accent-color: #ffffff;">
+        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-[#FF9F1C] to-orange-600 text-black flex items-center justify-center font-black text-sm tracking-tighter shadow-[0_0_15px_rgba(255,159,28,0.3)]">T1</div>
+        <span class="font-bold tracking-widest text-white/90 uppercase text-xs sm:text-sm">T1GER</span>
+      </div>
+      <!-- Actions -->
+      <div class="fixed top-6 right-6 md:right-12 z-50 flex items-center gap-3 pointer-events-auto">
+        <button onclick="openModal('signInModal')" class="hidden lg:inline-flex rounded-lg items-center justify-center px-[14px] py-[7px] font-bold text-white/50 bg-white/5 border border-white/10 text-xs transition-colors hover:bg-white/10">Sign in</button>
+        <button onclick="openModal('vipModal')" class="hidden md:inline-flex rounded-lg glass-pill items-center justify-center px-[14px] py-[7px] font-bold text-[#E8952A] text-xs shadow-[inset_0_0_10px_rgba(232,149,42,0.1)] hover:shadow-[inset_0_0_20px_rgba(232,149,42,0.2)]" style="--accent-color: #E8952A;">VIP code</button>
+        <button onclick="openModal('joinModal')" class="btn-primary rounded-lg items-center justify-center px-[14px] py-[7px] font-bold text-black text-xs" style="--accent-color: #E8952A;">Join</button>
+      </div>
+    </nav>
+
+    <!-- Waitlist Hero -->
+    <div class="relative min-h-screen w-full shrink-0 text-white font-sans flex flex-col items-center justify-center overflow-hidden">
+      <main class="relative z-10 flex flex-col items-center justify-center text-center px-6 md:px-12 w-full max-w-6xl mx-auto">
+        <div class="flex flex-col items-center w-full reveal-hidden" data-delay="0">
+          <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-[110px] font-serif uppercase tracking-normal leading-none flex flex-col items-center text-center w-full">
+            <span class="text-white">Stop scrolling.</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-b from-[#FF9F1C] to-orange-500 drop-shadow-[0_0_20px_rgba(255,159,28,0.3)]">Start hunting.</span>
+          </h1>
+          <p class="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed mt-6 md:mt-8">Turn your real-world goals into a game.<br class="hidden sm:block"/> The Black Market opens soon.</p>
+          <div class="flex flex-col sm:flex-row items-center gap-4 justify-center w-full mt-10">
+            <button onclick="openModal('joinModal')" class="btn-primary w-full sm:w-auto inline-flex items-center justify-center px-8 md:px-10 py-4 text-base md:text-lg rounded-full" style="--accent-color: #E8952A;">
+              <span class="relative z-10 flex items-center gap-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">Join Waitlist</span>
+            </button>
+            <button onclick="openModal('vipModal')" class="glass-pill rounded-full w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 font-medium text-white text-sm md:text-base hover:text-[#E8952A] transition-colors" style="--accent-color: #ffffff;">Have an invite code?</button>
+          </div>
+        </div>
+      </main>
+      <div class="absolute bottom-12 right-12 flex items-center gap-3 cursor-pointer z-50 pointer-events-auto group reveal-hidden" data-delay="1000" onclick="window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })">
+        <span class="text-slate-500 font-mono text-[10px] uppercase tracking-[0.3em] group-hover:text-white transition-colors">Scroll</span>
+        <div class="animate-[bounce_2s_infinite]">
+          <svg class="w-5 h-5 text-slate-500 group-hover:text-cyan-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Marquee -->
+    <div class="relative w-full overflow-hidden py-3 z-20">
+      <div class="flex w-[200%] animate-marquee">
+        <!-- Replicated 6 times for seamless loop -->
+        <div class="flex items-center shrink-0">
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">SHOW UP</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">PROVE IT</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">EARN IT</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">NO EXCUSES</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">DISCIPLINE DAILY</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">SNAP PROOF</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">LEVEL UP</span><span class="text-[#E8952A] text-xl px-4">·</span>
+        </div>
+        <div class="flex items-center shrink-0">
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">SHOW UP</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">PROVE IT</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">EARN IT</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">NO EXCUSES</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">DISCIPLINE DAILY</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">SNAP PROOF</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">LEVEL UP</span><span class="text-[#E8952A] text-xl px-4">·</span>
+        </div>
+        <div class="flex items-center shrink-0">
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">SHOW UP</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">PROVE IT</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">EARN IT</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">NO EXCUSES</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">DISCIPLINE DAILY</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">SNAP PROOF</span><span class="text-[#E8952A] text-xl px-4">·</span>
+          <span class="text-[20px] font-['Bebas_Neue'] tracking-[4px] text-white/15 uppercase px-4 whitespace-nowrap">LEVEL UP</span><span class="text-[#E8952A] text-xl px-4">·</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- What Is T1GER -->
+    <section class="min-h-screen w-full flex flex-col items-center justify-center px-6 py-24 relative z-20 reveal-hidden">
+      <div class="text-center w-full max-w-4xl mx-auto flex flex-col items-center">
+        <span class="text-[#E8952A] text-[11px] tracking-[3px] uppercase font-bold mb-6 font-sans">WHAT IS T1GER</span>
+        <h2 class="font-serif text-[clamp(40px,7vw,72px)] leading-tight text-white mb-8 tracking-normal">The only metric that matters is showing up.</h2>
+        <p class="text-slate-400 text-base md:text-lg max-w-[520px] mx-auto text-center leading-relaxed mb-16 font-sans">T1GER is a game engine for your real life. Complete a mission — gym, study session, business task. Snap a photo. AI verifies it happened. You earn XP. No proof, no credit.</p>
+        
+        <div class="flex flex-wrap justify-center gap-4 w-full max-w-3xl mb-8">
+          <div class="glass-pill inline-flex items-center rounded-full px-5 py-2.5 font-sans" style="--accent-color: #E8952A;">
+            <span class="w-2 h-2 rounded-full bg-[#E8952A] shadow-[0_0_8px_#E8952A] animate-pulse mr-3"></span>
+            <span class="text-white font-medium text-sm drop-shadow-[0_0_4px_rgba(232,149,42,0.5)]">31 day streak</span>
+          </div>
+          <div class="glass-pill inline-flex items-center rounded-full px-5 py-2.5 font-sans" style="--accent-color: #4CAF7D;">
+            <span class="w-2 h-2 rounded-full bg-[#4CAF7D] shadow-[0_0_8px_#4CAF7D] mr-3"></span>
+            <span class="text-white font-medium text-sm drop-shadow-[0_0_4px_rgba(76,175,125,0.5)]">Mission complete</span>
+          </div>
+          <div class="glass-pill inline-flex items-center rounded-full px-5 py-2.5 font-sans" style="--accent-color: #8B73FF;">
+            <span class="w-2 h-2 rounded-full bg-[#8B73FF] shadow-[0_0_8px_#8B73FF] mr-3"></span>
+            <span class="text-white font-medium text-sm drop-shadow-[0_0_4px_rgba(139,115,255,0.5)]">Deep study · 2hr</span>
+          </div>
+          <div class="glass-pill inline-flex items-center rounded-full px-5 py-2.5 font-sans" style="--accent-color: #FFC107;">
+            <span class="w-2 h-2 rounded-full bg-[#FFC107] shadow-[0_0_8px_#FFC107] animate-pulse mr-3"></span>
+            <span class="text-white font-medium text-sm drop-shadow-[0_0_4px_rgba(255,193,7,0.5)]">Proof verified</span>
+          </div>
+          <div class="glass-pill inline-flex items-center rounded-full px-5 py-2.5 font-sans" style="--accent-color: #FFEB3B;">
+            <span class="w-2 h-2 rounded-full bg-[#FFEB3B] shadow-[0_0_8px_#FFEB3B] mr-3"></span>
+            <span class="text-white font-medium text-sm drop-shadow-[0_0_4px_rgba(255,235,59,0.5)]">+400 XP earned</span>
+          </div>
+          <div class="glass-pill inline-flex items-center rounded-full px-5 py-2.5 font-sans" style="--accent-color: #F44336;">
+            <span class="w-2 h-2 rounded-full bg-[#F44336] shadow-[0_0_8px_#F44336] mr-3"></span>
+            <span class="text-white font-medium text-sm drop-shadow-[0_0_4px_rgba(244,67,54,0.5)]">Level 14 unlocked</span>
+          </div>
+        </div>
+        <p class="text-slate-500 text-[12px] font-sans">The status language of T1GER</p>
+      </div>
+    </section>
+
+    <!-- Pillars -->
+    <section class="min-h-screen w-full flex flex-col items-center justify-center px-6 py-24 relative z-20">
+      <div class="w-full max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass-pill flex flex-col p-10 md:p-12 rounded-3xl reveal-hidden" data-delay="0" style="--accent-color: #ffffff;">
+            <span class="font-['Bebas_Neue'] text-[48px] text-white/15 mb-6 leading-none">01</span>
+            <h3 class="font-['Bebas_Neue'] text-[26px] text-white uppercase mb-4 tracking-wide leading-none">SNAP PROOF</h3>
+            <p class="text-slate-400 text-[14px] leading-relaxed font-sans">Every mission requires a photo. AI checks it against your goal in seconds. No shortcuts. No faking.</p>
+          </div>
+          <div class="glass-pill flex flex-col p-10 md:p-12 rounded-3xl reveal-hidden" data-delay="100" style="--accent-color: #ffffff;">
+            <span class="font-['Bebas_Neue'] text-[48px] text-white/15 mb-6 leading-none">02</span>
+            <h3 class="font-['Bebas_Neue'] text-[26px] text-white uppercase mb-4 tracking-wide leading-none">BUILD STREAKS</h3>
+            <p class="text-slate-400 text-[14px] leading-relaxed font-sans">Miss a day, lose your streak. The pressure is the point. Streaks are the metric your future self will thank you for.</p>
+          </div>
+          <div class="glass-pill flex flex-col p-10 md:p-12 rounded-3xl reveal-hidden" data-delay="200" style="--accent-color: #ffffff;">
+            <span class="font-['Bebas_Neue'] text-[48px] text-white/15 mb-6 leading-none">03</span>
+            <h3 class="font-['Bebas_Neue'] text-[26px] text-white uppercase mb-4 tracking-wide leading-none">EARN YOUR RANK</h3>
+            <p class="text-slate-400 text-[14px] leading-relaxed font-sans">Your position on the global board is earned, not bought. Every XP comes from real proof.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Manifesto -->
+    <section class="shrink-0 relative h-screen w-screen flex flex-col justify-center overflow-hidden pt-20 pb-10">
+      <div class="absolute inset-0 pointer-events-none z-0">
+        <div class="absolute top-1/2 right-[-20%] -translate-y-1/2 w-[800px] h-[800px] bg-cyan-900/20 rounded-full blur-[150px] animate-[pulse_15s_ease-in-out_infinite]"></div>
+      </div>
+      <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center h-full">
+        <div class="flex flex-col text-left space-y-8 lg:pr-12 reveal-hidden">
+          <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif uppercase tracking-normal leading-[1.05]">
+            <span class="text-white block">Your to-do list is a </span>
+            <span class="text-slate-600 block my-2">spreadsheet.</span>
+            <span class="text-white block">This is a </span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF9F1C] via-orange-400 to-[#FF9F1C] drop-shadow-[0_0_15px_rgba(255,159,28,0.4)] block animate-[gradient_8s_linear_infinite] bg-[length:200%_auto]">command center.</span>
+          </h2>
+          <p class="text-slate-400 text-base md:text-lg font-medium leading-relaxed max-w-lg">Standard productivity apps suppress your potential. T1GER turns your habits into quests. Stop managing your time. <span class="text-white font-bold">Start playing it.</span></p>
+        </div>
+        <div class="relative w-full aspect-[4/5] sm:aspect-square lg:aspect-[3/4] max-w-[600px] mx-auto perspective-[1000px] reveal-hidden" id="manifesto-container">
+          <div id="manifesto-box" class="w-full h-full relative rounded-[2.5rem] bg-slate-900/20 backdrop-blur-3xl border border-cyan-500/20 hover:border-cyan-400/60 shadow-[inset_0_0_80px_rgba(34,211,238,0.05),_0_20px_50px_rgba(0,0,0,0.5)] transition-colors duration-500 overflow-hidden group">
+            <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-300/50 to-transparent opacity-50"></div>
+            <div class="absolute top-0 right-10 w-32 h-32 bg-cyan-400/20 rounded-full blur-[40px] group-hover:bg-cyan-400/40 transition-colors duration-700"></div>
+            <div class="absolute bottom-[-10%] inset-x-0 h-[40%] flex items-center justify-center pointer-events-none">
+              <div class="relative w-[70%] h-[120px] rounded-[100%] border-[2px] border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.5),_inset_0_0_20px_rgba(34,211,238,0.3)] bg-cyan-900/10" style="transform: rotateX(70deg)">
+                <div class="absolute inset-0 bg-cyan-400/30 blur-[20px] rounded-full"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] border-[4px] border-cyan-300/40 rounded-full border-dashed animate-[spin_15s_linear_infinite]"></div>
+              </div>
+            </div>
+            <!-- Corners -->
+            <div class="absolute top-6 left-6 w-4 h-4 border-t-2 border-l-2 border-cyan-500/40 group-hover:border-cyan-400 transition-colors"></div>
+            <div class="absolute top-6 right-6 w-4 h-4 border-t-2 border-r-2 border-cyan-500/40 group-hover:border-cyan-400 transition-colors"></div>
+            <div class="absolute bottom-6 left-6 w-4 h-4 border-b-2 border-l-2 border-cyan-500/40 group-hover:border-cyan-400 transition-colors"></div>
+            <div class="absolute bottom-6 right-6 w-4 h-4 border-b-2 border-r-2 border-cyan-500/40 group-hover:border-cyan-400 transition-colors"></div>
+            <!-- Dust generated by JS -->
+            <div id="hologram-dust" class="absolute inset-0 pointer-events-none overflow-hidden mix-blend-screen"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Join Waitlist Modal -->
+  <div id="joinModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-300 modal-hidden font-sans">
+    <div class="absolute inset-0 bg-black/75 backdrop-blur-[8px]" onclick="closeModal('joinModal')"></div>
+    <div id="joinModalContent" class="modal-content-hidden relative w-full max-w-md bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5),_inset_0_0_20px_rgba(255,255,255,0.02)] overflow-hidden">
+      <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+      <button onclick="closeModal('joinModal')" class="absolute top-6 right-6 p-2 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-colors z-50">✕</button>
+      
+      <!-- Form State -->
+      <div id="joinFormState" class="relative z-10 w-full flex flex-col items-center flex-col transition-all duration-300">
+        <h2 class="font-serif text-[40px] leading-none text-white mb-2 uppercase text-center w-full">Claim your spot.</h2>
+        <p class="text-slate-400 text-sm mb-8 text-center font-sans">The Black Market opens soon. Be first.</p>
+        <form class="w-full space-y-4" onsubmit="handleJoinSubmit(event)">
+          <div class="space-y-1">
+            <input type="email" id="joinEmail" placeholder="your@email.com" class="w-full bg-black/40 border border-white/10 focus:border-[#E8952A]/50 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-colors" />
+            <p id="joinError" class="text-[#E8952A] text-xs font-medium pl-1 hidden"></p>
+          </div>
+          <input type="text" id="joinName" placeholder="Your name (optional)" class="w-full bg-black/40 border border-white/10 focus:border-[#E8952A]/50 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-colors" />
+          <button type="submit" id="joinBtn" class="btn-primary w-full py-4 rounded-xl mt-4 flex items-center justify-center gap-2 font-bold text-black" style="--accent-color: #E8952A;">
+            <span id="joinBtnText">Claim my spot <span class="text-lg leading-none">→</span></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Success State -->
+      <div id="joinSuccessState" class="relative z-10 w-full flex flex-col items-center text-center hidden transition-all duration-300 opacity-0 scale-95">
+        <div id="joinPosition" class="font-serif text-[80px] leading-none text-[#E8952A] drop-shadow-[0_0_20px_rgba(232,149,42,0.4)] mb-2">#0</div>
+        <h2 class="font-serif text-[28px] leading-none text-white mb-8 uppercase">You're in. The hunt begins.</h2>
+        <div class="w-full bg-black/40 border border-white/10 rounded-xl p-4 mb-4 flex items-center justify-between font-mono text-sm group relative overflow-hidden">
+          <span class="text-slate-300" id="refLinkText">t1ger.app/ref/T1G-X9A2</span>
+          <button onclick="copyRefLink()" class="text-[#E8952A] text-xs font-bold uppercase tracking-wider font-sans"><span id="copyFeedback">Copy</span></button>
+        </div>
+        <div class="grid grid-cols-3 gap-2 w-full mb-6">
+          <button onclick="copyRefLink()" class="glass-pill rounded-lg py-2 flex flex-col items-center justify-center gap-1 text-slate-300 hover:text-white" style="--accent-color: #ffffff;"><span class="text-[10px] uppercase tracking-wider font-bold">Copy link</span></button>
+          <a id="shareX" href="#" target="_blank" class="glass-pill rounded-lg py-2 flex flex-col items-center justify-center gap-1 text-slate-300 hover:text-white" style="--accent-color: #ffffff;"><span class="text-[10px] uppercase tracking-wider font-bold">Share on X</span></a>
+          <a id="shareWA" href="#" target="_blank" class="glass-pill rounded-lg py-2 flex flex-col items-center justify-center gap-1 text-slate-300 hover:text-white" style="--accent-color: #ffffff;"><span class="text-[10px] uppercase tracking-wider font-bold">WhatsApp</span></a>
+        </div>
+        <p class="text-slate-500 text-[11px] font-sans">Each referral moves you up 100 spots</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign In Modal -->
+  <div id="signInModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-300 modal-hidden font-sans">
+    <div class="absolute inset-0 bg-black/75 backdrop-blur-[8px]" onclick="closeModal('signInModal')"></div>
+    <div id="signInModalContent" class="modal-content-hidden relative w-full max-w-md bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5),_inset_0_0_20px_rgba(255,255,255,0.02)] overflow-hidden">
+      <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+      <button onclick="closeModal('signInModal')" class="absolute top-6 right-6 p-2 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-colors z-50">✕</button>
+      
+      <div id="signInFormState" class="relative z-10 w-full flex flex-col items-center transition-all duration-300">
+        <h2 class="font-serif text-[40px] leading-none text-white mb-8 uppercase text-center w-full">Welcome back.</h2>
+        <form class="w-full space-y-4 font-sans" onsubmit="handleSignInSubmit(event)">
+          <div class="space-y-1">
+            <input type="email" id="signInEmail" placeholder="your@email.com" class="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-colors" />
+            <p id="signInError" class="text-[#E8952A] text-xs font-medium pl-1 hidden"></p>
+          </div>
+          <button type="submit" class="w-full py-3.5 rounded-xl mt-2 flex items-center justify-center font-bold text-white bg-white/10 border border-white/20 hover:bg-white/15 transition-colors">Send magic link</button>
+        </form>
+        <div class="w-full flex items-center gap-4 my-8">
+          <div class="flex-1 h-px bg-white/10"></div><span class="text-slate-500 text-xs font-medium uppercase tracking-wider">Or continue with</span><div class="flex-1 h-px bg-white/10"></div>
+        </div>
+        <div class="w-full space-y-3">
+          <button onclick="alert('Coming soon')" class="w-full py-3 rounded-xl flex items-center justify-center gap-3 bg-white text-black font-semibold hover:bg-slate-200 transition-colors"><img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5" /> Google</button>
+          <button onclick="alert('Coming soon')" class="w-full py-3 rounded-xl flex items-center justify-center gap-3 bg-black/50 border border-white/10 text-white font-semibold hover:bg-white/5 transition-colors">Apple</button>
+        </div>
+      </div>
+      
+      <div id="signInSuccessState" class="relative z-10 w-full flex flex-col items-center text-center py-6 hidden transition-all duration-300 opacity-0 scale-95">
+        <div class="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center mb-6 text-green-400">✓</div>
+        <h2 class="font-serif text-[32px] leading-none text-white mb-4 uppercase">Check your email</h2>
+        <p class="text-slate-400 font-sans">We sent a secure sign-in link to<br/><strong id="signInSuccessEmail" class="text-white mt-1 block"></strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIP Code Modal -->
+  <div id="vipModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-300 modal-hidden font-sans">
+    <div class="absolute inset-0 bg-black/75 backdrop-blur-[8px]" onclick="closeModal('vipModal')"></div>
+    <div id="vipModalContent" class="modal-content-hidden relative w-full max-w-md bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5),_inset_0_0_20px_rgba(255,255,255,0.02)] overflow-hidden">
+      <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+      <button onclick="closeModal('vipModal')" class="absolute top-6 right-6 p-2 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-colors z-50">✕</button>
+      <div class="relative z-10 w-full flex flex-col items-center">
+        <div class="w-12 h-12 rounded-full bg-[#E8952A]/10 border border-[#E8952A]/30 flex items-center justify-center mb-6 text-[#E8952A] shadow-[inset_0_0_15px_rgba(232,149,42,0.2)]">⚿</div>
+        <h2 class="font-serif text-[40px] leading-none text-white mb-2 uppercase text-center w-full">Enter VIP Code</h2>
+        <p class="text-slate-400 text-sm mb-8 text-center font-sans">Got a code from a founding member?</p>
+        <form class="w-full space-y-4 font-sans flex flex-col items-center" onsubmit="handleVipSubmit(event)">
+          <div class="space-y-1 w-full relative border-[#E8952A]">
+            <input type="text" id="vipCode" placeholder="T1GER-XXXX-XXXX" oninput="this.value = this.value.toUpperCase()" class="w-full bg-black/40 border border-[#E8952A]/40 focus:border-[#E8952A] rounded-xl px-4 py-4 text-center text-[#E8952A] font-mono font-bold tracking-[0.2em] placeholder-[#E8952A]/30 outline-none transition-colors shadow-[inset_0_0_10px_rgba(232,149,42,0.1)]" />
+            <p id="vipError" class="text-[#E8952A] text-xs font-medium pl-1 text-center mt-2 hidden"></p>
+          </div>
+          <button type="submit" class="btn-primary w-full py-4 rounded-xl mt-4 flex items-center justify-center gap-2 font-bold text-black border border-[#E8952A]/50" style="--accent-color: #E8952A;">Unlock access →</button>
+          <button type="button" onclick="closeModal('vipModal'); setTimeout(() => openModal('joinModal'), 200)" class="mt-6 text-slate-400 text-sm hover:text-white transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/50">Join the regular waitlist instead</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Reveal Observer for scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const delay = entry.target.getAttribute('data-delay') || 0;
+          setTimeout(() => {
+            entry.target.classList.remove('reveal-hidden');
+            entry.target.classList.add('reveal-visible');
+          }, delay);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: "-50px" });
+
+    document.querySelectorAll('.reveal-hidden').forEach(el => observer.observe(el));
+
+    // Dust Generator for Manifesto
+    const dustContainer = document.getElementById('hologram-dust');
+    for (let i = 0; i < 15; i++) {
+        const dust = document.createElement('div');
+        dust.className = 'absolute rounded-full bg-cyan-300 shadow-[0_0_8px_#22d3ee] animate-[hologram-rise_8s_ease-in-out_infinite]';
+        dust.style.width = (Math.random() * 3 + 1) + 'px';
+        dust.style.height = (Math.random() * 3 + 1) + 'px';
+        dust.style.left = (Math.random() * 100) + '%';
+        dust.style.top = (Math.random() * 100 + 10) + '%';
+        dust.style.opacity = (Math.random() * 0.7 + 0.3).toString();
+        dust.style.animationDuration = (Math.random() * 10 + 5) + 's';
+        dust.style.animationDelay = (Math.random() * 5) + 's';
+        dustContainer.appendChild(dust);
+    }
+
+    // Manifesto 3D Parallax Mouse Move
+    const manifestoContainer = document.getElementById('manifesto-container');
+    const manifestoBox = document.getElementById('manifesto-box');
+    
+    manifestoContainer.addEventListener('mousemove', (e) => {
+        const rect = manifestoContainer.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+        const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+        const rotateX = y * -10;
+        const rotateY = x * 10;
+        manifestoBox.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    manifestoContainer.addEventListener('mouseleave', () => {
+        manifestoBox.style.transform = `rotateX(0deg) rotateY(0deg)`;
+    });
+
+    // Modals functionality
+    function openModal(id) {
+        document.body.style.overflow = 'hidden';
+        const modal = document.getElementById(id);
+        const content = document.getElementById(id + 'Content');
+        modal.classList.remove('modal-hidden');
+        modal.classList.add('modal-visible');
+        setTimeout(() => {
+            content.classList.remove('modal-content-hidden');
+            content.classList.add('modal-content-visible');
+        }, 10);
+    }
+
+    function closeModal(id) {
+        document.body.style.overflow = 'auto';
+        const modal = document.getElementById(id);
+        const content = document.getElementById(id + 'Content');
+        content.classList.remove('modal-content-visible');
+        content.classList.add('modal-content-hidden');
+        setTimeout(() => {
+            modal.classList.remove('modal-visible');
+            modal.classList.add('modal-hidden');
+        }, 300);
+    }
+
+    // Close Modals on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            ['joinModal', 'signInModal', 'vipModal'].forEach(id => {
+                if(document.getElementById(id).classList.contains('modal-visible')) closeModal(id);
+            });
+        }
+    });
+
+    // Form Interactions
+    function shakeElement(el) {
+        el.classList.add('animate-shake', 'border-red-500/50');
+        setTimeout(() => el.classList.remove('animate-shake', 'border-red-500/50'), 400);
+    }
+
+    // Join Submit Mock
+    function handleJoinSubmit(e) {
+        e.preventDefault();
+        const email = document.getElementById('joinEmail');
+        const error = document.getElementById('joinError');
+        const btnText = document.getElementById('joinBtnText');
+        
+        if (!email.value || !/^\S+@\S+\.\S+$/.test(email.value)) {
+            error.textContent = "Please enter a valid email address.";
+            error.classList.remove('hidden');
+            shakeElement(email);
+            return;
+        }
+        
+        error.classList.add('hidden');
+        btnText.innerHTML = "Processing...";
+        
+        // Simulate API
+        setTimeout(() => {
+            document.getElementById('joinFormState').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('joinFormState').classList.add('hidden');
+                document.getElementById('joinSuccessState').classList.remove('hidden');
+                
+                // Animate count up
+                let pos = 0;
+                const target = 248;
+                const interval = setInterval(() => {
+                    pos += 4;
+                    if(pos >= target) { pos = target; clearInterval(interval); }
+                    document.getElementById('joinPosition').textContent = `#${pos}`;
+                }, 10);
+                
+                setTimeout(() => {
+                    document.getElementById('joinSuccessState').style.opacity = '1';
+                    document.getElementById('joinSuccessState').style.transform = 'scale(1)';
+                    
+                    // Setup share links safely
+                    const refCode = "T1G-" + Math.random().toString(36).substring(2, 6).toUpperCase();
+                    document.getElementById('refLinkText').textContent = `t1ger.app/ref/${refCode}`;
+                    
+                    document.getElementById('shareX').href = `https://twitter.com/intent/tweet?text=` + encodeURIComponent(`I'm #${target} on the T1GER waitlist. Join me → https://t1ger.app/ref/${refCode}`);
+                    document.getElementById('shareWA').href = `https://wa.me/?text=` + encodeURIComponent(`I'm #${target} on the T1GER waitlist → https://t1ger.app/ref/${refCode}`);
+                }, 50);
+                
+            }, 300);
+        }, 1500);
+    }
+
+    window.copyRefLink = function() {
+        const text = document.getElementById('refLinkText').textContent;
+        navigator.clipboard.writeText("https://" + text);
+        const target = document.getElementById('copyFeedback');
+        target.textContent = "Copied!";
+        setTimeout(() => target.textContent = "Copy", 2000);
+    }
+
+    // VIP Submit (Mock)
+    function handleVipSubmit(e) {
+        e.preventDefault();
+        const code = document.getElementById('vipCode');
+        const error = document.getElementById('vipError');
+        
+        if (!code.value.startsWith('T1GER-')) {
+            error.textContent = "Invalid VIP code format.";
+            error.classList.remove('hidden');
+            shakeElement(code);
+            return;
+        }
+        
+        error.classList.add('hidden');
+        alert('Valid VIP code - Access Granted (Mock)');
+        closeModal('vipModal');
+    }
+
+    // Sign In (Mock)
+    function handleSignInSubmit(e) {
+        e.preventDefault();
+        const email = document.getElementById('signInEmail');
+        const error = document.getElementById('signInError');
+        
+        if (!email.value || !/^\S+@\S+\.\S+$/.test(email.value)) {
+            error.textContent = "Please enter a valid email address.";
+            error.classList.remove('hidden');
+            shakeElement(email);
+            return;
+        }
+        
+        error.classList.add('hidden');
+        document.getElementById('signInSuccessEmail').textContent = email.value;
+        
+        document.getElementById('signInFormState').classList.add('hidden');
+        document.getElementById('signInSuccessState').classList.remove('hidden');
+        
+        setTimeout(() => {
+            document.getElementById('signInSuccessState').style.opacity = '1';
+            document.getElementById('signInSuccessState').style.transform = 'scale(1)';
+        }, 50);
+        
+        setTimeout(() => {
+            closeModal('signInModal');
+            document.getElementById('signInEmail').value = '';
+            setTimeout(() => {
+                document.getElementById('signInSuccessState').classList.add('hidden');
+                document.getElementById('signInSuccessState').style.opacity = '0';
+                document.getElementById('signInFormState').classList.remove('hidden');
+            }, 400);
+        }, 3000);
+    }
+  </script>
+</body>
+</html>
