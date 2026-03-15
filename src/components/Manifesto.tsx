@@ -26,7 +26,7 @@ export default function Manifesto() {
     const rotateY = useMotionTemplate`${mouseX.get() * 10}deg`;
 
     return (
-        <section className="shrink-0 relative h-screen w-screen flex flex-col justify-center overflow-hidden pt-20 pb-10">
+        <section className="shrink-0 relative w-full flex flex-col justify-center overflow-hidden py-12 md:py-20">
             {/* Background Breathing Gradient (Locked to right side of Slide 1) */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 <motion.div 
@@ -37,13 +37,13 @@ export default function Manifesto() {
                 />
             </div>
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center h-full">
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
                 
                 {/* LEFT COLUMN: TYPOGRAPHY */}
                 <motion.div 
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
+                    viewport={{ once: true, amount: 0.05 }}
                     transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
                     className="flex flex-col text-left space-y-8 lg:pr-12"
                 >
@@ -70,7 +70,7 @@ export default function Manifesto() {
                 <motion.div 
                     initial={{ opacity: 0, scale: 0.9, rotateY: 15 }}
                     whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
+                    viewport={{ once: true, amount: 0.05 }}
                     transition={{ duration: 1, type: "spring", bounce: 0.4, delay: 0.2 }}
                     className="relative w-full aspect-[4/5] sm:aspect-square lg:aspect-[3/4] max-w-[600px] mx-auto perspective-[1000px]"
                     onMouseMove={handleMouseMove}

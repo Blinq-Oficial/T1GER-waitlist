@@ -8,20 +8,20 @@ interface Props {
 
 export default function Navbar({ onOpenJoin, onOpenSignIn, onOpenVip }: Props) {
   return (
-    <>
-        {/* Floating Logo - Top Left */}
+    <nav className="fixed top-0 inset-x-0 h-[64px] z-50 flex items-center justify-between px-6 md:px-12 pointer-events-none">
+        {/* Floating Logo - Left */}
         <div 
-            className="fixed top-6 left-6 md:left-12 z-50 flex items-center gap-3 rounded-full px-6 py-3 pointer-events-auto glass-pill !backdrop-blur-[8px]"
+            className="flex items-center gap-3 rounded-full px-5 py-2 pointer-events-auto glass-pill !backdrop-blur-[8px]"
             style={{ '--accent-color': '#ffffff' } as React.CSSProperties}
         >
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#FF9F1C] to-orange-600 text-black flex items-center justify-center font-black text-sm tracking-tighter shadow-[0_0_15px_rgba(255,159,28,0.3)]">
+            <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-gradient-to-br from-[#FF9F1C] to-orange-600 text-black flex items-center justify-center font-black text-xs md:text-sm tracking-tighter shadow-[0_0_15px_rgba(255,159,28,0.3)]">
                 T1
             </div>
             <span className="font-bold tracking-widest text-white/90 uppercase text-xs sm:text-sm">T1GER</span>
         </div>
 
-        {/* Floating Actions - Top Right */}
-        <div className="fixed top-6 right-6 md:right-12 z-50 flex items-center gap-3 pointer-events-auto">
+        {/* Floating Actions - Right */}
+        <div className="flex items-center gap-2 md:gap-3 pointer-events-auto">
             <button 
                onClick={onOpenSignIn}
                className="hidden lg:inline-flex rounded-lg items-center justify-center px-[14px] py-[7px] font-bold text-white/50 bg-white/5 border border-white/10 text-xs transition-colors hover:bg-white/10"
@@ -43,6 +43,6 @@ export default function Navbar({ onOpenJoin, onOpenSignIn, onOpenVip }: Props) {
                 Join
             </button>
         </div>
-    </>
+    </nav>
   );
 }

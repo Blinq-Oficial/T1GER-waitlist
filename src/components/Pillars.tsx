@@ -20,7 +20,7 @@ export default function Pillars() {
   ];
 
   return (
-    <section className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-24 relative z-20">
+    <section className="w-full flex flex-col items-center justify-center px-6 py-12 md:py-20 relative z-20">
       <div className="w-full max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {pillars.map((pillar, index) => (
@@ -28,7 +28,7 @@ export default function Pillars() {
               key={index}
               initial={{ opacity: 0, y: 32, scale: 0.97 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: true, amount: 0.05 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: index * 0.1 }}
               className="glass-pill flex flex-col p-10 md:p-12 rounded-3xl"
               style={{ '--accent-color': '#ffffff' } as React.CSSProperties}

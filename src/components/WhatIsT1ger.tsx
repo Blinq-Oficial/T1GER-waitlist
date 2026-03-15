@@ -5,9 +5,9 @@ export default function WhatIsT1ger() {
     <motion.section 
       initial={{ opacity: 0, y: 32, scale: 0.97 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ once: true, amount: 0.05 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-24 relative z-20"
+      className="w-full flex flex-col items-center justify-center px-6 py-12 md:py-20 relative z-20"
     >
       <div className="text-center w-full max-w-4xl mx-auto flex flex-col items-center">
         {/* Eyebrow */}
@@ -21,7 +21,7 @@ export default function WhatIsT1ger() {
         </h2>
         
         {/* Body Text */}
-        <p className="text-slate-400 text-base md:text-lg max-w-[520px] mx-auto text-center leading-relaxed mb-16 font-sans">
+        <p className="text-slate-400 text-base md:text-lg max-w-[520px] mx-auto text-center leading-relaxed mb-10 font-sans">
           T1GER is a game engine for your real life. Complete a mission — gym, study session, business task. Snap a photo. AI verifies it happened. You earn XP. No proof, no credit.
         </p>
         
