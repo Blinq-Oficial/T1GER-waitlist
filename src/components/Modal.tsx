@@ -35,6 +35,8 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          style={{ willChange: "opacity" }}
           className="fixed inset-0 z-[100] flex items-center justify-center p-4"
         >
           {/* Overlay */}
@@ -48,7 +50,8 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            style={{ willChange: "transform, opacity" }}
             className="relative w-full max-w-md bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5),_inset_0_0_20px_rgba(255,255,255,0.02)] overflow-hidden"
           >
             {/* Inner Glow Map */}

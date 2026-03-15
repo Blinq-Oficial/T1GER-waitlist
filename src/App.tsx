@@ -17,14 +17,14 @@ export default function App() {
   return (
     <div className="text-slate-50 selection:bg-[#E8952A]/30 scrollbar-hide overflow-x-hidden">
       {/* Global Atmospheric Light Sources */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-full pointer-events-none z-0 overflow-hidden">
         {/* Cool blue-teal behind hero */}
-        <div className="absolute top-[-10%] left-[10%] w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[#0E3547]/40 rounded-full blur-[120px] mix-blend-screen" />
+        <div className="absolute top-0 left-[10%] w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[#0E3547]/40 rounded-full blur-[120px] mix-blend-screen" />
         
         {/* Very subtle warm amber glow emerging toward middle */}
-        <div className="absolute top-[35%] right-[-10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[#E8952A]/10 rounded-full blur-[150px] mix-blend-screen" />
+        <div className="absolute top-[30%] right-[-10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[#E8952A]/10 rounded-full blur-[150px] mix-blend-screen" />
         
-        {/* Soft fill */}
+        {/* Soft fill further down */}
         <div className="absolute top-[60%] left-[-20%] w-[70vw] h-[70vw] max-w-[800px] max-h-[800px] bg-[#0A1A2A]/20 rounded-full blur-[140px] mix-blend-screen" />
       </div>
 

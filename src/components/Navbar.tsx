@@ -11,7 +11,7 @@ export default function Navbar({ onOpenJoin, onOpenSignIn, onOpenVip }: Props) {
     <>
         {/* Floating Logo - Top Left */}
         <div 
-            className="fixed top-6 left-6 md:left-12 z-50 flex items-center gap-3 rounded-full px-6 py-3 pointer-events-auto glass-pill"
+            className="fixed top-6 left-6 md:left-12 z-50 flex items-center gap-3 rounded-full px-6 py-3 pointer-events-auto glass-pill !backdrop-blur-[8px]"
             style={{ '--accent-color': '#ffffff' } as React.CSSProperties}
         >
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#FF9F1C] to-orange-600 text-black flex items-center justify-center font-black text-sm tracking-tighter shadow-[0_0_15px_rgba(255,159,28,0.3)]">

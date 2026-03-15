@@ -11,7 +11,7 @@ export default function WhatIsT1ger() {
     >
       <div className="text-center w-full max-w-4xl mx-auto flex flex-col items-center">
         {/* Eyebrow */}
-        <span className="text-[#E8952A] text-[11px] tracking-[3px] uppercase font-bold mb-6 font-sans">
+        <span className="text-[#E8952A] text-sm sm:text-[11px] tracking-[3px] uppercase font-bold mb-6 font-sans">
           WHAT IS T1GER
         </span>
         
@@ -54,7 +54,7 @@ export default function WhatIsT1ger() {
         </div>
         
         {/* Caption */}
-        <p className="text-slate-500 text-[12px] font-sans">The status language of T1GER</p>
+        <p className="text-slate-500 text-sm sm:text-[12px] font-sans">The status language of T1GER</p>
       </div>
     </motion.section>
   );

@@ -44,7 +44,7 @@ export default function Waitlist({ onOpenJoin, onOpenVip }: Props) {
                         
                         <button 
                            onClick={onOpenVip}
-                           className="glass-pill rounded-full w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 font-medium text-white text-sm md:text-base hover:text-[#E8952A] transition-colors"
+                           className="glass-pill rounded-full w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 font-medium text-white text-base hover:text-[#E8952A] transition-colors"
                            style={{ '--accent-color': '#ffffff' } as React.CSSProperties}
                         >
                             Have an invite code?
@@ -61,7 +61,7 @@ export default function Waitlist({ onOpenJoin, onOpenVip }: Props) {
                 transition={{ delay: 1.5, duration: 1 }}
                 onClick={() => window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })}
             >
-                <span className="text-slate-500 font-mono text-[10px] uppercase tracking-[0.3em] group-hover:text-white transition-colors">Scroll</span>
+                <span className="text-slate-500 font-mono text-xs sm:text-[10px] uppercase tracking-[0.3em] group-hover:text-white transition-colors">Scroll</span>
                 <motion.div
                     animate={{ y: [0, 8, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}

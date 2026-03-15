@@ -39,7 +39,7 @@ export default function Pillars() {
               <h3 className="font-['Bebas_Neue'] text-[26px] text-white uppercase mb-4 tracking-wide leading-none">
                 {pillar.title}
               </h3>
-              <p className="text-slate-400 text-[14px] leading-relaxed font-sans">
+              <p className="text-slate-400 text-base sm:text-[14px] leading-relaxed font-sans">
                 {pillar.text}
               </p>
             </motion.div>
