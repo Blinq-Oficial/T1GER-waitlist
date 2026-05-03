@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import SmoothScroll from './components/animations/SmoothScroll';
 import Preloader from './components/animations/Preloader';
 import CustomCursor from './components/animations/CustomCursor';
@@ -81,6 +82,7 @@ export default function App() {
           <Footer />
         </div>
       </div>
+      <SpeedInsights />
     </SmoothScroll>
   );
 }
