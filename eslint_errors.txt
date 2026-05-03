@@ -1,0 +1,9 @@
+﻿
+C:\Users\david\Desktop\MI Respaldo\WEBSITES\T1GER Waitlist Web\src\components\modals\JoinWaitlistModal.tsx
+  68:14  error  'err' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\david\Desktop\MI Respaldo\WEBSITES\T1GER Waitlist Web\src\components\modals\VipCodeModal.tsx
+  2:18  error  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 2 problems (2 errors, 0 warnings)
+

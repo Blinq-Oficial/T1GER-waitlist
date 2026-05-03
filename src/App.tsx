@@ -1,57 +1,86 @@
-import React, { useState } from 'react';
-import Navbar from './components/Navbar';
-import Waitlist from './components/Waitlist';
-import Marquee from './components/Marquee';
-import WhatIsT1ger from './components/WhatIsT1ger';
-import Pillars from './components/Pillars';
-import Manifesto from './components/Manifesto';
-import JoinWaitlistModal from './components/modals/JoinWaitlistModal';
-import SignInModal from './components/modals/SignInModal';
-import VipCodeModal from './components/modals/VipCodeModal';
+import { useState, useCallback } from 'react';
+import SmoothScroll from './components/animations/SmoothScroll';
+import Preloader from './components/animations/Preloader';
+import CustomCursor from './components/animations/CustomCursor';
+import Sidebar from './components/navigation/Sidebar';
+
+// Sections (in order)
+import SectionHero from './components/sections/SectionHero';
+import SectionShowcase from './components/sections/SectionShowcase';
+import SectionAbout from './components/sections/SectionAbout';
+import SectionVision from './components/sections/SectionVision';
+import SectionProtocol from './components/sections/SectionProtocol';
+import SectionLife from './components/sections/SectionLife';
+import SectionJoin from './components/sections/SectionJoin';
+import SectionFAQ from './components/sections/SectionFAQ';
+import SectionVideo from './components/sections/SectionVideo';
+import Footer from './components/sections/Footer';
 
 export default function App() {
-  const [isJoinOpen, setIsJoinOpen] = useState(false);
-  const [isSignInOpen, setIsSignInOpen] = useState(false);
-  const [isVipOpen, setIsVipOpen] = useState(false);
+  const [isPreloaded, setIsPreloaded] = useState(false);
+  const [isSignedUp, setIsSignedUp] = useState(false);
+  const [waitlistPosition, setWaitlistPosition] = useState(0);
+
+  const handleSignup = useCallback((position: number) => {
+    setWaitlistPosition(position);
+    setIsSignedUp(true);
+  }, []);
 
   return (
-    <div className="text-slate-50 selection:bg-[#E8952A]/30 scrollbar-hide overflow-x-hidden">
-      {/* Global Atmospheric Light Sources */}
-      <div className="absolute inset-x-0 top-0 h-full pointer-events-none z-0 overflow-hidden">
-        {/* Cool blue-teal behind hero */}
-        <div className="absolute top-0 left-[10%] w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[#0E3547]/40 rounded-full blur-[120px] mix-blend-screen" />
-        
-        {/* Very subtle warm amber glow emerging toward middle */}
-        <div className="absolute top-[30%] right-[-10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[#E8952A]/10 rounded-full blur-[150px] mix-blend-screen" />
-        
-        {/* Soft fill further down */}
-        <div className="absolute top-[60%] left-[-20%] w-[70vw] h-[70vw] max-w-[800px] max-h-[800px] bg-[#0A1A2A]/20 rounded-full blur-[140px] mix-blend-screen" />
-      </div>
+    <SmoothScroll>
+      <Preloader onComplete={() => setIsPreloaded(true)} />
+      <CustomCursor />
+      <div className="relative w-full text-white font-sans min-h-screen">
+        {/* Layered gradient background (replaces WebGL) */}
+        <div className="fixed inset-0 z-0 bg-[#050505]">
+          <div className="absolute inset-0 bg-gradient-radial opacity-40" />
+        </div>
 
-      <div className="relative z-10 w-full flex flex-col">
-        <Navbar 
-          onOpenJoin={() => setIsJoinOpen(true)}
-          onOpenSignIn={() => setIsSignInOpen(true)}
-          onOpenVip={() => setIsVipOpen(true)}
-        />
-        <Waitlist 
-          onOpenJoin={() => setIsJoinOpen(true)}
-          onOpenVip={() => setIsVipOpen(true)}
-        />
-        <Marquee />
-        <WhatIsT1ger />
-        <Pillars />
-        <Manifesto />
-      </div>
+        {/* Left Navigation Sidebar */}
+        <Sidebar isPreloaded={isPreloaded} />
 
-      {/* Modals */}
-      <JoinWaitlistModal isOpen={isJoinOpen} onClose={() => setIsJoinOpen(false)} />
-      <SignInModal isOpen={isSignInOpen} onClose={() => setIsSignInOpen(false)} />
-      <VipCodeModal 
-        isOpen={isVipOpen} 
-        onClose={() => setIsVipOpen(false)} 
-        onOpenRegularWaitlist={() => setIsJoinOpen(true)}
-      />
-    </div>
+        {/* Main Content */}
+        <div className="w-full relative z-10">
+          {/* Section 1: Hero (massive outlined title) */}
+          <SectionHero
+            onSuccess={handleSignup}
+            isSignedUp={isSignedUp}
+            waitlistPosition={waitlistPosition}
+            isPreloaded={isPreloaded}
+          />
+
+          {/* Section 2: Cinematic Video Bridge */}
+          <SectionVideo />
+
+          {/* Section 3: Visual Showcase (purely visual, no text) */}
+          <SectionShowcase />
+
+          {/* Section 3: About (visual statement → text) */}
+          <SectionAbout />
+
+          {/* Section 4: Vision (Numbered Pillars) */}
+          <SectionVision />
+
+          {/* Section 5: The Protocol (Sticker Text Reveals) */}
+          <SectionProtocol />
+
+          {/* Section 6: Life Visualizer */}
+          <SectionLife />
+
+          {/* Section 7: Join / Donate */}
+          <SectionJoin
+            onSuccess={handleSignup}
+            isSignedUp={isSignedUp}
+            waitlistPosition={waitlistPosition}
+          />
+
+          {/* Section 8: FAQ */}
+          <SectionFAQ />
+
+          {/* Section 9: Footer */}
+          <Footer />
+        </div>
+      </div>
+    </SmoothScroll>
   );
 }

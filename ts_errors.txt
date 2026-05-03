@@ -1,0 +1,3 @@
+﻿src/components/BackgroundEffects.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/slides/SlideLifeVisualizer.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/slides/SlidePostSignup.tsx(1,8): error TS6133: 'React' is declared but its value is never read.

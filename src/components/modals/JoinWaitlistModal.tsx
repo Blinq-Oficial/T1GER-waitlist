@@ -65,7 +65,7 @@ export default function JoinWaitlistModal({ isOpen, onClose }: Props) {
       // Dispatch event to update navbar counter if it existed
       window.dispatchEvent(new CustomEvent('t1ger-joined'));
 
-    } catch (err) {
+    } catch {
       setStatus('idle');
       triggerError('Network error. Check your connection.');
     }
