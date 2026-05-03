@@ -161,7 +161,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
         <motion.div
           className="absolute w-[600px] h-[600px] rounded-full pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(255,107,0,0.06) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, oklch(65% 0.22 45 / 0.04) 0%, transparent 60%)',
             left: smoothX,
             top: smoothY,
             x: '-50%',
@@ -186,9 +186,9 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
             >
               {/* Tagline above title */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={isPreloaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.8, delay: 0.1, ease: [0.19, 1, 0.22, 1] }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.8, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
                 className="mb-8"
               >
                 <span className="font-mono text-white/30 tracking-[0.5em] text-xs sm:text-sm uppercase">
@@ -207,11 +207,10 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                   className="font-outfit font-black uppercase leading-[0.82] select-none"
                   style={{
                     fontSize: 'clamp(5rem, 20vw, 18rem)',
-                    letterSpacing: '-0.03em',
+                    letterSpacing: '-0.02em',
                     color: 'transparent',
-                    WebkitTextStroke: '2px rgba(255,107,0,0.7)',
-                    textShadow: '0 0 80px rgba(255,107,0,0.15), 0 0 160px rgba(255,107,0,0.08)',
-                    filter: 'drop-shadow(0 0 40px rgba(255,107,0,0.1))',
+                    WebkitTextStroke: '1px rgba(255,255,255,0.15)',
+                    filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))',
                   }}
                 >
                   {'T1GER'.split('').map((char, i) => (
@@ -238,9 +237,9 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                   className="absolute inset-0 font-outfit font-black uppercase leading-[0.82] select-none pointer-events-none opacity-0 hover-fill-text"
                   style={{
                     fontSize: 'clamp(5rem, 20vw, 18rem)',
-                    letterSpacing: '-0.03em',
-                    color: '#FF6B00',
-                    textShadow: '0 0 60px rgba(255,107,0,0.4)',
+                    letterSpacing: '-0.02em',
+                    color: 'oklch(65% 0.22 45)',
+                    textShadow: '0 4px 12px rgba(0,0,0,0.5)',
                   }}
                 >
                   T1GER
@@ -249,9 +248,9 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
 
               {/* Slogan */}
               <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={isPreloaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-                transition={{ duration: 0.8, delay: 1.2, ease: [0.19, 1, 0.22, 1] }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.8, delay: 1.2, ease: [0.23, 1, 0.32, 1] }}
                 className="mb-12"
               >
                 <p
@@ -266,9 +265,9 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
               {/* Email Form */}
               <motion.form
                 onSubmit={handleSubmit}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isPreloaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ duration: 0.8, delay: 1.5, ease: [0.19, 1, 0.22, 1] }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.8, delay: 1.5, ease: [0.23, 1, 0.32, 1] }}
                 className="w-full max-w-sm space-y-3"
               >
                 <div className="relative">
@@ -281,7 +280,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                       setErrorText('');
                     }}
                     disabled={status !== 'idle'}
-                    className="w-full bg-white/[0.04] border border-white/[0.08] rounded-full px-6 py-4 text-white placeholder-white/15 font-mono tracking-[0.15em] text-sm outline-none transition-all duration-500 focus:border-[#FF6B00]/40 focus:bg-white/[0.06] focus:shadow-[0_0_40px_rgba(255,107,0,0.08)]"
+                    className="w-full bg-white/[0.04] border border-white/[0.1] rounded-full px-6 py-4 text-white placeholder-white/30 font-mono tracking-[0.15em] text-sm outline-none transition-all duration-150 focus:border-[var(--color-electric-orange)] focus:bg-white/[0.06] focus:shadow-[0_0_0_1px_var(--color-electric-orange)]"
                   />
                   <AnimatePresence>
                     {errorText && (

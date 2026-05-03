@@ -52,7 +52,7 @@ export default function SectionLife() {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at 50% 30%, rgba(255,107,0,0.08) 0%, transparent 55%)',
+          background: 'radial-gradient(ellipse at 50% 30%, oklch(65% 0.22 45 / 0.04) 0%, transparent 55%)',
         }}
       />
 
@@ -60,10 +60,10 @@ export default function SectionLife() {
 
         {/* ─── BIG STATEMENT ─── */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+          transition={{ duration: 1, ease: [0.23, 1, 0.32, 1] }}
           className="text-center mb-10 md:mb-14"
         >
           <h2
@@ -72,7 +72,7 @@ export default function SectionLife() {
           >
             THIS IS YOUR LIFE
             <br />
-            <span className="text-[#FF6B00]">IN MONTHS.</span>
+            <span className="text-[var(--color-electric-orange)]">IN MONTHS.</span>
           </h2>
         </motion.div>
 
@@ -81,10 +81,10 @@ export default function SectionLife() {
           {!submitted ? (
             <motion.div
               key="input-phase"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
               className="flex flex-col items-center gap-5 w-full max-w-xs"
             >
               <p className="text-white/45 font-mono text-sm md:text-base tracking-[0.2em] uppercase text-center">
@@ -99,7 +99,7 @@ export default function SectionLife() {
                 onChange={(e) => setAge(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="25"
-                className="w-full bg-white/[0.06] border-2 border-white/[0.12] rounded-2xl px-8 py-5 text-center font-mono text-white focus:outline-none focus:border-[#FF6B00]/60 focus:shadow-[0_0_50px_rgba(255,107,0,0.15)] transition-all duration-500 placeholder-white/15"
+                className="w-full bg-white/[0.06] border border-white/[0.1] rounded-lg px-8 py-5 text-center font-mono text-white focus:outline-none focus:border-[var(--color-electric-orange)] focus:shadow-[0_0_0_1px_var(--color-electric-orange)] transition-all duration-150 placeholder-white/30"
                 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', lineHeight: 1.2 }}
                 min="1"
                 max="100"
@@ -122,9 +122,9 @@ export default function SectionLife() {
             /* ─── PHASE 2: DOT GRID ─── */
             <motion.div
               key="grid-phase"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: [0.23, 1, 0.32, 1] }}
               className="flex flex-col items-center w-full"
             >
               {/* Age indicator + reset */}
@@ -140,7 +140,7 @@ export default function SectionLife() {
                 <span className="text-white/10">•</span>
                 <button
                   onClick={handleReset}
-                  className="text-white/25 hover:text-[#FF6B00] font-mono text-xs tracking-wider cursor-pointer bg-transparent border-none transition-colors duration-300 underline underline-offset-4"
+                  className="text-white/40 hover:text-[var(--color-electric-orange)] font-mono text-xs tracking-wider cursor-pointer bg-transparent border-none transition-colors duration-150 underline underline-offset-4"
                 >
                   Change
                 </button>
@@ -150,7 +150,7 @@ export default function SectionLife() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.93 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.2, delay: 0.15, ease: [0.19, 1, 0.22, 1] }}
+                transition={{ duration: 1.2, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
                 className="w-full"
               >
                 <div
@@ -161,10 +161,10 @@ export default function SectionLife() {
                     return (
                       <div
                         key={dotIndex}
-                        className={`aspect-square rounded-full transition-colors duration-500 ${
+                        className={`aspect-square rounded-sm transition-colors duration-500 ${
                           isLived
-                            ? 'bg-[#FF6B00] shadow-[0_0_3px_rgba(255,107,0,0.5)]'
-                            : 'bg-white/[0.04]'
+                            ? 'bg-[var(--color-electric-orange)]'
+                            : 'bg-white/[0.06]'
                         }`}
                       />
                     );
@@ -179,11 +179,11 @@ export default function SectionLife() {
                   className="flex items-center justify-center gap-8 mt-4 font-mono text-xs text-white/30 tracking-[0.12em] uppercase"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#FF6B00] shadow-[0_0_4px_rgba(255,107,0,0.5)]" />
+                    <div className="w-2.5 h-2.5 rounded-sm bg-[var(--color-electric-orange)]" />
                     Gone ({livedMonths.toLocaleString()})
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-white/[0.04] border border-white/10" />
+                    <div className="w-2.5 h-2.5 rounded-sm bg-white/[0.06] border border-white/10" />
                     Left ({remaining.toLocaleString()})
                   </div>
                 </motion.div>
@@ -191,9 +191,9 @@ export default function SectionLife() {
 
               {/* Emotional text */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1, duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
                 className="text-center mt-10 md:mt-14 max-w-lg"
               >
                 <p
@@ -211,9 +211,9 @@ export default function SectionLife() {
 
               {/* CTA */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.4, duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.4, duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
                 className="mt-8"
               >
                 <button

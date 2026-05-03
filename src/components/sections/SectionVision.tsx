@@ -53,20 +53,20 @@ export default function SectionVision() {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at 50% 30%, rgba(204,255,0,0.04) 0%, transparent 50%)',
+          background: 'radial-gradient(ellipse at 50% 30%, oklch(90% 0.18 135 / 0.02) 0%, transparent 50%)',
         }}
       />
 
       <div className="relative z-10 px-6 sm:px-12 max-w-5xl">
         {/* Section heading — centered */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-          className="text-center mb-14 md:mb-20"
+          transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+          className="text-left mb-14 md:mb-20 max-w-2xl"
         >
-          <span className="font-mono text-[#CCFF00]/40 tracking-[0.3em] text-xs uppercase block mb-4">
+          <span className="font-mono text-[var(--color-acid-green)] opacity-40 tracking-[0.3em] text-xs uppercase block mb-4">
             ● The Vision
           </span>
           <h2
@@ -77,8 +77,8 @@ export default function SectionVision() {
             <span
               style={{
                 color: 'transparent',
-                WebkitTextStroke: '2px #CCFF00',
-                filter: 'drop-shadow(0 0 20px rgba(204,255,0,0.15))',
+                WebkitTextStroke: '1px var(--color-acid-green)',
+                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))',
               }}
             >
               ONE PROTOCOL.
@@ -86,8 +86,8 @@ export default function SectionVision() {
           </h2>
         </motion.div>
 
-        {/* Card grid — 2×3 centered */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 justify-items-center">
+        {/* Card grid — 2×3 asymmetric/left-aligned */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {pillars.map((pillar, i) => (
             <VisionCard key={pillar.number} {...pillar} index={i} />
           ))}
@@ -134,19 +134,19 @@ function VisionCard({
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true }}
       transition={{
-        duration: 0.7,
+        duration: 0.5,
         delay: index * 0.08,
-        ease: [0.19, 1, 0.22, 1],
+        ease: [0.23, 1, 0.32, 1],
       }}
       className="relative group"
     >
-      <div className="relative bg-white/[0.03] border border-white/[0.06] rounded-xl p-8 md:p-10 overflow-hidden hover:bg-white/[0.06] hover:border-white/[0.12] hover:-translate-y-1 hover:shadow-[0_8px_40px_rgba(204,255,0,0.05)] transition-all duration-500 cursor-default h-full flex flex-col items-center justify-center">
+      <div className="relative bg-white/[0.03] border border-white/[0.06] rounded-lg p-8 md:p-10 overflow-hidden hover:bg-white/[0.06] hover:border-white/[0.15] hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-all duration-150 cursor-default h-full flex flex-col items-start justify-start">
         {/* Number watermark */}
         <span
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-outfit font-black transition-colors duration-500 select-none pointer-events-none"
+          className="absolute bottom-4 right-6 font-outfit font-black transition-colors duration-150 select-none pointer-events-none"
           style={{
-            fontSize: 'clamp(4rem, 10vw, 8rem)',
-            color: inView ? 'rgba(204,255,0,0.06)' : 'rgba(204,255,0,0.02)',
+            fontSize: 'clamp(3rem, 8vw, 6rem)',
+            color: inView ? 'oklch(90% 0.18 135 / 0.06)' : 'oklch(90% 0.18 135 / 0.02)',
             lineHeight: 1,
             zIndex: 0,
           }}
@@ -155,12 +155,12 @@ function VisionCard({
         </span>
 
         {/* Title */}
-        <h3 className="font-outfit font-black text-lg md:text-xl text-white uppercase tracking-tight mb-3 relative z-10 group-hover:text-[#CCFF00] transition-colors duration-300 text-center">
+        <h3 className="font-outfit font-black text-lg md:text-xl text-white uppercase tracking-tight mb-3 relative z-10 group-hover:text-[var(--color-acid-green)] transition-colors duration-150 text-left">
           {title}
         </h3>
 
         {/* Description */}
-        <p className="text-white/35 text-sm leading-relaxed font-sans relative z-10 group-hover:text-white/50 transition-colors duration-300 text-center">
+        <p className="text-white/40 text-sm leading-relaxed font-sans relative z-10 group-hover:text-white/60 transition-colors duration-150 text-left">
           {description}
         </p>
 

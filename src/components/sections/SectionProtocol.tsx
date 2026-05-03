@@ -3,12 +3,12 @@ import { motion } from 'framer-motion';
 import TextReveal from '../animations/TextReveal';
 
 const stickers = [
-  { type: 'italic', text: 'Core features.', bg: '#FF6B00' },
-  { type: 'bold', text: '7-DAY', bg: '#CCFF00' },
-  { type: 'italic', text: 'Zero excuses.', bg: '#FF6B00' },
-  { type: 'bold', text: 'STREAK', bg: '#CCFF00' },
-  { type: 'italic', text: 'The pressure never stops.', bg: '#FF6B00' },
-  { type: 'bold', text: 'TOP 5%', bg: '#CCFF00' },
+  { type: 'italic', text: 'Core features.', bg: 'var(--color-electric-orange)' },
+  { type: 'bold', text: '7-DAY', bg: 'var(--color-acid-green)' },
+  { type: 'italic', text: 'Zero excuses.', bg: 'var(--color-electric-orange)' },
+  { type: 'bold', text: 'STREAK', bg: 'var(--color-acid-green)' },
+  { type: 'italic', text: 'The pressure never stops.', bg: 'var(--color-electric-orange)' },
+  { type: 'bold', text: 'TOP 5%', bg: 'var(--color-acid-green)' },
 ];
 
 /**
@@ -32,10 +32,10 @@ export default function SectionProtocol() {
       <div className="relative flex flex-col items-center justify-center py-24 md:py-32 min-h-screen">
         {/* Section label — animated */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+          transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
           className="absolute top-10 left-6 sm:left-12"
         >
           <span className="t-label text-white/30 tracking-[0.3em]">
@@ -47,7 +47,7 @@ export default function SectionProtocol() {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at 50% 50%, rgba(150,80,255,0.04) 0%, transparent 50%)',
+            background: 'radial-gradient(ellipse at 50% 50%, oklch(65% 0.22 45 / 0.03) 0%, transparent 50%)',
           }}
         />
 
@@ -60,10 +60,10 @@ export default function SectionProtocol() {
 
         {/* Bottom description — animated */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.19, 1, 0.22, 1] }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
           className="mt-16 px-6 text-center max-w-lg"
         >
           <TextReveal className="text-white/35 font-mono text-sm tracking-wider leading-relaxed">
@@ -113,13 +113,13 @@ function StickerBlock({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, scale: 0.85, y: 40 }}
-      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: '-20px' }}
       transition={{
         duration: 0.9,
         delay: index * 0.12,
-        ease: [0.19, 1, 0.22, 1],
+        ease: [0.23, 1, 0.32, 1],
       }}
       className="relative flex items-center justify-center w-full"
       style={{
@@ -150,10 +150,10 @@ function StickerBlock({
           className="relative z-10 block px-8 py-3 md:px-14 md:py-4"
           style={{
             font: isItalic
-              ? `italic 500 clamp(1.25rem, 3vw, 2.5rem)/1.1 'Kanit', sans-serif`
-              : `900 clamp(3rem, 9vw, 8rem)/0.85 'Outfit', sans-serif`,
+              ? `italic 500 clamp(1.25rem, 3vw, 2.5rem)/1.5 'Kanit', sans-serif`
+              : `900 clamp(3rem, 9vw, 8rem)/1.0 'Outfit', sans-serif`,
             color: isItalic ? 'rgba(255,255,255,0.75)' : '#fff',
-            letterSpacing: isItalic ? '-0.01em' : '-0.03em',
+            letterSpacing: isItalic ? '-0.01em' : '-0.02em',
             textTransform: isItalic ? 'none' as const : 'uppercase' as const,
           }}
         >

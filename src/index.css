@@ -9,9 +9,9 @@
   --font-sans: "Kanit", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  --color-obsidian: #050505;
-  --color-electric-orange: #FF6B00;
-  --color-acid-green: #CCFF00;
+  --color-obsidian: oklch(18% 0.01 260);
+  --color-electric-orange: oklch(65% 0.22 45);
+  --color-acid-green: oklch(90% 0.18 135);
 
   --animate-pulse-slow: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -22,6 +22,7 @@
   --header-height: 3.0625rem;
   --ease-reveal: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-emil: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --color-cream: #fffff7;
   --color-dark: #050505;
@@ -300,20 +301,21 @@ html.lenis, html.lenis body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 5rem;
-  padding: 0.9375rem 2rem;
+  border-radius: 8px; /* Impeccable Grid / Taste Anti-slop */
+  padding: 0.75rem 1.5rem;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: background-color 0.4s var(--ease-reveal),
-              color 0.4s var(--ease-reveal),
-              box-shadow 0.4s var(--ease-reveal),
-              transform 0.2s ease;
+  transition: background-color 150ms var(--ease-emil),
+              color 150ms var(--ease-emil),
+              border-color 150ms var(--ease-emil),
+              box-shadow 150ms var(--ease-emil),
+              transform 150ms var(--ease-emil);
   will-change: transform;
 }
 
@@ -324,12 +326,14 @@ html.lenis, html.lenis body {
 .btn-tiger.--primary {
   background-color: var(--color-electric-orange);
   color: var(--color-dark);
-  box-shadow: 0 0 30px rgba(255, 107, 0, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 4px 8px rgba(0,0,0,0.05);
 }
 .btn-tiger.--primary:hover {
   background-color: var(--color-dark);
   color: var(--color-electric-orange);
-  box-shadow: 0 0 40px rgba(255, 107, 0, 0.5);
+  border-color: var(--color-electric-orange);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .btn-tiger.--accent {
@@ -365,14 +369,14 @@ html.lenis, html.lenis body {
 
 /* ─── Typography presets (Chainzoku-inspired) ─── */
 .t-display {
-  font: 900 clamp(3rem, 10vw, 10rem)/0.85 'Outfit', sans-serif;
-  letter-spacing: -0.03em;
+  font: 900 clamp(3rem, 10vw, 10rem)/1.0 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
 }
 
 .t-heading {
-  font: 900 clamp(2rem, 5vw, 5rem)/0.9 'Outfit', sans-serif;
-  letter-spacing: -0.02em;
+  font: 900 clamp(2rem, 5vw, 5rem)/1.2 'Outfit', sans-serif;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
 }
 
