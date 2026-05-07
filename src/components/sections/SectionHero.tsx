@@ -59,41 +59,51 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
     setStatus('loading');
     
     try {
-      // 1. Insert email into waitlist table
-      // Note: We use lowercase 'waitlist' as it is the standard Postgres convention.
+      // 1. Insert email into waitlist table (Supabase)
       const { error: insertError } = await supabase
         .from('waitlist')
         .insert([{ email }]);
 
-      if (insertError) {
+      if (insertError && insertError.code !== '23505') { // Ignore duplicate email
         console.error('Supabase Error:', insertError);
-        // If 'waitlist' fails, try 'Waitlist' as a fallback for users with capitalized tables
+        // Fallback check if table name is different
         if (insertError.code === '42P01') {
           const { error: retryError } = await supabase
             .from('Waitlist')
             .insert([{ email }]);
           
-          if (retryError) {
-            console.error('Supabase Retry Error:', retryError);
-            triggerError('ERROR: Debes ejecutar el script SQL en Supabase para crear la tabla.');
-            setStatus('idle');
-            return;
+          if (retryError && retryError.code !== '23505') {
+            throw retryError;
           }
         } else {
-          triggerError('Error de conexión. Verifica tu internet o base de datos.');
-          setStatus('idle');
-          return;
+          throw insertError;
         }
       }
 
-      // 2. Immediately count total records to get position
+      // 2. Send event to Loops via our new API route
+      try {
+        const loopsResponse = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+
+        if (!loopsResponse.ok) {
+          const loopsData = await loopsResponse.json();
+          console.warn('Loops API warning:', loopsData.error);
+        }
+      } catch (loopsErr) {
+        console.error('Failed to call Loops API:', loopsErr);
+        // We continue anyway since the user is already in Supabase
+      }
+
+      // 3. Immediately count total records to get position
       const { count, error: countError } = await supabase
         .from('waitlist')
         .select('*', { count: 'exact', head: true });
 
       let finalCount = count;
       if (countError) {
-        // Try fallback count
         const { count: retryCount } = await supabase
           .from('Waitlist')
           .select('*', { count: 'exact', head: true });
@@ -101,7 +111,6 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
       }
 
       if (finalCount === null) {
-        // Fallback if count fails
         onSuccess(Math.floor(Math.random() * 100) + 800);
       } else {
         setStatus('success');
@@ -330,7 +339,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#CCFF00]" />
                 <span className="font-mono text-[10px] sm:text-xs text-[#CCFF00] tracking-[0.3em] uppercase font-bold">
-                  Protocol Activated: You're In
+                  ¡BIENVENIDO A LA JUNGLA!
                 </span>
               </motion.div>
 
