@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import SmoothScroll from './components/animations/SmoothScroll';
 import Preloader from './components/animations/Preloader';
 import CustomCursor from './components/animations/CustomCursor';
@@ -30,6 +31,7 @@ export default function App() {
     <SmoothScroll>
       <Preloader onComplete={() => setIsPreloaded(true)} />
       <CustomCursor />
+      <Analytics />
       <div className="relative w-full text-white font-sans min-h-screen">
         {/* Layered gradient background (replaces WebGL) */}
         <div className="fixed inset-0 z-0 bg-[#050505]">
