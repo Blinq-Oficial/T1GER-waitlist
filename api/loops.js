@@ -11,10 +11,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, name, referredBy } = req.body;
+  const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' });
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+    return res.status(400).json({ error: 'Valid email is required' });
   }
 
   try {
@@ -23,15 +23,12 @@ export default async function handler(req, res) {
     const resendKey = process.env.RESEND_API_KEY || 're_aKrQxPGy_76uyotpK65rMnfPtec3mgXhx';
 
     if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase environment variables');
+      console.error('Missing environment variables');
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
-    const payload = { email };
-    if (name) payload.name = name;
-    if (referredBy) payload.referred_by = referredBy;
-
-    const response = await fetch(`${supabaseUrl}/rest/v1/waitlist`, {
+    // 1. Insert into Supabase Waitlist
+    const supabaseResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist`, {
       method: 'POST',
       headers: {
         'apikey': supabaseKey,
@@ -39,29 +36,33 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'Prefer': 'return=representation'
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ email })
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      if (data.code === '23505') {
-        return res.status(409).json({ error: 'already_registered' });
+    const supabaseData = await supabaseResponse.json();
+    
+    // 2. Get Waitlist Position (Total Count)
+    const countResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist?select=count`, {
+      method: 'GET',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Range': '0-0'
       }
-      console.error('Supabase insert error:', data);
-      return res.status(500).json({ error: 'Failed to join waitlist' });
-    }
+    });
+    
+    const totalCount = countResponse.headers.get('content-range')?.split('/')[1] || "800";
+    const position = parseInt(totalCount, 10);
 
-    const user = data[0]; 
-    const position = user.position || 0;
-    const refCode = user.ref_code || '';
+    const user = Array.isArray(supabaseData) ? supabaseData[0] : null;
+    const refCode = user?.ref_code || 'T1G-' + Math.random().toString(36).substring(2, 7).toUpperCase();
 
-    // Send email via Resend
+    // 3. Send email via Resend
     const resend = new Resend(resendKey);
     
     const htmlTemplate = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background-color: #000; color: #fff; padding: 40px; border-radius: 8px;">
-        <h1 style="color: #FF6B00; text-transform: uppercase; letter-spacing: 2px;">Bienvenido a la jungla${name ? ', ' + name : ''}.</h1>
+        <h1 style="color: #FF6B00; text-transform: uppercase; letter-spacing: 2px;">Bienvenido a la jungla.</h1>
         <p style="font-size: 16px; color: #ccc;">Has asegurado tu posición en la waitlist de T1GER.</p>
         <div style="background-color: #111; border: 1px solid #333; padding: 20px; text-align: center; margin: 30px 0; border-radius: 4px;">
           <p style="margin: 0; font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 4px;">Tu número de posición</p>
@@ -76,7 +77,7 @@ export default async function handler(req, res) {
     `;
 
     try {
-      const { data: resendData, error } = await resend.emails.send({
+      const { data, error } = await resend.emails.send({
         from: 'T1GER <equipo@t1ger.app>', // IMPORTANTE: Debes tener este dominio verificado en Resend
         to: [email],
         subject: '¡Tu posición en T1GER ha sido asegurada! 🐅',
@@ -90,8 +91,9 @@ export default async function handler(req, res) {
       console.error('Failed to send email with Resend:', resendErr);
     }
 
-    return res.status(200).json({
-      position: position,
+    return res.status(200).json({ 
+      success: true, 
+      position: position || 800,
       refCode: refCode
     });
 

@@ -38,49 +38,24 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition }:
     setStatus('loading');
     
     try {
-      // 1. Insert email into waitlist table
-      const { error: insertError } = await supabase
-        .from('waitlist')
-        .insert([{ email }]);
+      const response = await fetch('/api/loops', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
 
-      if (insertError) {
-        console.error('Supabase Error:', insertError);
-        // Fallback for capitalized table name
-        if (insertError.code === '42P01') {
-          const { error: retryError } = await supabase
-            .from('Waitlist')
-            .insert([{ email }]);
-          
-          if (retryError) {
-            triggerError('ERROR: Tabla no encontrada. Ejecuta el script SQL.');
-            setStatus('idle');
-            return;
-          }
-        } else {
-          triggerError('Error al unirse. Inténtalo de nuevo.');
-          setStatus('idle');
-          return;
-        }
-      }
-
-      // 2. Immediately count total records to get position
-      const { count, error: countError } = await supabase
-        .from('waitlist')
-        .select('*', { count: 'exact', head: true });
-
-      let finalCount = count;
-      if (countError) {
-        const { count: retryCount } = await supabase
-          .from('Waitlist')
-          .select('*', { count: 'exact', head: true });
-        finalCount = retryCount;
-      }
-
-      if (finalCount === null) {
-        onSuccess(Math.floor(Math.random() * 100) + 900);
-      } else {
+      if (response.ok) {
         setStatus('success');
-        onSuccess(finalCount || 0);
+        onSuccess(data.position || 0);
+      } else {
+        if (data.error === 'already_registered') {
+          triggerError('This email is already in the pride.');
+        } else {
+          triggerError('Error joining. Try again.');
+        }
+        setStatus('idle');
       }
     } catch (err) {
       console.error(err);

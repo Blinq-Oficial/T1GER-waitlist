@@ -34,7 +34,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorText('');
 
@@ -46,19 +46,21 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/waitlist', {
+      const response = await fetch('/api/loops', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
 
       if (response.ok) {
-        alert("Welcome to the Jungle! Check your inbox.");
+        const data = await response.json();
         setEmail('');
-        // Transition to success state with a random/temp position
-        onSuccess(Math.floor(Math.random() * 100) + 800);
+        // Transition to success state
+        onSuccess(data.position || 800);
       } else {
-        alert("Error joining the pride. Try again.");
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Loops Error:', errorData);
+        alert(errorData.error || "Error joining the pride. Try again.");
       }
     } catch (err) {
       console.error(err);
@@ -205,6 +207,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
               >
                 <div className="relative">
                   <input
+                    name="email"
                     type="email"
                     placeholder="YOUR EMAIL"
                     value={email}
