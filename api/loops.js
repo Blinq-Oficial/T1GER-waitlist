@@ -23,47 +23,52 @@ export default async function handler(req, res) {
     const resendKey = process.env.RESEND_API_KEY || 're_aKrQxPGy_76uyotpK65rMnfPtec3mgXhx';
 
     if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase environment variables');
       return res.status(500).json({ 
-        error: 'Configuración incompleta: Faltan las variables de Supabase en Vercel (SUPABASE_URL o SUPABASE_ANON_KEY).' 
+        error: 'Configuración incompleta: Faltan las variables de Supabase (SUPABASE_URL o SUPABASE_ANON_KEY) en Vercel.' 
       });
     }
 
     // 1. Insert into Supabase Waitlist
-    const supabaseResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist`, {
-      method: 'POST',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify({ email })
-    });
+    let supabaseResponse;
+    try {
+      supabaseResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist`, {
+        method: 'POST',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({ email })
+      });
+    } catch (e) {
+      return res.status(500).json({ error: `Falla de red al insertar en Supabase: ${e.message}. Verifica que SUPABASE_URL sea correcta.` });
+    }
 
     const supabaseData = await supabaseResponse.json();
     
-    // Check for duplicate or other errors
     if (!supabaseResponse.ok) {
-      if (supabaseData.code === '23505') {
-        // We still want to get the position even if already registered
-      } else {
-        console.error('Supabase Error:', supabaseData);
+      if (supabaseData.code !== '23505') {
         return res.status(supabaseResponse.status).json({ 
-          error: `Error de base de datos: ${supabaseData.message || 'No se pudo guardar el email'}` 
+          error: `Supabase respondió con error: ${supabaseData.message || 'Error desconocido'}` 
         });
       }
     }
 
-    // 2. Get Waitlist Position (Total Count)
-    const countResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist?select=count`, {
-      method: 'GET',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Range': '0-0'
-      }
-    });
+    // 2. Get Waitlist Position
+    let countResponse;
+    try {
+      countResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist?select=count`, {
+        method: 'GET',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Range': '0-0'
+        }
+      });
+    } catch (e) {
+      return res.status(500).json({ error: `Falla de red al obtener conteo de Supabase: ${e.message}` });
+    }
     
     const totalCount = countResponse.headers.get('content-range')?.split('/')[1] || "800";
     const position = parseInt(totalCount, 10);
@@ -92,19 +97,16 @@ export default async function handler(req, res) {
         </div>
       `;
 
-      const { data: resendData, error: resendError } = await resend.emails.send({
+      await resend.emails.send({
         from: 'T1GER <equipo@t1ger.app>',
         to: [email],
         subject: '¡Tu posición en T1GER ha sido asegurada! 🐅',
         html: htmlTemplate,
       });
 
-      if (resendError) {
-        console.error('Resend API error:', resendError);
-        // Note: We don't block the response here because the user is already in the DB
-      }
     } catch (resendErr) {
-      console.error('Failed to send email with Resend:', resendErr);
+      console.error('Resend Error:', resendErr);
+      // We don't fail the whole request if email fails, but we could return a warning
     }
 
     return res.status(200).json({ 
@@ -114,10 +116,8 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Waitlist API error:', error);
-    return res.status(500).json({ 
-      error: `Error interno: ${error.message || 'Desconocido'}` 
-    });
+    return res.status(500).json({ error: `Error inesperado: ${error.message}` });
   }
 }
+
 
