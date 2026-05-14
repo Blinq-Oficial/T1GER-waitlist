@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Heart, Mail, Copy, Check, Share2, Sparkles, MessageCircle, Send } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 
 interface Props {
@@ -44,22 +45,18 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition }:
         body: JSON.stringify({ email }),
       });
       
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (response.ok) {
         setStatus('success');
         onSuccess(data.position || 0);
       } else {
-        if (data.error === 'already_registered') {
-          triggerError('This email is already in the pride.');
-        } else {
-          triggerError('Error joining. Try again.');
-        }
+        triggerError(data.error || 'Error joining. Make sure you are using vercel dev.');
         setStatus('idle');
       }
-    } catch (err) {
-      console.error(err);
-      triggerError('Connection lost. Try again.');
+    } catch (err: any) {
+      console.error('Network Error:', err);
+      triggerError("Connection failed. Use 'vercel dev' for local testing.");
       setStatus('idle');
     }
   };

@@ -17,8 +17,8 @@ export default function CustomCursor() {
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  // Stronger lag effect for the star
-  const springConfig = { damping: 18, stiffness: 120, mass: 0.6 };
+  // Snappier, lighter physics for the trailing star
+  const springConfig = { damping: 25, stiffness: 300, mass: 0.2 };
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { Loader2, Sparkles } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 interface Props {
   onSuccess: (position: number) => void;
@@ -52,19 +53,20 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
         body: JSON.stringify({ email }),
       });
 
+      const data = await response.json().catch(() => ({}));
+
       if (response.ok) {
-        const data = await response.json();
         setEmail('');
-        // Transition to success state
         onSuccess(data.position || 800);
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Loops Error:', errorData);
-        alert(errorData.error || "Error joining the pride. Try again.");
+        console.error('API Error:', data);
+        // Provide a very clear error message
+        const errorMsg = data.error || `Server returned ${response.status}. Make sure you are running 'vercel dev' to test emails locally.`;
+        alert(errorMsg);
       }
-    } catch (err) {
-      console.error(err);
-      alert("Error joining the pride. Try again.");
+    } catch (err: any) {
+      console.error('Network Error:', err);
+      alert("Connection failed. To test automated emails locally, you must use 'vercel dev' instead of 'npm run dev'.");
     } finally {
       setIsLoading(false);
     }

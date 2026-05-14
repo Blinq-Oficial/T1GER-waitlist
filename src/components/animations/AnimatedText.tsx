@@ -46,7 +46,8 @@ export default function AnimatedText({ text, className = "", delay = 0 }: Props)
       className={`flex flex-wrap ${className}`}
       variants={container}
       initial="hidden"
-      animate="visible"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
     >
       {words.map((word, index) => (
         <motion.span

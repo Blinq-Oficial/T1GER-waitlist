@@ -4,39 +4,29 @@ import { Plus } from 'lucide-react';
 
 const faqs = [
   {
-    question: 'What is T1GER?',
+    question: 'What exactly is T1GER?',
     answer:
-      'T1GER is a daily operating system for ambitious people. It combines habit tracking, micro-learning, and competitive gamification into one protocol designed to build discipline, consistency, and growth.',
+      'It’s the first productivity app with actual consequences. Think of it like Duolingo, but for building your business and leveling up your mindset. You complete daily, bite-sized missions to earn XP and build your streak.',
   },
   {
-    question: 'How does the daily protocol work?',
+    question: 'What happens if my tiger dies?',
     answer:
-      'Each day you complete habits, a micro-lesson, and compete on leaderboards. Your streak determines your rank. Miss a day? Your streak resets. The pressure is constant — that\'s the point.',
+      'If you slack off, procrastinate, or leave the app during Focus Time, your digital apex predator takes damage. If he dies, your streak burns, your multipliers reset, and your Squad is penalized. Actions have real consequences here.',
   },
   {
-    question: 'Is T1GER free?',
+    question: 'How does the "Squad" feature work?',
     answer:
-      'T1GER will launch with a free tier covering the core daily protocol. A Pro tier will unlock advanced analytics, AI auditing, and exclusive community features.',
+      'Weaponized peer pressure. You link your account with up to 3 friends. If one of you misses a daily mission, the entire Squad’s pet takes a hit. You grow together, or you fail together. You don\'t just let yourself down; you let the Pride down.',
   },
   {
-    question: 'When does T1GER launch?',
+    question: 'Why do you show my lifespan in dots?',
     answer:
-      'We are currently in the waitlist phase. Join now to secure your position. Early members get priority access and exclusive founding benefits when we go live.',
+      "Memento Mori. We visualize your exact estimated lifespan on your screen. It's a psychological trigger designed to wake you up. Stop acting like you have infinite time to build your empire. Watch your time disappear, stop scrolling, and start hunting.",
   },
   {
-    question: 'What makes T1GER different from other habit apps?',
+    question: 'When do I get access to the app?',
     answer:
-      'Most habit apps are passive trackers. T1GER is a competitive protocol — it punishes laziness, rewards consistency, and puts your progress on public leaderboards. It is designed to create real accountability.',
-  },
-  {
-    question: 'How does the donation feature work?',
-    answer:
-      'For every $1 donated through T1GER, 100% goes directly to tiger conservation through trusted wildlife organizations. We believe in building something that gives back to the species that inspired us.',
-  },
-  {
-    question: 'Can I use T1GER on mobile?',
-    answer:
-      'T1GER is built mobile-first. The web app works on all devices, and a native mobile app is planned for launch. Your progress syncs across all platforms.',
+      'We are currently in the closed waitlist phase. By entering your email, you secure your spot in line. Want to get in faster? After you sign up, you\'ll get a unique referral link. Share it with your network to skip ahead, or upgrade to T1GER PRO to bypass the line entirely.',
   },
 ];
 

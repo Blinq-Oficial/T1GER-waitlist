@@ -11,12 +11,11 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.0, // Slightly faster for responsiveness
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+      lerp: 0.08, // Physics-based smoothing for a lighter feel
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.1, // Improved flick scroll
+      wheelMultiplier: 1.0, // Standard wheel speed
       touchMultiplier: 1.5, // Better mobile feel
     });
 

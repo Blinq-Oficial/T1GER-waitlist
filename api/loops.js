@@ -14,24 +14,30 @@ export default async function handler(req, res) {
   const { email } = req.body;
 
   if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-    return res.status(400).json({ error: 'Valid email is required' });
+    return res.status(400).json({ error: 'A valid email address is required.' });
   }
 
   try {
     const supabaseUrl = 'https://pzxjwqnxnkxtmwovzsuv.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6eGp3cW54bmt4dG13b3Z6c3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjQyNDAsImV4cCI6MjA5MzQwMDI0MH0.3aS948dQbncMdO5ihsJPWuxs9Mxq2HZPCZEZIHGlwVc';
+    const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6eGp3cW54bmt4dG13b3Z6c3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjQyNDAsImV4cCI6MjA5MzQwMDI0MH0.3aS948dQbncMdO5ihsJPWuxs9Mxq2HZPCZEZIHGlwVc';
     const resendKey = process.env.RESEND_API_KEY || 're_aKrQxPGy_76uyotpK65rMnfPtec3mgXhx';
 
-    if (!supabaseUrl || !supabaseKey) {
-      return res.status(500).json({ 
-        error: 'Configuración incompleta: Faltan las variables de Supabase (SUPABASE_URL o SUPABASE_ANON_KEY) en Vercel.' 
-      });
-    }
+    // 1. Check if user already exists
+    const checkResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist?email=eq.${encodeURIComponent(email)}&select=*`, {
+      method: 'GET',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+      }
+    });
 
-    // 1. Insert into Supabase Waitlist
-    let supabaseResponse;
-    try {
-      supabaseResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist`, {
+    const existingUsers = await checkResponse.json();
+    let user = existingUsers && existingUsers.length > 0 ? existingUsers[0] : null;
+    let isNewUser = false;
+
+    if (!user) {
+      // 2. Insert new user
+      const insertResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist`, {
         method: 'POST',
         headers: {
           'apikey': supabaseKey,
@@ -41,53 +47,60 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({ email })
       });
-    } catch (e) {
-      return res.status(500).json({ error: `Falla de red al insertar en Supabase: ${e.message}. Verifica que SUPABASE_URL sea correcta.` });
-    }
 
-    const supabaseData = await supabaseResponse.json();
-    
-    if (!supabaseResponse.ok) {
-      if (supabaseData.code !== '23505') {
-        return res.status(supabaseResponse.status).json({ 
-          error: `Supabase respondió con error: ${supabaseData.message || 'Error desconocido'}` 
+      const insertData = await insertResponse.json();
+
+      if (insertResponse.ok) {
+        user = Array.isArray(insertData) ? insertData[0] : insertData;
+        isNewUser = true;
+      } else if (insertData.code === '23505') {
+        // Race condition: someone else added this email just now. Fetch again.
+        const retryResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist?email=eq.${encodeURIComponent(email)}&select=*`, {
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+          }
+        });
+        const retryData = await retryResponse.json();
+        user = retryData && retryData.length > 0 ? retryData[0] : null;
+      } else {
+        console.error('Supabase Error:', insertData);
+        return res.status(insertResponse.status).json({ 
+          error: `Waitlist error: ${insertData.message || 'Unable to join at this time.'}` 
         });
       }
     }
 
-    // 2. Get Waitlist Position
-    let countResponse;
-    try {
-      countResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist?select=count`, {
-        method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Range': '0-0'
-        }
-      });
-    } catch (e) {
-      return res.status(500).json({ error: `Network failure getting Supabase count: ${e.message}` });
+    if (!user) {
+      return res.status(500).json({ error: 'Failed to retrieve user record.' });
     }
+
+    // 3. Get Waitlist Position (Total count of users)
+    // We use count=exact to get the total number of rows
+    const countResponse = await fetch(`${supabaseUrl}/rest/v1/waitlist?select=id`, {
+      method: 'GET',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Prefer': 'count=exact',
+        'Range': '0-0'
+      }
+    });
     
     const contentRange = countResponse.headers.get('content-range');
-    let position = 800; // Default fallback
+    let totalCount = 0; // Default if count fails
     
     if (contentRange && contentRange.includes('/')) {
-      const totalStr = contentRange.split('/')[1];
-      const parsed = parseInt(totalStr, 10);
-      if (!isNaN(parsed)) {
-        position = parsed;
-      }
+      totalCount = parseInt(contentRange.split('/')[1], 10);
     }
 
-    const user = Array.isArray(supabaseData) ? supabaseData[0] : null;
-    const refCode = user?.ref_code || 'T1G-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+    // Use user.id as the definitive position if it exists, otherwise use totalCount
+    const position = (user.id && typeof user.id === 'number') ? user.id : (totalCount || 800);
+    const refCode = user.ref_code || 'T1G-' + Math.random().toString(36).substring(2, 7).toUpperCase();
 
-    // 3. Send email via Resend
+    // 4. Send email via Resend
     try {
       const resend = new Resend(resendKey);
-      
       const htmlTemplate = `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background-color: #000; color: #fff; padding: 40px; border-radius: 8px; border: 1px solid #333;">
           <h1 style="color: #FF6B00; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Welcome to the Jungle.</h1>
@@ -111,20 +124,19 @@ export default async function handler(req, res) {
         subject: 'Your T1GER position is secured! 🐅',
         html: htmlTemplate,
       });
-
     } catch (resendErr) {
       console.error('Resend Error:', resendErr);
-      // We don't fail the whole request if email fails, but we could return a warning
     }
 
     return res.status(200).json({ 
       success: true, 
-      position: position || 800,
+      position: position,
       refCode: refCode
     });
 
   } catch (error) {
-    return res.status(500).json({ error: `Error inesperado: ${error.message}` });
+    console.error('Unexpected Error:', error);
+    return res.status(500).json({ error: 'Internal server error. Please try again later.' });
   }
 }
 
