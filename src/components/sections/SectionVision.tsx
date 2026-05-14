@@ -66,7 +66,7 @@ export default function SectionVision() {
           transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
           className="text-left mb-14 md:mb-20 max-w-2xl"
         >
-          <span className="font-mono text-[var(--color-acid-green)] opacity-40 tracking-[0.3em] text-xs uppercase block mb-4">
+          <span className="font-mono text-[#FF6B00] opacity-40 tracking-[0.3em] text-xs uppercase block mb-4">
             ● The Vision
           </span>
           <h2
@@ -77,8 +77,8 @@ export default function SectionVision() {
             <span
               style={{
                 color: 'transparent',
-                WebkitTextStroke: '1px var(--color-acid-green)',
-                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))',
+                WebkitTextStroke: '1px #FF6B00',
+                filter: 'drop-shadow(0 2px 8px rgba(255,107,0,0.3))',
               }}
             >
               ONE PROTOCOL.
@@ -140,13 +140,13 @@ function VisionCard({
       }}
       className="relative group"
     >
-      <div className="relative bg-white/[0.03] border border-white/[0.06] rounded-lg p-8 md:p-10 overflow-hidden hover:bg-white/[0.06] hover:border-white/[0.15] hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-all duration-150 cursor-default h-full flex flex-col items-start justify-start">
+      <div className="relative bg-white/[0.03] border border-white/[0.06] rounded-lg p-8 md:p-10 overflow-hidden hover:bg-white/[0.06] hover:border-[#FF6B00]/40 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,107,0,0.05)] transition-all duration-300 cursor-default h-full flex flex-col items-start justify-start">
         {/* Number watermark */}
         <span
-          className="absolute bottom-4 right-6 font-outfit font-black transition-colors duration-150 select-none pointer-events-none"
+          className="absolute bottom-4 right-6 font-outfit font-black transition-colors duration-300 select-none pointer-events-none"
           style={{
             fontSize: 'clamp(3rem, 8vw, 6rem)',
-            color: inView ? 'oklch(90% 0.18 135 / 0.06)' : 'oklch(90% 0.18 135 / 0.02)',
+            color: inView ? 'rgba(255, 107, 0, 0.08)' : 'rgba(255, 107, 0, 0.02)',
             lineHeight: 1,
             zIndex: 0,
           }}
@@ -155,12 +155,12 @@ function VisionCard({
         </span>
 
         {/* Title */}
-        <h3 className="font-outfit font-black text-lg md:text-xl text-white uppercase tracking-tight mb-3 relative z-10 group-hover:text-[var(--color-acid-green)] transition-colors duration-150 text-left">
+        <h3 className="font-outfit font-black text-lg md:text-xl text-white uppercase tracking-tight mb-3 relative z-10 group-hover:text-[#FF6B00] transition-colors duration-300 text-left">
           {title}
         </h3>
 
         {/* Description */}
-        <p className="text-white/40 text-sm leading-relaxed font-sans relative z-10 group-hover:text-white/60 transition-colors duration-150 text-left">
+        <p className="text-white/40 text-sm leading-relaxed font-sans relative z-10 group-hover:text-white/60 transition-colors duration-300 text-left">
           {description}
         </p>
 

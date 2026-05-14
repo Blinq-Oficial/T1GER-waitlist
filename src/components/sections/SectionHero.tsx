@@ -220,20 +220,30 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                   </AnimatePresence>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="btn-tiger --primary w-full py-4 text-sm flex items-center justify-center gap-2"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>CONNECTING...</span>
-                    </>
-                  ) : (
-                    'JOIN THE PRIDE'
-                  )}
-                </button>
+                <div className="flex flex-col gap-4">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="btn-tiger --primary w-full py-4 text-sm flex items-center justify-center gap-2"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>CONNECTING...</span>
+                      </>
+                    ) : (
+                      'JOIN THE PRIDE'
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="text-white/20 hover:text-[#FF6B00] font-mono text-[10px] tracking-[0.3em] uppercase transition-colors"
+                  >
+                    [ CALCULATE YOUR TIMELINE ]
+                  </button>
+                </div>
               </motion.form>
             </motion.div>
           ) : (
@@ -262,7 +272,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-6 text-center"
+                className="mb-10 text-center"
               >
                 <span className="font-mono text-white/20 text-[10px] tracking-[0.5em] uppercase block mb-4">
                   YOU ARE T1GER NO.
@@ -283,12 +293,58 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                 </div>
               </motion.div>
 
-              <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-                 {/* Simplified share links for brevity */}
-                 <button onClick={handleCopy} className="text-white/30 font-mono text-[10px] uppercase tracking-widest border border-white/10 rounded-full px-6 py-3 hover:bg-white/5 transition-all">
-                   {copied ? 'COPIED' : 'COPY LINK'}
-                 </button>
-              </div>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="w-full space-y-6"
+              >
+                <p className="text-white/40 font-mono text-[10px] tracking-[0.2em] uppercase text-center">
+                  Share your rank to climb the hunt
+                </p>
+                
+                <div className="flex flex-col gap-3">
+                  {/* Referral Link Display */}
+                  <div className="flex items-center gap-2 bg-white/[0.03] border border-white/10 rounded-full pl-6 pr-2 py-2 group">
+                    <span className="flex-1 font-mono text-[10px] text-white/30 truncate select-all">{shareUrl}</span>
+                    <button 
+                      onClick={handleCopy}
+                      className="bg-white/10 hover:bg-white text-black px-4 py-2 rounded-full font-mono text-[10px] font-bold transition-all"
+                    >
+                      {copied ? 'COPIED' : 'COPY'}
+                    </button>
+                  </div>
+
+                  {/* Social Buttons */}
+                  <div className="flex gap-2">
+                    <a 
+                      href={`https://wa.me/?text=${encodeURIComponent(`I just joined the T1GER waitlist! 🐅 I'm No. #${waitlistPosition}. Join the hunt here: ${shareUrl}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-[#25D366]/10 border border-[#25D366]/30 hover:bg-[#25D366] hover:text-black transition-all rounded-xl py-4 text-center font-mono text-[10px] font-bold tracking-widest text-[#25D366]"
+                    >
+                      WHATSAPP
+                    </a>
+                    <a 
+                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just secured my position on the T1GER waitlist. 🐅\n\nRank: #${waitlistPosition}\nJoin the top 1% here: ${shareUrl}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-white/[0.03] border border-white/10 hover:bg-white hover:text-black transition-all rounded-xl py-4 text-center font-mono text-[10px] font-bold tracking-widest text-white"
+                    >
+                      SHARE ON X
+                    </a>
+                  </div>
+
+                  {/* New Reward Button */}
+                  <button
+                    onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="w-full bg-[#FF6B00] text-black py-4 rounded-xl font-outfit font-black text-xs uppercase tracking-[0.2em] hover:bg-white transition-all flex items-center justify-center gap-2 group"
+                  >
+                    REVEAL YOUR BIOLOGICAL CLOCK
+                    <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

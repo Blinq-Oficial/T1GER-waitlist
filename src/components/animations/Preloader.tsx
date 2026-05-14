@@ -21,23 +21,23 @@ export default function Preloader({ onComplete }: Props) {
 
   useEffect(() => {
     // Simulate loading progress
+    // Accelerate progress
     const interval = setInterval(() => {
       setProgress((p) => {
         if (p >= 100) {
           clearInterval(interval);
           return 100;
         }
-        // Accelerating progress
-        const increment = p < 70 ? Math.random() * 15 + 5 : Math.random() * 8 + 2;
+        const increment = p < 70 ? Math.random() * 20 + 10 : Math.random() * 10 + 5;
         return Math.min(100, p + increment);
       });
-    }, 120);
+    }, 80);
 
     // Dismiss after timeline
     const timer = setTimeout(() => {
       setIsLoading(false);
       onComplete?.();
-    }, 3200);
+    }, 2200);
 
     return () => {
       clearTimeout(timer);
