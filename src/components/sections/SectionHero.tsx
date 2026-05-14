@@ -266,30 +266,28 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                 <span className="font-mono text-xs text-white tracking-[0.4em] uppercase font-bold">
                   THE HUNT BEGINS
                 </span>
-              </motion.div>
-
-              <motion.div
+              </motion.div>              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-12 text-center"
+                className="mb-14 text-center"
               >
-                <span className="font-mono text-white/20 text-[10px] tracking-[0.5em] uppercase block mb-6">
+                <span className="font-mono text-white/50 text-[11px] tracking-[0.5em] uppercase block mb-6">
                   YOUR ELITE RANK
                 </span>
-                <div className="relative inline-block group">
+                <div className="relative inline-flex items-baseline justify-center group">
+                  <span className="text-[#FF6B00] font-mono text-[4vw] md:text-[3rem] font-black mr-2 leading-none">#</span>
                   <span
                     className="font-outfit font-black text-white block relative z-10 transition-transform group-hover:scale-105 duration-700"
                     style={{
-                      fontSize: 'clamp(5rem, 20vw, 12rem)',
-                      lineHeight: 0.75,
-                      letterSpacing: '-0.05em',
+                      fontSize: 'clamp(6rem, 22vw, 14rem)',
+                      lineHeight: 0.7,
+                      letterSpacing: '-0.06em',
                     }}
                   >
-                    <span className="text-[#FF6B00] font-mono text-[0.4em] align-top mr-1">#</span>
                     {waitlistPosition}
                   </span>
-                  <div className="absolute inset-0 bg-[#FF6B00]/10 blur-3xl rounded-full -z-10 group-hover:bg-[#FF6B00]/20 transition-colors duration-700" />
+                  <div className="absolute inset-0 bg-[#FF6B00]/10 blur-[100px] rounded-full -z-10 group-hover:bg-[#FF6B00]/20 transition-colors duration-700" />
                 </div>
               </motion.div>
 
@@ -297,29 +295,29 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="w-full max-w-sm space-y-8"
+                className="w-full max-w-sm flex flex-col items-center gap-8"
               >
-                <div className="space-y-4">
-                  <p className="text-white/40 font-mono text-[10px] tracking-[0.3em] uppercase text-center">
+                <div className="w-full space-y-4">
+                  <p className="text-white/40 font-mono text-[9px] tracking-[0.3em] uppercase text-center">
                     Share your rank to climb higher
                   </p>
                   
-                  <div className="flex items-center gap-2 bg-white/[0.02] border border-white/10 rounded-full pl-6 pr-2 py-2.5 group">
+                  <div className="flex items-center gap-2 bg-white/[0.02] border border-white/10 rounded-full pl-6 pr-1.5 py-1.5 group">
                     <span className="flex-1 font-mono text-[10px] text-white/30 truncate select-all">{shareUrl}</span>
                     <button 
                       onClick={handleCopy}
-                      className="bg-[#FF6B00] text-black px-5 py-2 rounded-full font-mono text-[10px] font-bold hover:bg-white transition-all"
+                      className="bg-[#FF6B00] text-black px-6 py-2.5 rounded-full font-mono text-[10px] font-bold hover:bg-white transition-all uppercase tracking-widest"
                     >
                       {copied ? 'COPIED' : 'COPY'}
                     </button>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <a 
                       href={`https://wa.me/?text=${encodeURIComponent(`I just joined the T1GER waitlist! 🐅 I'm Rank #${waitlistPosition}. Join the hunt: ${shareUrl}`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 bg-white/[0.03] border border-white/10 hover:border-[#25D366]/40 hover:text-[#25D366] transition-all rounded-xl py-5 text-center font-mono text-[10px] font-bold tracking-widest"
+                      className="flex-1 bg-white/[0.03] border border-white/10 hover:border-[#25D366]/40 hover:text-[#25D366] transition-all rounded-2xl py-5 text-center font-mono text-[9px] font-bold tracking-[0.2em] uppercase"
                     >
                       WHATSAPP
                     </a>
@@ -327,7 +325,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                       href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just secured my rank on the T1GER waitlist. 🐅\n\nRank: #${waitlistPosition}\nJoin the elite 1%: ${shareUrl}`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 bg-white/[0.03] border border-white/10 hover:border-white hover:text-white transition-all rounded-xl py-5 text-center font-mono text-[10px] font-bold tracking-widest"
+                      className="flex-1 bg-white/[0.03] border border-white/10 hover:border-white hover:text-white transition-all rounded-2xl py-5 text-center font-mono text-[9px] font-bold tracking-[0.2em] uppercase"
                     >
                       SHARE ON X
                     </a>
@@ -336,10 +334,10 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
 
                 <button
                   onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full bg-white text-black py-5 rounded-full font-outfit font-black text-sm uppercase tracking-[0.2em] hover:bg-[#FF6B00] hover:text-white transition-all flex items-center justify-center gap-3 group shadow-2xl"
+                  className="w-full relative bg-white text-black py-6 rounded-full font-outfit font-black text-[11px] uppercase tracking-[0.25em] hover:bg-[#FF6B00] hover:text-white transition-all shadow-2xl overflow-hidden group"
                 >
-                  REVEAL BIOLOGICAL CLOCK
-                  <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  <span className="relative z-10">REVEAL BIOLOGICAL CLOCK</span>
+                  <ChevronRight className="absolute right-8 top-1/2 -translate-y-1/2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </button>
               </motion.div>
             </motion.div>
