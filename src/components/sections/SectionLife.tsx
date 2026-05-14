@@ -96,18 +96,17 @@ export default function SectionLife() {
                   onChange={(e) => setAge(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="00"
-                  className="w-40 bg-transparent border-none text-center font-outfit font-black text-white outline-none focus:ring-0 placeholder-white/5"
+                  className="w-32 bg-transparent border-none text-center font-outfit font-black text-white outline-none focus:ring-0 placeholder-white/5"
                   style={{ fontSize: '7rem', lineHeight: 1 }}
-                  autoFocus
                 />
-                <div className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#FF6B00] to-transparent" />
+                <div className="absolute -bottom-2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B00] to-transparent opacity-50" />
               </div>
               <button
                 onClick={handleSubmitAge}
                 disabled={!isValidAge}
-                className="btn-tiger --primary px-16 py-5 text-sm tracking-[0.3em] font-bold disabled:opacity-10"
+                className="group relative px-16 py-6 rounded-full bg-[#FF6B00] text-black font-outfit font-black text-sm tracking-[0.2em] uppercase transition-all hover:bg-white hover:scale-105 active:scale-95 disabled:opacity-10 shadow-[0_0_40px_rgba(255,107,0,0.2)]"
               >
-                INITIALIZE SCAN
+                REVEAL TIMELINE <ChevronRight className="inline-block w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
               </button>
             </motion.div>
           ) : (

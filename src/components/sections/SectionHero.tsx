@@ -249,22 +249,23 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
           ) : (
             <motion.div
               key="post-signup"
-              initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+              initial={{ opacity: 0, scale: 0.9, filter: 'blur(15px)' }}
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center w-full max-w-md relative"
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col items-center w-full max-w-2xl relative"
+              style={{ minHeight: '60vh', justifyContent: 'center' }}
             >
-              <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-[#FF6B00]/10 blur-[100px] pointer-events-none rounded-full" />
+              <div className="absolute inset-0 bg-[#FF6B00]/5 blur-[120px] pointer-events-none rounded-full" />
 
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="inline-flex items-center gap-3 bg-white/[0.03] border border-[#CCFF00]/30 backdrop-blur-md rounded-full px-5 py-2 mb-8"
+                className="inline-flex items-center gap-3 bg-white/[0.03] border border-[#FF6B00]/30 backdrop-blur-md rounded-full px-6 py-2.5 mb-10"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#CCFF00]" />
-                <span className="font-mono text-[10px] sm:text-xs text-[#CCFF00] tracking-[0.3em] uppercase font-bold">
-                  WELCOME TO THE JUNGLE!
+                <Sparkles className="w-4 h-4 text-[#FF6B00]" />
+                <span className="font-mono text-xs text-white tracking-[0.4em] uppercase font-bold">
+                  THE HUNT BEGINS
                 </span>
               </motion.div>
 
@@ -272,24 +273,24 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-10 text-center"
+                className="mb-12 text-center"
               >
-                <span className="font-mono text-white/20 text-[10px] tracking-[0.5em] uppercase block mb-4">
-                  YOU ARE T1GER NO.
+                <span className="font-mono text-white/20 text-[10px] tracking-[0.5em] uppercase block mb-6">
+                  YOUR ELITE RANK
                 </span>
-                <div className="relative inline-block">
+                <div className="relative inline-block group">
                   <span
-                    className="font-outfit font-black text-white block relative z-10"
+                    className="font-outfit font-black text-white block relative z-10 transition-transform group-hover:scale-105 duration-700"
                     style={{
-                      fontSize: 'clamp(3.5rem, 15vw, 10rem)',
-                      lineHeight: 0.8,
+                      fontSize: 'clamp(5rem, 20vw, 12rem)',
+                      lineHeight: 0.75,
                       letterSpacing: '-0.05em',
                     }}
                   >
-                    <span className="text-[#FF6B00]/40 font-mono text-[0.4em] align-top mr-1">#</span>
+                    <span className="text-[#FF6B00] font-mono text-[0.4em] align-top mr-1">#</span>
                     {waitlistPosition}
                   </span>
-                  <div className="absolute inset-0 bg-[#FF6B00]/5 blur-3xl rounded-full -z-10" />
+                  <div className="absolute inset-0 bg-[#FF6B00]/10 blur-3xl rounded-full -z-10 group-hover:bg-[#FF6B00]/20 transition-colors duration-700" />
                 </div>
               </motion.div>
 
@@ -297,54 +298,52 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="w-full space-y-6"
+                className="w-full max-w-sm space-y-8"
               >
-                <p className="text-white/40 font-mono text-[10px] tracking-[0.2em] uppercase text-center">
-                  Share your rank to climb the hunt
-                </p>
-                
-                <div className="flex flex-col gap-3">
-                  {/* Referral Link Display */}
-                  <div className="flex items-center gap-2 bg-white/[0.03] border border-white/10 rounded-full pl-6 pr-2 py-2 group">
+                <div className="space-y-4">
+                  <p className="text-white/40 font-mono text-[10px] tracking-[0.3em] uppercase text-center">
+                    Share your rank to climb higher
+                  </p>
+                  
+                  <div className="flex items-center gap-2 bg-white/[0.02] border border-white/10 rounded-full pl-6 pr-2 py-2.5 group">
                     <span className="flex-1 font-mono text-[10px] text-white/30 truncate select-all">{shareUrl}</span>
                     <button 
                       onClick={handleCopy}
-                      className="bg-white/10 hover:bg-white text-black px-4 py-2 rounded-full font-mono text-[10px] font-bold transition-all"
+                      className="bg-[#FF6B00] text-black px-5 py-2 rounded-full font-mono text-[10px] font-bold hover:bg-white transition-all"
                     >
                       {copied ? 'COPIED' : 'COPY'}
                     </button>
                   </div>
 
-                  {/* Social Buttons */}
                   <div className="flex gap-2">
                     <a 
-                      href={`https://wa.me/?text=${encodeURIComponent(`I just joined the T1GER waitlist! 🐅 I'm No. #${waitlistPosition}. Join the hunt here: ${shareUrl}`)}`}
+                      href={`https://wa.me/?text=${encodeURIComponent(`I just joined the T1GER waitlist! 🐅 I'm Rank #${waitlistPosition}. Join the hunt: ${shareUrl}`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 bg-[#25D366]/10 border border-[#25D366]/30 hover:bg-[#25D366] hover:text-black transition-all rounded-xl py-4 text-center font-mono text-[10px] font-bold tracking-widest text-[#25D366]"
+                      className="flex-1 bg-white/[0.03] border border-white/10 hover:border-[#25D366]/40 hover:text-[#25D366] transition-all rounded-xl py-5 text-center font-mono text-[10px] font-bold tracking-widest"
                     >
                       WHATSAPP
                     </a>
                     <a 
-                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just secured my position on the T1GER waitlist. 🐅\n\nRank: #${waitlistPosition}\nJoin the top 1% here: ${shareUrl}`)}`}
+                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just secured my rank on the T1GER waitlist. 🐅\n\nRank: #${waitlistPosition}\nJoin the elite 1%: ${shareUrl}`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 bg-white/[0.03] border border-white/10 hover:bg-white hover:text-black transition-all rounded-xl py-4 text-center font-mono text-[10px] font-bold tracking-widest text-white"
+                      className="flex-1 bg-white/[0.03] border border-white/10 hover:border-white hover:text-white transition-all rounded-xl py-5 text-center font-mono text-[10px] font-bold tracking-widest"
                     >
                       SHARE ON X
                     </a>
                   </div>
-
-                  {/* New Reward Button */}
-                  <button
-                    onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full bg-[#FF6B00] text-black py-4 rounded-xl font-outfit font-black text-xs uppercase tracking-[0.2em] hover:bg-white transition-all flex items-center justify-center gap-2 group"
-                  >
-                    REVEAL YOUR BIOLOGICAL CLOCK
-                    <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  </button>
                 </div>
-              </motion.div>
+
+                <button
+                  onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full bg-white text-black py-5 rounded-full font-outfit font-black text-sm uppercase tracking-[0.2em] hover:bg-[#FF6B00] hover:text-white transition-all flex items-center justify-center gap-3 group shadow-2xl"
+                >
+                  REVEAL BIOLOGICAL CLOCK
+                  <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
+            </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
