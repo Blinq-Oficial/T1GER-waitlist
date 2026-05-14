@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Heart, Mail, Copy, Check, Share2, Sparkles, MessageCircle, Send } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
 
 
 interface Props {

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import { Loader2, Sparkles } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { Loader2, Sparkles, ChevronRight } from 'lucide-react';
 
 interface Props {
   onSuccess: (position: number) => void;
@@ -342,8 +341,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                   REVEAL BIOLOGICAL CLOCK
                   <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </button>
-              </div>
-            </motion.div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
