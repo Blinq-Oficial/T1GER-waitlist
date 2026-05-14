@@ -1,20 +1,28 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, RotateCcw, Info } from 'lucide-react';
+import { ChevronRight, RotateCcw, ShieldAlert, Target, TrendingUp } from 'lucide-react';
 
 /**
- * SectionLife — Ultra-Dense "Memento Mori" Visualizer.
+ * SectionLife — Final "Memento Mori" Implementation.
  * 
- * Inspired by 'Wait But Why' and high-end editorial life charts.
- * Optimized for maximum width and dense visual impact.
+ * Uses a fixed 40-column grid (Desktop) / 20-column grid (Mobile) 
+ * for a perfectly mathematical representation of a life in months.
  */
 export default function SectionLife() {
   const [age, setAge] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Baseline: 80 years = 960 months
+  // Check for mobile to adjust grid
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const totalYears = 80;
-  const totalMonths = totalYears * 12; 
+  const totalMonths = totalYears * 12; // 960
   const numAge = parseInt(age);
   const isValidAge = !isNaN(numAge) && numAge >= 1 && numAge <= 100;
   const livedMonths = isValidAge ? Math.min(numAge * 12, totalMonths) : 0;
@@ -35,36 +43,38 @@ export default function SectionLife() {
     setAge('');
   };
 
+  // Grid Configuration
+  const cols = isMobile ? 20 : 40;
+  const rows = totalMonths / cols; // 48 or 24
+
   return (
     <section
       id="life"
-      className="relative px-4 sm:px-12 md:pl-40 flex flex-col items-center overflow-hidden bg-section-fire"
+      className="relative px-6 sm:px-12 md:pl-40 flex flex-col items-center overflow-hidden bg-section-fire"
       style={{
-        paddingTop: 'clamp(4rem, 8vw, 8rem)',
-        paddingBottom: 'clamp(4rem, 8vw, 8rem)',
+        paddingTop: 'clamp(5rem, 10vw, 10rem)',
+        paddingBottom: 'clamp(5rem, 10vw, 10rem)',
       }}
     >
-      {/* Cinematic Overlays */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_40%,rgba(255,107,0,0.08),transparent_70%)]" />
-      </div>
+      <div className="absolute inset-0 pointer-events-none bg-noise opacity-20" />
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center">
+      <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
         
-        {/* ─── MINIMALIST HEADER ─── */}
+        {/* ─── HEADER ─── */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-12 md:mb-16"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="h-[1px] w-8 bg-[#FF6B00]/40" />
-            <span className="font-mono text-[9px] text-[#FF6B00] tracking-[0.5em] uppercase">Memento Mori</span>
-            <div className="h-[1px] w-8 bg-[#FF6B00]/40" />
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <span className="w-12 h-[1px] bg-[#FF6B00]/30" />
+            <span className="font-mono text-[10px] text-[#FF6B00] tracking-[0.4em] uppercase">Biological Countdown</span>
+            <span className="w-12 h-[1px] bg-[#FF6B00]/30" />
           </div>
-          <h2 className="font-outfit font-black text-white uppercase tracking-tighter leading-none text-[clamp(2rem,7vw,5rem)]">
-            YOUR LIFE IN <span className="text-[#FF6B00]">MONTHS.</span>
+          <h2 className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.88] text-[clamp(2.5rem,8vw,5.5rem)]">
+            YOUR LIFE <br />
+            <span className="text-[#FF6B00]">IN MONTHS.</span>
           </h2>
         </motion.div>
 
@@ -73,13 +83,12 @@ export default function SectionLife() {
             /* ─── PHASE 1: INPUT ─── */
             <motion.div
               key="input"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95, filter: 'blur(15px)' }}
-              className="w-full max-w-md flex flex-col items-center py-12"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, filter: 'blur(20px)' }}
+              className="flex flex-col items-center bg-black/40 border border-white/10 rounded-3xl p-10 md:p-16 backdrop-blur-xl shadow-2xl"
             >
-              <p className="text-white/30 font-mono text-xs tracking-[0.2em] uppercase mb-8">What is your current age?</p>
-              
+              <p className="text-white/40 font-mono text-xs tracking-widest uppercase mb-8">Confirm your biological level</p>
               <div className="relative mb-12">
                 <input
                   type="number"
@@ -87,117 +96,140 @@ export default function SectionLife() {
                   onChange={(e) => setAge(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="00"
-                  className="w-32 bg-transparent border-none text-center font-outfit font-black text-white outline-none focus:ring-0 placeholder-white/5"
+                  className="w-40 bg-transparent border-none text-center font-outfit font-black text-white outline-none focus:ring-0 placeholder-white/5"
                   style={{ fontSize: '7rem', lineHeight: 1 }}
                   autoFocus
                 />
-                <div className="absolute -bottom-2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B00] to-transparent opacity-50" />
+                <div className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#FF6B00] to-transparent" />
               </div>
-
               <button
                 onClick={handleSubmitAge}
                 disabled={!isValidAge}
-                className="group relative px-12 py-4 rounded-full border border-white/10 text-white/50 font-mono text-[10px] tracking-[0.3em] uppercase transition-all hover:border-[#FF6B00] hover:text-[#FF6B00] disabled:opacity-10"
+                className="btn-tiger --primary px-16 py-5 text-sm tracking-[0.3em] font-bold disabled:opacity-10"
               >
-                Reveal Timeline <ChevronRight className="inline-block w-3 h-3 ml-2 transition-transform group-hover:translate-x-1" />
+                INITIALIZE SCAN
               </button>
             </motion.div>
           ) : (
-            /* ─── PHASE 2: ULTRA-DENSE GRID ─── */
+            /* ─── PHASE 2: THE REAL GRID ─── */
             <motion.div
-              key="viz"
+              key="grid"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="w-full flex flex-col items-center"
             >
-              {/* Header Stats */}
-              <div className="flex gap-8 mb-10 font-mono text-[10px] tracking-[0.2em] uppercase">
-                <div className="flex flex-col items-center">
-                  <span className="text-white/20 mb-1">Spent</span>
-                  <span className="text-[#FF6B00] font-bold">{livedMonths} Months</span>
+              {/* Analytics */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-12">
+                <div className="bg-white/[0.03] border border-white/5 p-6 rounded-2xl">
+                  <p className="text-white/20 font-mono text-[9px] tracking-widest uppercase mb-2">Age</p>
+                  <p className="text-white font-outfit font-black text-3xl">{age}</p>
                 </div>
-                <div className="h-8 w-[1px] bg-white/10" />
-                <div className="flex flex-col items-center">
-                  <span className="text-white/20 mb-1">Remaining</span>
-                  <span className="text-white font-bold">{remainingMonths} Months</span>
+                <div className="bg-[#FF6B00]/10 border border-[#FF6B00]/20 p-6 rounded-2xl">
+                  <p className="text-[#FF6B00]/50 font-mono text-[9px] tracking-widest uppercase mb-2">Months Gone</p>
+                  <p className="text-[#FF6B00] font-outfit font-black text-3xl">{livedMonths}</p>
                 </div>
-                <div className="h-8 w-[1px] bg-white/10" />
-                <button onClick={handleReset} className="text-white/20 hover:text-white transition-colors">
-                  <RotateCcw className="w-4 h-4 mt-2" />
+                <div className="bg-white/[0.03] border border-white/5 p-6 rounded-2xl">
+                  <p className="text-white/20 font-mono text-[9px] tracking-widest uppercase mb-2">Months Left</p>
+                  <p className="text-white font-outfit font-black text-3xl">{remainingMonths}</p>
+                </div>
+                <button 
+                  onClick={handleReset}
+                  className="bg-white/[0.03] border border-white/5 p-6 rounded-2xl hover:bg-white/10 transition-all flex items-center justify-center"
+                >
+                  <RotateCcw className="w-6 h-6 text-white/30" />
                 </button>
               </div>
 
-              {/* The Grid — Optimized for width and density */}
-              <div className="w-full bg-black/40 border border-white/5 p-4 sm:p-8 rounded-xl backdrop-blur-sm">
+              {/* Grid with bulletproof inline styles */}
+              <div className="relative w-full bg-black/60 border border-white/10 p-4 md:p-10 rounded-2xl shadow-inner">
                 <div 
-                  className="grid gap-[2px] sm:gap-[3px] justify-center"
+                  className="grid gap-[3px] md:gap-[4px] w-full"
                   style={{ 
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(6px, 1fr))',
-                    maxWidth: '100%'
+                    gridTemplateColumns: `repeat(${cols}, 1fr)`,
+                    gridTemplateRows: `repeat(${rows}, 1fr)` 
                   }}
                 >
-                  {/* Forcing a wide aspect ratio by controlling the container width if needed */}
-                  <div className="contents" style={{ display: 'grid', gridTemplateColumns: 'repeat(24, 1fr)', gap: '2px' }}>
-                    {/* Note: In a real responsive scenario, we'd use a more dynamic approach, 
-                        but here we'll use a standard dense grid that wraps naturally. */}
-                  </div>
-                  
-                  {/* Let's use a responsive column count that keeps it wide */}
-                  <div className="grid grid-cols-24 sm:grid-cols-36 md:grid-cols-48 gap-[2px] sm:gap-[4px]">
-                    {dots.map((dotIndex) => {
-                      const isLived = dotIndex < livedMonths;
-                      return (
-                        <motion.div
-                          key={dotIndex}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: (dotIndex / totalMonths) * 0.3 }}
-                          className={`aspect-square rounded-[1px] ${
-                            isLived 
-                              ? 'bg-[#FF6B00] shadow-[0_0_4px_rgba(255,107,0,0.4)]' 
-                              : 'bg-white/5 border border-white-[0.02]'
-                          }`}
-                        />
-                      );
-                    })}
-                  </div>
+                  {dots.map((dotIndex) => {
+                    const isLived = dotIndex < livedMonths;
+                    return (
+                      <motion.div
+                        key={dotIndex}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ 
+                          delay: (dotIndex / totalMonths) * 0.8,
+                          duration: 0.2
+                        }}
+                        className={`aspect-square rounded-[1px] md:rounded-sm transition-all duration-700 ${
+                          isLived 
+                            ? 'bg-[#FF6B00] shadow-[0_0_8px_rgba(255,107,0,0.4)]' 
+                            : 'bg-white/10 border border-white/5'
+                        }`}
+                      />
+                    );
+                  })}
                 </div>
 
-                {/* Annotation */}
-                <div className="mt-8 flex justify-between items-center px-2">
-                  <div className="flex gap-6 font-mono text-[9px] tracking-[0.2em] text-white/20 uppercase">
+                <div className="mt-8 flex justify-between items-center px-2 font-mono text-[10px] tracking-widest uppercase">
+                  <div className="flex gap-6 text-white/40">
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-[#FF6B00] rounded-full" /> History
+                      <div className="w-2.5 h-2.5 bg-[#FF6B00] rounded-sm" /> Gone
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-white/10 rounded-full" /> Potential
+                      <div className="w-2.5 h-2.5 bg-white/10 rounded-sm" /> Remaining
                     </div>
                   </div>
-                  <div className="hidden sm:flex items-center gap-2 text-white/10 font-mono text-[8px] tracking-[0.2em] uppercase">
-                    <Info className="w-3 h-3" /> Each dot represents one month of your life (80 yr baseline)
+                  <div className="hidden sm:block text-white/10">
+                    Baseline: 80 Years / 960 Months
                   </div>
                 </div>
               </div>
 
-              {/* Emotional Punchline */}
-              <div className="mt-16 text-center max-w-2xl">
-                <p className="font-outfit font-black text-white/90 text-2xl md:text-4xl uppercase tracking-tighter leading-tight mb-6">
-                  Look at the empty space. <br />
-                  That is your only remaining currency.
-                </p>
-                <p className="text-white/30 font-mono text-sm tracking-wide leading-relaxed mb-12">
-                  The orange is permanent. It cannot be moved, edited, or deleted. 
-                  Every month you procrastinate adds another orange dot to the grid. 
-                  Don't let your grid fill up with regrets.
-                </p>
+              {/* The "Brutal" Analysis */}
+              <div className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-4xl">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4 text-[#FF6B00]">
+                    <ShieldAlert className="w-8 h-8" />
+                    <h3 className="font-outfit font-black text-2xl uppercase tracking-tight">The Reality of Drift</h3>
+                  </div>
+                  <p className="text-white/40 font-mono text-sm leading-relaxed">
+                    Every orange dot is a month you already spent. You cannot trade them back. 
+                    You cannot buy more. The grey dots are not guaranteed; they are merely potential.
+                    Drifting is the slow death of your empire.
+                  </p>
+                </div>
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4 text-white">
+                    <TrendingUp className="w-8 h-8" />
+                    <h3 className="font-outfit font-black text-2xl uppercase tracking-tight">Weaponize the Rest</h3>
+                  </div>
+                  <p className="text-white/40 font-mono text-sm leading-relaxed">
+                    Most founders waste 40% of their grey dots in distraction. 
+                    T1GER is designed to ensure every remaining dot is used for execution, 
+                    discipline, and building a legacy that outlasts the grid.
+                  </p>
+                </div>
+              </div>
 
+              {/* Ultimate CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.5 }}
+                className="mt-20 w-full flex flex-col items-center"
+              >
                 <button
                   onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center gap-4 bg-white text-black px-12 py-5 rounded-full font-outfit font-black text-sm uppercase tracking-widest hover:bg-[#FF6B00] hover:text-white transition-all duration-500 shadow-2xl"
+                  className="group relative flex items-center gap-6 bg-white text-black px-14 py-6 rounded-full font-outfit font-black text-base uppercase tracking-[0.2em] transition-all hover:bg-[#FF6B00] hover:text-white hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(255,107,0,0.15)]"
                 >
-                  START THE HUNT NOW <ChevronRight className="w-4 h-4" />
+                  <Target className="w-5 h-5 transition-transform group-hover:rotate-45" />
+                  JOIN THE TOP 1% NOW
+                  <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </button>
-              </div>
+                <p className="mt-6 text-white/20 font-mono text-[10px] tracking-[0.4em] uppercase">
+                  Do not waste another month.
+                </p>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
