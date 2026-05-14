@@ -68,7 +68,7 @@ export default function SectionLife() {
         >
           <h2
             className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.88]"
-            style={{ fontSize: 'clamp(2.2rem, 6vw, 5rem)' }}
+            style={{ fontSize: 'clamp(2rem, 10vw, 5rem)' }}
           >
             THIS IS YOUR LIFE
             <br />

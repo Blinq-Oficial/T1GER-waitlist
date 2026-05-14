@@ -67,11 +67,19 @@ export default async function handler(req, res) {
         }
       });
     } catch (e) {
-      return res.status(500).json({ error: `Falla de red al obtener conteo de Supabase: ${e.message}` });
+      return res.status(500).json({ error: `Network failure getting Supabase count: ${e.message}` });
     }
     
-    const totalCount = countResponse.headers.get('content-range')?.split('/')[1] || "800";
-    const position = parseInt(totalCount, 10);
+    const contentRange = countResponse.headers.get('content-range');
+    let position = 800; // Default fallback
+    
+    if (contentRange && contentRange.includes('/')) {
+      const totalStr = contentRange.split('/')[1];
+      const parsed = parseInt(totalStr, 10);
+      if (!isNaN(parsed)) {
+        position = parsed;
+      }
+    }
 
     const user = Array.isArray(supabaseData) ? supabaseData[0] : null;
     const refCode = user?.ref_code || 'T1G-' + Math.random().toString(36).substring(2, 7).toUpperCase();
@@ -82,13 +90,13 @@ export default async function handler(req, res) {
       
       const htmlTemplate = `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background-color: #000; color: #fff; padding: 40px; border-radius: 8px; border: 1px solid #333;">
-          <h1 style="color: #FF6B00; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Bienvenido a la jungla.</h1>
-          <p style="font-size: 16px; color: #ccc; line-height: 1.6;">Has asegurado tu posición en la waitlist de <strong>T1GER</strong>.</p>
+          <h1 style="color: #FF6B00; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Welcome to the Jungle.</h1>
+          <p style="font-size: 16px; color: #ccc; line-height: 1.6;">You have secured your position on the <strong>T1GER</strong> waitlist.</p>
           <div style="background-color: #111; border: 1px solid #FF6B00; padding: 25px; text-align: center; margin: 30px 0; border-radius: 12px;">
-            <p style="margin: 0; font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 4px;">Tu número de posición</p>
+            <p style="margin: 0; font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 4px;">Your Position</p>
             <h2 style="margin: 10px 0 0 0; font-size: 56px; color: #fff; font-weight: 900;">#${position}</h2>
           </div>
-          <p style="font-size: 16px; color: #ccc; line-height: 1.6;">Cada invitación te acerca más al lanzamiento. Comparte tu link único:</p>
+          <p style="font-size: 16px; color: #ccc; line-height: 1.6;">Every referral brings you closer to the hunt. Share your unique link:</p>
           <div style="text-align: center; margin: 35px 0;">
             <a href="https://t1ger.app/?ref=${position}" style="background-color: #FF6B00; color: #000; padding: 18px 35px; text-decoration: none; font-weight: bold; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px; display: inline-block;">HUNT GREATNESS</a>
           </div>
@@ -100,7 +108,7 @@ export default async function handler(req, res) {
       await resend.emails.send({
         from: 'T1GER <equipo@t1ger.app>',
         to: [email],
-        subject: '¡Tu posición en T1GER ha sido asegurada! 🐅',
+        subject: 'Your T1GER position is secured! 🐅',
         html: htmlTemplate,
       });
 

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import { Loader2, Copy, Check, Share2, Sparkles, MessageCircle, Send } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 
 interface Props {
   onSuccess: (position: number) => void;
@@ -78,27 +78,13 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'T1GER Waitlist',
-          text: `I just joined the T1GER waitlist 🐅 Build discipline. Hunt greatness. Join me here:`,
-          url: shareUrl,
-        });
-      } catch (err) {
-        console.error('Error sharing:', err);
-      }
-    } else {
-      handleCopy();
-    }
-  };
+
 
   return (
     <section
       id="hero"
       ref={sectionRef}
-      className="relative flex flex-col items-center justify-center px-6 sm:px-12 md:pl-40 overflow-hidden"
+      className="relative flex flex-col items-center justify-center px-6 sm:px-12 md:pl-40 overflow-x-hidden"
       style={{ minHeight: '100vh' }}
     >
       {/* Animated gradient background */}
@@ -157,7 +143,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                 <h1
                   className="font-outfit font-black uppercase leading-[0.82] select-none"
                   style={{
-                    fontSize: 'clamp(5rem, 20vw, 18rem)',
+                    fontSize: 'clamp(3.5rem, 18vw, 18rem)',
                     letterSpacing: '-0.02em',
                     color: 'transparent',
                     WebkitTextStroke: '1px rgba(255,255,255,0.15)',
@@ -193,7 +179,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                   className="font-outfit font-black text-white/90 uppercase tracking-[0.06em]"
                   style={{ fontSize: 'clamp(1rem, 2.5vw, 1.8rem)' }}
                 >
-                  BUILD DISCIPLINE.{' '}
+                  BUILD DISCIPLINE.<br className="md:hidden" />{' '}
                   <span className="text-[#CCFF00]">HUNT GREATNESS.</span>
                 </p>
               </motion.div>
@@ -266,7 +252,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#CCFF00]" />
                 <span className="font-mono text-[10px] sm:text-xs text-[#CCFF00] tracking-[0.3em] uppercase font-bold">
-                  ¡BIENVENIDO A LA JUNGLA!
+                  WELCOME TO THE JUNGLE!
                 </span>
               </motion.div>
 
@@ -283,7 +269,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                   <span
                     className="font-outfit font-black text-white block relative z-10"
                     style={{
-                      fontSize: 'clamp(5rem, 15vw, 10rem)',
+                      fontSize: 'clamp(3.5rem, 15vw, 10rem)',
                       lineHeight: 0.8,
                       letterSpacing: '-0.05em',
                     }}

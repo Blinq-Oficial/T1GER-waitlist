@@ -22,7 +22,7 @@ export default function SectionAbout() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-24 md:py-40 px-6 sm:px-12 md:pl-40 lg:px-24 flex flex-col items-center overflow-hidden bg-section-warm"
+      className="relative py-20 md:py-40 px-6 sm:px-12 md:pl-40 lg:px-24 flex flex-col items-center overflow-x-hidden bg-section-warm"
       style={{ minHeight: '100vh' }}
     >
       {/* Animated ambient glow */}
@@ -34,7 +34,7 @@ export default function SectionAbout() {
         }}
       />
 
-      <div className="relative z-10 max-w-5xl mx-auto">
+      <div className="relative z-10 w-full max-w-5xl mx-auto">
         {/* ─── Text Content (below the visual) ─── */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -44,7 +44,7 @@ export default function SectionAbout() {
           className="mb-10"
         >
           <span className="t-label text-[#FF6B00]/60 tracking-[0.3em]">
-            ● What is T1GER?
+            ● THE PROTOCOL
           </span>
         </motion.div>
 
@@ -53,7 +53,7 @@ export default function SectionAbout() {
           <TextReveal
             className="text-white/85 leading-[1.6] text-xl md:text-2xl lg:text-3xl font-sans font-light"
           >
-            A daily operating system for ambitious people who refuse to be average.
+            T1GER is a sovereign operating system for the elite 1% who refuse to be average.
           </TextReveal>
         </div>
 
@@ -62,7 +62,7 @@ export default function SectionAbout() {
             className="text-white/55 leading-[1.6] text-lg md:text-xl lg:text-2xl font-sans font-light"
             delay={200}
           >
-            It combines habit tracking, micro-learning, and competitive gamification into one protocol designed to forge discipline.
+            Built to forge unshakeable discipline through micro-learning, lethal consistency, and high-stakes gamification.
           </TextReveal>
         </div>
 
@@ -76,18 +76,18 @@ export default function SectionAbout() {
         >
           {[
             {
-              title: 'DAILY HABITS',
-              description: 'Gamified streaks that punish laziness and reward consistency. Every day you show up, you level up.',
+              title: 'FORGE STREAKS',
+              description: 'Gamified systems that punish stagnation. Every win builds your legacy; every failure resets the hunt.',
               delay: 0,
             },
             {
-              title: 'LEARN & GROW',
-              description: 'Bite-sized daily lessons on finance, marketing, and discipline. Real executable knowledge for predators.',
+              title: 'PREDATOR KNOWLEDGE',
+              description: 'Elite-tier insights on wealth, strategy, and power. Executable knowledge distilled for those who lead.',
               delay: 150,
             },
             {
-              title: 'COMPETE & RISE',
-              description: 'Global leaderboards. Weekly tournaments. Your progress is public. The pride watches.',
+              title: 'PRIDE HIERARCHY',
+              description: 'Public leaderboards. Ruthless accountability. Discipline is the only currency that matters.',
               delay: 300,
             },
           ].map((feature) => (

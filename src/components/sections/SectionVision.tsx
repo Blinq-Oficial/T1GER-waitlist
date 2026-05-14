@@ -43,7 +43,7 @@ export default function SectionVision() {
   return (
     <section
       id="vision"
-      className="relative w-full md:pl-40 flex flex-col items-center overflow-hidden bg-section-jungle"
+      className="relative w-full md:pl-40 flex flex-col items-center overflow-x-hidden bg-section-jungle"
       style={{
         paddingTop: 'clamp(5rem, 10vw, 10rem)',
         paddingBottom: 'clamp(5rem, 10vw, 10rem)',
@@ -71,9 +71,9 @@ export default function SectionVision() {
           </span>
           <h2
             className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.9]"
-            style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
+            style={{ fontSize: 'clamp(2rem, 10vw, 5rem)' }}
           >
-            6 PILLARS.{' '}
+            6 PILLARS.<br className="md:hidden" />{' '}
             <span
               style={{
                 color: 'transparent',

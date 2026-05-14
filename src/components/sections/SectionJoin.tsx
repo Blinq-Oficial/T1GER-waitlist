@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Heart, Mail, Copy, Check, Share2, Sparkles, MessageCircle, Send } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+
 
 interface Props {
   onSuccess: (position: number) => void;
@@ -77,7 +77,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition }:
       try {
         await navigator.share({
           title: 'T1GER Waitlist',
-          text: `¡Únete a la waitlist de T1GER! 🐅`,
+          text: `Join the T1GER waitlist! 🐅`,
           url: shareUrl,
         });
       } catch (err) {
@@ -298,12 +298,12 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition }:
                     onClick={handleNativeShare}
                     className="md:hidden flex items-center gap-2 bg-[#FF6B00] border border-[#FF6B00]/20 rounded-full px-5 py-2 text-white font-mono text-[10px] tracking-[0.2em] uppercase cursor-pointer"
                   >
-                    <Send className="w-3 h-3" /> Compartir
+                    <Send className="w-3 h-3" /> Share
                   </button>
 
                   {/* WhatsApp */}
                   <a
-                    href={`https://wa.me/?text=${encodeURIComponent(`¡Me acabo de unir a la waitlist de T1GER! 🐅 Únete aquí: ${shareUrl}`)}`}
+                    href={`https://wa.me/?text=${encodeURIComponent(`I just joined the T1GER waitlist! 🐅 Join here: ${shareUrl}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-3 bg-white/[0.02] border border-white/10 rounded-full px-5 py-2.5 text-white/30 hover:text-[#25D366] hover:border-[#25D366]/50 transition-all font-mono text-[10px] tracking-[0.2em] uppercase cursor-pointer"

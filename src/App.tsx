@@ -40,7 +40,7 @@ export default function App() {
         <Sidebar isPreloaded={isPreloaded} />
 
         {/* Main Content */}
-        <div className="w-full relative z-10">
+        <div className="w-full relative z-10 overflow-x-hidden">
           {/* Section 1: Hero (massive outlined title) */}
           <SectionHero
             onSuccess={handleSignup}

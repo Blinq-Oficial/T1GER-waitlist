@@ -81,7 +81,7 @@ export default function SectionFAQ() {
           </span>
           <h2
             className="font-outfit font-black text-black uppercase tracking-tighter leading-[0.9]"
-            style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}
+            style={{ fontSize: 'clamp(2rem, 8vw, 4.5rem)' }}
           >
             FAQ
           </h2>
