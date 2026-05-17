@@ -110,17 +110,33 @@ export default function Sidebar({ isPreloaded }: Props) {
         initial={{ y: -80 }}
         animate={isPreloaded ? { y: 0 } : { y: -80 }}
         transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-        className="fixed top-0 left-0 right-0 h-16 md:hidden z-[60] flex items-center justify-between px-6 backdrop-blur-md border-b"
+        className="fixed top-0 left-0 right-0 h-16 md:hidden z-[60] flex items-center justify-between px-4 backdrop-blur-md border-b"
         style={{
           borderColor: isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)',
           backgroundColor: isLight ? 'rgba(245,245,240,0.85)' : 'rgba(5,5,5,0.7)',
         }}
       >
-        <div />
+        <button
+          onClick={() => scrollTo('#hero')}
+          className="font-syncopate text-sm font-bold tracking-[0.18em] bg-transparent border-none"
+          style={{ color: activeColor }}
+          aria-label="Go to top"
+        >
+          T1GER
+        </button>
+
+        <button
+          onClick={() => scrollTo('#join')}
+          className="rounded-full bg-[#FF6B00] px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-black"
+        >
+          Join
+        </button>
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="w-10 h-10 flex flex-col items-center justify-center gap-1.5 cursor-pointer"
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileOpen}
         >
           <span className={`block w-4 h-px transition-transform duration-300 ${mobileOpen ? 'rotate-45 translate-y-1' : ''}`} style={{ backgroundColor: activeColor }} />
           <span className={`block w-4 h-px transition-opacity duration-300 ${mobileOpen ? 'opacity-0' : ''}`} style={{ backgroundColor: activeColor }} />

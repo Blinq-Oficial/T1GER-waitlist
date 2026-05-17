@@ -1,21 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { Loader2, Sparkles, ChevronRight } from 'lucide-react';
+import { joinWaitlist } from '../../lib/waitlistSignup';
 
 interface Props {
-  onSuccess: (position: number) => void;
+  onSuccess: (position: number, shareUrl?: string) => void;
   isSignedUp: boolean;
   waitlistPosition: number;
+  waitlistShareUrl: string;
   isPreloaded: boolean;
 }
 
 /**
  * SectionHero — Chainzoku-inspired hero with outlined typography.
  */
-export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, isPreloaded }: Props) {
+export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, waitlistShareUrl, isPreloaded }: Props) {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
+  const [helperText, setHelperText] = useState('');
   const [copied, setCopied] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -37,6 +40,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorText('');
+    setHelperText('');
 
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       setErrorText('Enter a valid email.');
@@ -46,32 +50,19 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
     setIsLoading(true);
     
     try {
-      const response = await fetch('/api/loops', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (response.ok) {
-        setEmail('');
-        onSuccess(data.position || 800);
-      } else {
-        console.error('API Error:', data);
-        // Provide a very clear error message
-        const errorMsg = data.error || `Server returned ${response.status}. Make sure you are running 'vercel dev' to test emails locally.`;
-        alert(errorMsg);
-      }
-    } catch (err: any) {
+      const data = await joinWaitlist(email);
+      setEmail('');
+      setHelperText(data.alreadyJoined ? "You're already in. Showing your position." : 'Position secured.');
+      onSuccess(data.position || 800, data.shareUrl);
+    } catch (err: unknown) {
       console.error('Network Error:', err);
-      alert("Connection failed. To test automated emails locally, you must use 'vercel dev' instead of 'npm run dev'.");
+      setErrorText(err instanceof Error ? err.message : 'Connection failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const shareUrl = `https://t1ger.app/?ref=${waitlistPosition}`;
+  const shareUrl = waitlistShareUrl || `https://t1ger.app/?ref=${waitlistPosition}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -187,6 +178,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
 
               <motion.form
                 onSubmit={handleSubmit}
+                noValidate
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.8, delay: 1.5, ease: [0.23, 1, 0.32, 1] }}
@@ -196,6 +188,8 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                   <input
                     name="email"
                     type="email"
+                    aria-label="Email address"
+                    autoComplete="email"
                     placeholder="YOUR EMAIL"
                     value={email}
                     onChange={(e) => {
@@ -217,6 +211,18 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                       </motion.p>
                     )}
                   </AnimatePresence>
+                  <AnimatePresence>
+                    {helperText && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute -bottom-6 left-4 text-[#CCFF00] text-xs font-mono"
+                      >
+                        {helperText}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <div className="flex flex-col gap-4">
@@ -231,7 +237,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, i
                         <span>CONNECTING...</span>
                       </>
                     ) : (
-                      'JOIN THE PRIDE'
+                      'JOIN THE WAITLIST'
                     )}
                   </button>
 

@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, RotateCcw, ShieldAlert, Target, TrendingUp } from 'lucide-react';
 
+const TOTAL_MONTHS = 960;
+
 /**
  * SectionLife — Final "Memento Mori" Implementation.
  * 
@@ -21,14 +23,13 @@ export default function SectionLife() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const totalYears = 80;
-  const totalMonths = totalYears * 12; // 960
+  const totalMonths = TOTAL_MONTHS;
   const numAge = parseInt(age);
   const isValidAge = !isNaN(numAge) && numAge >= 1 && numAge <= 100;
   const livedMonths = isValidAge ? Math.min(numAge * 12, totalMonths) : 0;
   const remainingMonths = Math.max(0, totalMonths - livedMonths);
 
-  const dots = useMemo(() => Array.from({ length: totalMonths }, (_, i) => i), []);
+  const dots = useMemo(() => Array.from({ length: TOTAL_MONTHS }, (_, i) => i), []);
 
   const handleSubmitAge = () => {
     if (isValidAge) setSubmitted(true);

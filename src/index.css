@@ -49,6 +49,7 @@ html {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
+  position: relative;
 }
 
 body {
@@ -277,7 +278,7 @@ html.lenis, html.lenis body {
 
 /* Radial gradient for fixed background */
 .bg-gradient-radial {
-  background: radial-gradient(ellipse 80% 50% at 50% 50%, rgba(255,107,0,0.06) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% 50%, rgba(255,107,0,0.06) 0%, transparent 70%);
 }
 
 /* Hover-fill effect for outlined title */

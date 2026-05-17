@@ -24,7 +24,7 @@ export default function SectionAbout() {
       id="about"
       ref={sectionRef}
       className="relative py-20 md:py-40 px-6 sm:px-12 md:pl-40 lg:px-24 flex flex-col items-center overflow-x-hidden bg-section-warm"
-      style={{ minHeight: '100vh' }}
+      style={{ minHeight: '100vh', position: 'relative' }}
     >
       {/* Animated ambient glow */}
       <motion.div

@@ -19,6 +19,7 @@ export default function SectionVideo() {
     <section
       ref={sectionRef}
       className="relative h-[50vh] md:h-[60vh] overflow-hidden bg-black"
+      style={{ position: 'relative' }}
     >
       {/* Background Video */}
       <motion.div 

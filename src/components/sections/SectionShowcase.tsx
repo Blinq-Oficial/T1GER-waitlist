@@ -47,6 +47,7 @@ export default function SectionShowcase() {
       ref={sectionRef}
       className="relative overflow-hidden"
       style={{
+        position: 'relative',
         height: '100vh',
         background: 'linear-gradient(180deg, #050505 0%, #0a0500 30%, #150a00 50%, #0a0500 70%, #050505 100%)',
       }}

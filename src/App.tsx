@@ -20,9 +20,11 @@ export default function App() {
   const [isPreloaded, setIsPreloaded] = useState(false);
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [waitlistPosition, setWaitlistPosition] = useState(0);
+  const [waitlistShareUrl, setWaitlistShareUrl] = useState('');
 
-  const handleSignup = useCallback((position: number) => {
+  const handleSignup = useCallback((position: number, shareUrl?: string) => {
     setWaitlistPosition(position);
+    setWaitlistShareUrl(shareUrl || `https://t1ger.app/?ref=${position}`);
     setIsSignedUp(true);
   }, []);
 
@@ -46,6 +48,7 @@ export default function App() {
             onSuccess={handleSignup}
             isSignedUp={isSignedUp}
             waitlistPosition={waitlistPosition}
+            waitlistShareUrl={waitlistShareUrl}
             isPreloaded={isPreloaded}
           />
 
@@ -72,6 +75,7 @@ export default function App() {
             onSuccess={handleSignup}
             isSignedUp={isSignedUp}
             waitlistPosition={waitlistPosition}
+            waitlistShareUrl={waitlistShareUrl}
           />
 
           {/* Section 8: FAQ */}

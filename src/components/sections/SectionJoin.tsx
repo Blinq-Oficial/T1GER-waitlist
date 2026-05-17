@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Heart, Mail, Copy, Check, Share2, Sparkles, MessageCircle, Send } from 'lucide-react';
+import { joinWaitlist } from '../../lib/waitlistSignup';
 
 
 interface Props {
-  onSuccess: (position: number) => void;
+  onSuccess: (position: number, shareUrl?: string) => void;
   isSignedUp: boolean;
   waitlistPosition: number;
+  waitlistShareUrl: string;
 }
 
 /**
@@ -15,7 +17,7 @@ interface Props {
  * Before signup: heading + email form + donate CTA
  * After signup: position number + share link + donation
  */
-export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition }: Props) {
+export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, waitlistShareUrl }: Props) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [errorText, setErrorText] = useState('');
@@ -38,29 +40,17 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition }:
     setStatus('loading');
     
     try {
-      const response = await fetch('/api/loops', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      
-      const data = await response.json().catch(() => ({}));
-
-      if (response.ok) {
-        setStatus('success');
-        onSuccess(data.position || 0);
-      } else {
-        triggerError(data.error || 'Error joining. Make sure you are using vercel dev.');
-        setStatus('idle');
-      }
-    } catch (err: any) {
+      const data = await joinWaitlist(email);
+      setStatus('success');
+      onSuccess(data.position || 0, data.shareUrl);
+    } catch (err: unknown) {
       console.error('Network Error:', err);
-      triggerError("Connection failed. Use 'vercel dev' for local testing.");
+      triggerError(err instanceof Error ? err.message : 'Connection failed. Please try again.');
       setStatus('idle');
     }
   };
 
-  const shareUrl = `https://t1ger.app/?ref=${waitlistPosition}`;
+  const shareUrl = waitlistShareUrl || `https://t1ger.app/?ref=${waitlistPosition}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -151,11 +141,13 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition }:
                 className="relative bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 md:p-8"
               >
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} noValidate className="space-y-4">
                   <div className="relative">
                     <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/15" />
                     <input
                       type="email"
+                      aria-label="Email address"
+                      autoComplete="email"
                       placeholder="YOUR EMAIL"
                       value={email}
                       onChange={(e) => {
@@ -187,7 +179,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition }:
                     {status === 'loading' ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                     ) : (
-                      'INITIATE HUNT'
+                      'JOIN THE WAITLIST'
                     )}
                   </button>
                 </form>
