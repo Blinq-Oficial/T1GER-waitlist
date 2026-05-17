@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 
 const DEFAULT_SUPABASE_URL = 'https://pzxjwqnxnkxtmwovzsuv.supabase.co';
+const EXPECTED_SUPABASE_HOST = new URL(DEFAULT_SUPABASE_URL).hostname;
 const DEFAULT_SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6eGp3cW54bmt4dG13b3Z6c3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjQyNDAsImV4cCI6MjA5MzQwMDI0MH0.3aS948dQbncMdO5ihsJPWuxs9Mxq2HZPCZEZIHGlwVc';
 
@@ -17,11 +18,17 @@ function cleanString(value) {
 
 function getSupabaseUrl() {
   const rawUrl = cleanString(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
-  const candidate = rawUrl || DEFAULT_SUPABASE_URL;
+  const candidate = rawUrl.replace(/^https?:\/\/https?:\/\//i, 'https://') || DEFAULT_SUPABASE_URL;
   const withProtocol = /^https?:\/\//i.test(candidate) ? candidate : `https://${candidate}`;
 
   try {
-    return new URL(withProtocol).origin;
+    const url = new URL(withProtocol);
+    if (url.hostname !== EXPECTED_SUPABASE_HOST) {
+      console.error('Unexpected Supabase host configuration.');
+      return DEFAULT_SUPABASE_URL;
+    }
+
+    return url.origin;
   } catch {
     console.error('Invalid Supabase URL configuration.');
     return DEFAULT_SUPABASE_URL;
