@@ -64,14 +64,23 @@ function normalizeSignup(body = {}) {
 async function supabaseRequest(path, options = {}) {
   const supabaseUrl = getSupabaseUrl();
   const supabaseAnonKey = getSupabaseAnonKey();
-  const response = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
-    ...options,
-    headers: {
-      apikey: supabaseAnonKey,
-      Authorization: `Bearer ${supabaseAnonKey}`,
-      ...options.headers,
-    },
-  });
+  let response;
+
+  try {
+    response = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
+      ...options,
+      headers: {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
+        ...options.headers,
+      },
+    });
+  } catch (error) {
+    const supabaseError = new Error('SUPABASE_FETCH_FAILED');
+    supabaseError.step = path.split('?')[0];
+    supabaseError.cause = error;
+    throw supabaseError;
+  }
 
   const text = await response.text();
   let data = null;
@@ -85,6 +94,19 @@ async function supabaseRequest(path, options = {}) {
   }
 
   return { response, data };
+}
+
+function publicErrorDetails(error) {
+  if (error?.message === 'SUPABASE_FETCH_FAILED') {
+    return {
+      code: error.message,
+      step: error.step || 'unknown',
+    };
+  }
+
+  return {
+    code: 'WAITLIST_UNEXPECTED_ERROR',
+  };
 }
 
 async function getWaitlistCount() {
@@ -244,6 +266,9 @@ export async function handleWaitlistSignup(req, res) {
     });
   } catch (error) {
     console.error('Waitlist signup error:', error);
-    return jsonResponse(res, 500, { error: 'Internal server error. Please try again later.' });
+    return jsonResponse(res, 500, {
+      error: 'Internal server error. Please try again later.',
+      ...publicErrorDetails(error),
+    });
   }
 }
