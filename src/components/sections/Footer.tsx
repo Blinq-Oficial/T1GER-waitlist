@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import TextReveal from '../animations/TextReveal';
 import LetterReveal from '../animations/LetterReveal';
+import { RatingInteraction } from '../ui/emoji-rating';
 
 /**
  * Footer — Full-height cinematic footer with jungle gradient.
@@ -14,6 +15,7 @@ export default function Footer() {
     { label: 'Vision', href: '#vision' },
     { label: 'Protocol', href: '#protocol' },
     { label: 'Join', href: '#join' },
+    { label: 'FAQ', href: '#faq' },
   ];
 
   const socialLinks = [
@@ -43,7 +45,7 @@ export default function Footer() {
       <div />
 
       {/* Center content — animated */}
-      <div className="flex flex-col items-center text-center relative z-10 max-w-5xl mx-auto">
+      <div className="flex flex-col items-center text-center relative z-10 max-w-5xl mx-auto w-full">
         {/* T1GER wordmark */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -75,6 +77,20 @@ export default function Footer() {
           </TextReveal>
         </motion.div>
 
+        {/* Optional rating interaction widget */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.19, 1, 0.22, 1] }}
+          className="mb-12 bg-white/[0.02] border border-white/[0.06] rounded-[32px] p-6 sm:p-8 backdrop-blur-md shadow-[0_0_50px_rgba(0,0,0,0.8),0_0_30px_rgba(255,107,0,0.02)] flex flex-col items-center gap-5 w-full max-w-[440px] mx-auto relative group hover:border-[#FF6B00]/25 hover:shadow-[0_0_50px_rgba(255,107,0,0.08)] transition-all duration-500"
+        >
+          <span className="font-mono text-[9px] text-white/20 tracking-[0.3em] uppercase text-center block font-black select-none">
+            OPTIONAL: RATE YOUR EXPERIENCE
+          </span>
+          <RatingInteraction />
+        </motion.div>
+
         {/* Social links row — animated */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -103,27 +119,29 @@ export default function Footer() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ delay: 0.6 }}
-        className="w-full flex flex-col md:flex-row items-center justify-between gap-4 relative z-10"
+        className="w-full flex flex-col items-center justify-center gap-6 relative z-10 border-t border-white/[0.05] pt-8"
       >
         {/* Navigation */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="text-white/15 hover:text-white/40 font-mono text-[10px] tracking-[0.1em] uppercase transition-colors duration-500"
+              className="text-white/20 hover:text-[#CCFF00] font-mono text-[11px] tracking-[0.2em] uppercase transition-colors duration-300 relative group py-1 font-black"
             >
               {link.label}
+              <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#CCFF00] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
             </a>
           ))}
         </div>
 
         {/* Copyright */}
-        <div className="flex items-center gap-4">
-          <span className="text-white/10 font-mono text-[10px] tracking-[0.1em] uppercase">
+        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-white/10 font-mono text-[10px] tracking-[0.15em] uppercase font-bold">
+          <span>
             © {new Date().getFullYear()} T1GER Protocol
           </span>
-          <span className="text-white/10 font-mono text-[10px]">
+          <span className="hidden sm:inline text-white/5">•</span>
+          <span>
             All rights reserved
           </span>
         </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, CheckCircle2 } from 'lucide-react';
 import Modal from '../Modal';
+import { GlassButton } from '../ui/apple-tahoe-liquid-glass-button';
 
 interface Props {
   isOpen: boolean;
@@ -10,7 +11,7 @@ interface Props {
 
 export default function SignInModal({ isOpen, onClose }: Props) {
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'success'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [errorText, setErrorText] = useState('');
   const [shouldShake, setShouldShake] = useState(false);
 
@@ -30,12 +31,15 @@ export default function SignInModal({ isOpen, onClose }: Props) {
     }
 
     // Success placeholder logic for now
-    setStatus('success');
+    setStatus('loading');
     setTimeout(() => {
-        setStatus('idle');
-        setEmail('');
-        onClose();
-    }, 3000);
+      setStatus('success');
+      setTimeout(() => {
+          setStatus('idle');
+          setEmail('');
+          onClose();
+      }, 3000);
+    }, 1200);
   };
 
   return (
@@ -70,12 +74,14 @@ export default function SignInModal({ isOpen, onClose }: Props) {
                 )}
               </div>
 
-              <button
+              <GlassButton
                 type="submit"
-                className="w-full py-3.5 rounded-xl mt-2 flex items-center justify-center font-bold text-white bg-white/10 border border-white/20 hover:bg-white/15 transition-colors"
+                disabled={status === 'loading'}
+                className="w-full py-4 rounded-xl mt-4 flex items-center justify-center gap-2 font-bold text-white font-mono tracking-wider shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] transition-all duration-300 border border-[#FF6B00]/25 hover:border-[#FF6B00]/50"
+                glassColor="rgba(255, 107, 0, 0.38)"
               >
                 Send magic link
-              </button>
+              </GlassButton>
             </form>
 
             <div className="w-full flex items-center gap-4 my-8">

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,7 +19,6 @@ interface Props {
 export default function Sidebar({ isPreloaded }: Props) {
   const [activeId, setActiveId] = useState('hero');
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isLight, setIsLight] = useState(false);
 
   useEffect(() => {
     // ScrollSpy Logic
@@ -32,15 +33,6 @@ export default function Sidebar({ isPreloaded }: Props) {
         }
       }
       setActiveId(current);
-
-      // Light/Dark text adaptation based on FAQ section
-      const faq = document.getElementById('faq');
-      if (faq) {
-        const rect = faq.getBoundingClientRect();
-        setIsLight(rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2);
-      } else {
-        setIsLight(false);
-      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -55,46 +47,45 @@ export default function Sidebar({ isPreloaded }: Props) {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const textColor = isLight ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)';
-  const activeColor = isLight ? '#000' : '#fff';
-
   return (
     <>
-      {/* ─── DESKTOP SIDEBAR ─── */}
+      {/* ─── DESKTOP SIDEBAR (Liquid Glass Capsule) ─── */}
       <motion.aside
-        initial={{ opacity: 0, x: -20 }}
-        animate={isPreloaded ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+        initial={{ opacity: 0, x: -30, y: '-50%' }}
+        animate={isPreloaded ? { opacity: 1, x: 0, y: '-50%' } : { opacity: 0, x: -30, y: '-50%' }}
         transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-        className="fixed top-0 left-0 bottom-0 w-40 hidden md:flex flex-col py-12 z-[60] pointer-events-none"
+        className="fixed left-6 top-1/2 -translate-y-1/2 w-[124px] hidden md:flex flex-col py-8 px-3 z-[60] rounded-[2.5rem] bg-white/[0.02] border border-white/10 backdrop-blur-xl shadow-[inset_1px_1px_1px_rgba(255,255,255,0.15),_0_20px_40px_rgba(0,0,0,0.6)] items-center pointer-events-auto"
       >
-        {/* We use pointer-events-none on the container so we can click through the transparent parts, 
-            and pointer-events-auto on the actual clickable elements. */}
+        {/* Decorative Brand Accent Dot */}
+        <div className="w-2 h-2 rounded-full bg-[#FF6B00] shadow-[0_0_10px_rgba(255,107,0,0.8)] animate-pulse mb-8" />
 
-        {/* We use pointer-events-none on the container so we can click through the transparent parts, 
-            and pointer-events-auto on the actual clickable elements. */}
-
-        {/* Logo removed as requested */}
-        <div className="mb-12" />
-
-        {/* Middle: Horizontal Index Links */}
-        <nav className="flex flex-col flex-1 justify-center pointer-events-auto relative z-10 w-full pl-[30px]">
+        {/* Index Links */}
+         <nav className="flex flex-col gap-5 w-full items-center">
           {navLinks.map((link) => {
             const isActive = activeId === link.id;
             return (
-              <div key={link.label} className="relative flex items-center mb-6 group">
+              <div key={link.label} className="relative flex items-center justify-center w-full px-2 py-1 group">
+                {/* Dynamic Sliding Orange Glass Pill Background (Centered Bubble) */}
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-sidebar-bubble"
+                      className="absolute inset-0 bg-[#FF6B00]/10 border border-[#FF6B00]/30 rounded-full z-0 shadow-[0_0_15px_rgba(255,107,0,0.2)]"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </AnimatePresence>
 
                 <button
                   onClick={() => scrollTo(link.href)}
-                  className="font-outfit font-black text-[13px] tracking-widest uppercase cursor-pointer bg-transparent border-none transition-all duration-300 ml-[40px] whitespace-nowrap"
+                  className={`relative z-10 font-mono text-[9px] tracking-[0.2em] uppercase cursor-pointer bg-transparent border-none transition-all duration-300 py-1.5 w-full flex items-center justify-center font-black select-none ${
+                    isActive 
+                      ? 'text-white font-extrabold scale-[1.04]' 
+                      : 'text-white/35 group-hover:text-white/70 group-hover:scale-[1.04]'
+                  }`}
                   style={{
-                    color: isActive ? activeColor : textColor,
-                    textShadow: isActive && !isLight ? '0 0 10px rgba(255,255,255,0.3)' : 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) e.currentTarget.style.color = isLight ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.7)';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) e.currentTarget.style.color = textColor;
+                    textShadow: isActive ? '0 0 10px rgba(255,255,255,0.3)' : 'none',
+                    paddingLeft: '0.2em', // Corrects the letter-spacing shift to ensure absolute center alignment
                   }}
                 >
                   {link.label}
@@ -105,53 +96,50 @@ export default function Sidebar({ isPreloaded }: Props) {
         </nav>
       </motion.aside>
 
-      {/* ─── MOBILE TOP BAR ─── */}
+      {/* ─── MOBILE HEADER (Floating Glass Pill) ─── */}
       <motion.header
         initial={{ y: -80 }}
         animate={isPreloaded ? { y: 0 } : { y: -80 }}
         transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-        className="fixed top-0 left-0 right-0 h-16 md:hidden z-[60] flex items-center justify-between px-4 backdrop-blur-md border-b"
-        style={{
-          borderColor: isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)',
-          backgroundColor: isLight ? 'rgba(245,245,240,0.85)' : 'rgba(5,5,5,0.7)',
-        }}
+        className="fixed top-3 left-4 right-4 h-14 md:hidden z-[60] flex items-center justify-between px-5 rounded-full border border-white/10 backdrop-blur-xl bg-black/60 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
       >
         <button
           onClick={() => scrollTo('#hero')}
-          className="font-syncopate text-sm font-bold tracking-[0.18em] bg-transparent border-none"
-          style={{ color: activeColor }}
+          className="font-syncopate text-xs font-bold tracking-[0.2em] bg-transparent border-none text-white hover:text-[#FF6B00] transition-colors"
           aria-label="Go to top"
         >
           T1GER
         </button>
 
-        <button
-          onClick={() => scrollTo('#join')}
-          className="rounded-full bg-[#FF6B00] px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-black"
-        >
-          Join
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => scrollTo('#join')}
+            className="rounded-full bg-[#FF6B00] px-4 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-black shadow-[0_0_12px_rgba(255,107,0,0.3)] hover:scale-105 transition-transform"
+          >
+            Join
+          </button>
 
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="w-10 h-10 flex flex-col items-center justify-center gap-1.5 cursor-pointer"
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={mobileOpen}
-        >
-          <span className={`block w-4 h-px transition-transform duration-300 ${mobileOpen ? 'rotate-45 translate-y-1' : ''}`} style={{ backgroundColor: activeColor }} />
-          <span className={`block w-4 h-px transition-opacity duration-300 ${mobileOpen ? 'opacity-0' : ''}`} style={{ backgroundColor: activeColor }} />
-          <span className={`block w-4 h-px transition-transform duration-300 ${mobileOpen ? '-rotate-45 -translate-y-1' : ''}`} style={{ backgroundColor: activeColor }} />
-        </button>
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="w-8 h-8 flex flex-col items-center justify-center gap-1.5 cursor-pointer rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+          >
+            <span className={`block w-3.5 h-px bg-white transition-transform duration-300 ${mobileOpen ? 'rotate-45 translate-y-1' : ''}`} />
+            <span className={`block w-3.5 h-px bg-white transition-opacity duration-300 ${mobileOpen ? 'opacity-0' : ''}`} />
+            <span className={`block w-3.5 h-px bg-white transition-transform duration-300 ${mobileOpen ? '-rotate-45 -translate-y-1' : ''}`} />
+          </button>
+        </div>
       </motion.header>
 
-      {/* Mobile Overlay */}
+      {/* Mobile Overlay (Liquid Glass Terminal Menu) */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[55] bg-[#050505]/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 md:hidden"
+            className="fixed inset-0 z-[55] bg-[#050505]/95 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 md:hidden"
           >
             {navLinks.map((link, i) => {
               const isActive = activeId === link.id;
@@ -160,10 +148,13 @@ export default function Sidebar({ isPreloaded }: Props) {
                   key={link.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.06 }}
+                  transition={{ delay: i * 0.05, ease: [0.19, 1, 0.22, 1] }}
                   onClick={() => scrollTo(link.href)}
-                  className="font-outfit font-black text-3xl uppercase tracking-wider cursor-pointer bg-transparent border-none transition-colors"
-                  style={{ color: isActive ? '#FF6B00' : 'white' }}
+                  className="font-outfit font-black text-2xl uppercase tracking-[0.2em] cursor-pointer bg-transparent border-none transition-all duration-300 hover:scale-105"
+                  style={{ 
+                    color: isActive ? '#FF6B00' : 'white',
+                    textShadow: isActive ? '0 0 15px rgba(255,107,0,0.4)' : 'none'
+                  }}
                 >
                   {link.label}
                 </motion.button>

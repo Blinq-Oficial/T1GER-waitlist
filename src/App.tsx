@@ -6,14 +6,16 @@ import Sidebar from './components/navigation/Sidebar';
 
 // Sections (in order)
 import SectionHero from './components/sections/SectionHero';
+import SectionMarker from './components/sections/SectionMarker';
 import SectionShowcase from './components/sections/SectionShowcase';
+import SectionScrollDemo from './components/sections/SectionScrollDemo';
 import SectionAbout from './components/sections/SectionAbout';
 import SectionVision from './components/sections/SectionVision';
 import SectionProtocol from './components/sections/SectionProtocol';
 import SectionLife from './components/sections/SectionLife';
 import SectionJoin from './components/sections/SectionJoin';
 import SectionFAQ from './components/sections/SectionFAQ';
-import SectionVideo from './components/sections/SectionVideo';
+
 import Footer from './components/sections/Footer';
 
 export default function App() {
@@ -53,7 +55,8 @@ export default function App() {
           />
 
           {/* Section 2: Cinematic Video Bridge */}
-          <SectionVideo />
+          <SectionMarker />
+          <SectionScrollDemo />
 
           {/* Section 3: Visual Showcase (purely visual, no text) */}
           <SectionShowcase />

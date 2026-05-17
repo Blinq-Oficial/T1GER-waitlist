@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import ScrollReveal from '../animations/ScrollReveal';
+import { GlassButton } from '../ui/apple-tahoe-liquid-glass-button';
 
 interface Props {
   onSuccess: () => void;
@@ -57,7 +58,7 @@ export default function SlideCapture({ onSuccess }: Props) {
           </p>
 
           <form onSubmit={handleSubmit} className="w-full space-y-6">
-            <div className="space-y-2 relative">
+            <div className="space-y-2">
               <input
                 type="email"
                 placeholder="ENTER EMAIL ADDRESS"
@@ -66,27 +67,34 @@ export default function SlideCapture({ onSuccess }: Props) {
                 disabled={status !== 'idle'}
                 className={`w-full bg-white/5 border ${shouldShake ? 'border-red-500/50' : 'border-white/10 focus:border-[#FF6B00]/80 focus:bg-[#FF6B00]/5'} rounded-xl px-6 py-5 text-white placeholder-white/20 font-mono tracking-widest text-sm outline-none transition-all shadow-[inset_0_0_10px_rgba(255,107,0,0)] focus:shadow-[inset_0_0_15px_rgba(255,107,0,0.1)] ${shouldShake ? 'animate-shake' : ''}`}
               />
-              {errorText && (
-                <p className="text-[#FF6B00] text-xs font-mono font-bold pl-2 absolute -bottom-6 left-0">{errorText}</p>
-              )}
+              <AnimatePresence mode="wait">
+                {errorText && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: 'auto', marginTop: 4 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <p className="text-[#FF6B00] text-xs font-mono font-bold pl-2">⚠ {errorText.toUpperCase()}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            <button
+            <GlassButton
               type="submit"
               disabled={status !== 'idle'}
-              className="w-full btn-electric py-5 rounded-xl flex items-center justify-center gap-3 font-black text-lg uppercase tracking-wider relative overflow-hidden group"
+              className="w-full py-5 rounded-xl flex items-center justify-center gap-3 font-black text-lg uppercase tracking-wider text-white font-mono shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] transition-all duration-300 border border-[#FF6B00]/25 hover:border-[#FF6B00]/50"
+              glassColor="rgba(255, 107, 0, 0.38)"
             >
-              {/* Hover Glint Effect */}
-              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-[glint_1s_ease-out_infinite]" />
-
               {status === 'loading' ? (
                 <Loader2 className="w-6 h-6 animate-spin" />
               ) : status === 'success' ? (
-                <span className="text-obsidian">ACCESS GRANTED</span>
+                <span>ACCESS GRANTED</span>
               ) : (
                 <span>INITIATE HUNT</span>
               )}
-            </button>
+            </GlassButton>
           </form>
 
           {/* XP Gain Overlay */}

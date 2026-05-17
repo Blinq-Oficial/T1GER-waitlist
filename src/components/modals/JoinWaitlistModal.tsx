@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Twitter, MessageCircle, Copy, Loader2, Check } from 'lucide-react';
 import Modal from '../Modal';
+import { GlassButton } from '../ui/apple-tahoe-liquid-glass-button';
 
 interface Props {
   isOpen: boolean;
@@ -120,18 +121,18 @@ export default function JoinWaitlistModal({ isOpen, onClose }: Props) {
                 className="w-full bg-black/40 border border-white/10 focus:border-[#E8952A]/50 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-colors"
               />
 
-              <button
+              <GlassButton
                 type="submit"
                 disabled={status === 'loading'}
-                className="btn-primary w-full py-4 rounded-xl mt-4 flex items-center justify-center gap-2 font-bold text-black"
-                style={{ '--accent-color': '#E8952A' } as React.CSSProperties}
+                className="w-full py-4 rounded-xl mt-4 flex items-center justify-center gap-2 font-bold text-white font-mono tracking-wider shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] transition-all duration-300 border border-[#FF6B00]/25 hover:border-[#FF6B00]/50"
+                glassColor="rgba(255, 107, 0, 0.38)"
               >
                 {status === 'loading' ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
                   <>Claim my spot <span className="text-lg leading-none">→</span></>
                 )}
-              </button>
+              </GlassButton>
             </form>
           </motion.div>
         ) : (

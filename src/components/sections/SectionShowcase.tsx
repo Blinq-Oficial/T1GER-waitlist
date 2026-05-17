@@ -1,5 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { Player } from '@remotion/player';
+import { InfiniteBentoPan } from '../ui/infinite-bento-pan';
 
 /**
  * SectionShowcase — Purely visual section (no text paragraphs).
@@ -45,11 +47,10 @@ export default function SectionShowcase() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden"
+      className="relative overflow-hidden md:pl-40 w-full min-h-screen flex items-center justify-center bg-black"
       style={{
         position: 'relative',
-        height: '100vh',
-        background: 'linear-gradient(180deg, #050505 0%, #0a0500 30%, #150a00 50%, #0a0500 70%, #050505 100%)',
+        background: '#000000',
       }}
     >
       {/* Mouse-follow glow */}
@@ -66,7 +67,7 @@ export default function SectionShowcase() {
       {/* Scrolling content */}
       <motion.div
         id="showcase"
-        className="relative py-24 md:py-40 px-6 sm:px-12 flex flex-col items-center overflow-hidden bg-section-warm"
+        className="relative w-full py-24 md:py-40 px-6 sm:px-12 flex flex-col items-center justify-center overflow-hidden"
         style={{ scale, opacity }}
       >
         {/* Scrolling text row 1 */}
@@ -111,6 +112,45 @@ export default function SectionShowcase() {
               NEW CURRENCY.
             </span>
           </h2>
+        </motion.div>
+
+        {/* Floating SaaS Tactical Dashboard Container */}
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+          className="relative w-[90vw] max-w-[850px] mx-auto mt-6 mb-10 aspect-[16/9] rounded-2xl md:rounded-3xl border border-white/10 bg-black/40 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.85),_inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-md z-20 pointer-events-none"
+        >
+          {/* Mac window header */}
+          <div className="h-10 bg-white/[0.03] border-b border-white/5 flex items-center justify-between px-6 z-30 relative">
+            <div className="flex gap-2">
+              <div className="w-2 h-2 rounded-full bg-red-500/40" />
+              <div className="w-2 h-2 rounded-full bg-yellow-500/40" />
+              <div className="w-2 h-2 rounded-full bg-green-500/40" />
+            </div>
+            <span className="font-mono text-[8px] sm:text-[9px] text-white/30 tracking-[0.2em] uppercase">
+              T1GER // TACTICAL_CONSOLE
+            </span>
+            <div className="w-10" />
+          </div>
+
+          {/* Interactive Player content */}
+          <div className="absolute inset-0 top-10 overflow-hidden z-10">
+            <Player
+              component={InfiniteBentoPan as any}
+              inputProps={{ speed: 0.4, accentColor: "#FF6B00" }}
+              durationInFrames={240}
+              fps={30}
+              compositionWidth={1280}
+              compositionHeight={720}
+              autoPlay
+              loop
+              controls={false}
+              clickToPlay={false}
+              style={{ width: "100%", height: "100%" }}
+            />
+          </div>
         </motion.div>
 
         {/* Scrolling text row 2 (opposite direction) */}

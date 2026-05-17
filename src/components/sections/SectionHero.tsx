@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import { Loader2, Sparkles, ChevronRight } from 'lucide-react';
+import { Loader2, Sparkles, ChevronRight, ShieldCheck } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
+import { GlassButton } from '../ui/apple-tahoe-liquid-glass-button';
 
 interface Props {
   onSuccess: (position: number, shareUrl?: string) => void;
@@ -21,6 +22,69 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
   const [helperText, setHelperText] = useState('');
   const [copied, setCopied] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const fireConfetti = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const particles: any[] = [];
+    const colors = ["#FF6B00", "#10b981", "#fbbf24", "#f472b6", "#fff"];
+
+    canvas.width = 600;
+    canvas.height = 600;
+
+    const createParticle = () => {
+      return {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        vx: (Math.random() - 0.5) * 16, // Random spread X
+        vy: (Math.random() - 1.8) * 12, // Upward velocity
+        life: 100,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: Math.random() * 5 + 3,
+      };
+    };
+
+    for (let i = 0; i < 65; i++) {
+      particles.push(createParticle());
+    }
+
+    const animate = () => {
+      if (particles.length === 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.45; // Gravity
+        p.life -= 1.8;
+
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.life / 100);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          i--;
+        }
+      }
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+  };
 
   // Mouse-follow glow
   const mouseX = useMotionValue(0.5);
@@ -54,6 +118,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
       setEmail('');
       setHelperText(data.alreadyJoined ? "You're already in. Showing your position." : 'Position secured.');
       onSuccess(data.position || 800, data.shareUrl);
+      fireConfetti();
     } catch (err: unknown) {
       console.error('Network Error:', err);
       setErrorText(err instanceof Error ? err.message : 'Connection failed. Please try again.');
@@ -76,10 +141,113 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
     <section
       id="hero"
       ref={sectionRef}
-      className="relative flex flex-col items-center justify-center px-6 sm:px-12 md:pl-40 overflow-x-hidden"
+      className="relative flex flex-col items-center justify-center px-6 sm:px-12 md:pl-40 overflow-hidden"
       style={{ minHeight: '100vh' }}
     >
-      {/* Animated gradient background */}
+      {/* Animation Styles */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 60s linear infinite;
+        }
+        @keyframes spin-slow-reverse {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(-360deg); }
+        }
+        .animate-spin-slow-reverse {
+          animation: spin-slow-reverse 60s linear infinite;
+        }
+        @keyframes success-pulse {
+          0% { transform: scale(0.5); opacity: 0; }
+          50% { transform: scale(1.1); }
+          70% { transform: scale(0.95); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes success-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.4); }
+          50% { box-shadow: 0 0 60px rgba(255, 107, 0, 0.8), 0 0 100px rgba(255, 107, 0, 0.4); }
+        }
+        @keyframes celebration-ring {
+          0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+        .animate-ring {
+          animation: celebration-ring 0.8s ease-out forwards;
+        }
+      `}} />
+
+      {/* 3D Perspective Spinning Backdrop Layer */}
+      <div
+        className="absolute inset-0 w-full h-full pointer-events-none z-0"
+        style={{
+          perspective: "1200px",
+          transform: "perspective(1200px) rotateX(15deg)",
+          transformOrigin: "center bottom",
+          opacity: 1,
+        }}
+      >
+        {/* Image 3 (Back) - spins clockwise */}
+        <div className="absolute inset-0 animate-spin-slow">
+          <div
+            className="absolute top-1/2 left-1/2"
+            style={{
+              width: "2000px",
+              height: "2000px",
+              transform: "translate(-50%, -50%) rotate(279.05deg)",
+              zIndex: 0,
+            }}
+          >
+            <img
+              src="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=2048"
+              alt=""
+              className="w-full h-full object-cover opacity-50"
+            />
+          </div>
+        </div>
+
+        {/* Image 2 (Middle) - spins counter-clockwise */}
+        <div className="absolute inset-0 animate-spin-slow-reverse">
+          <div
+            className="absolute top-1/2 left-1/2"
+            style={{
+              width: "1000px",
+              height: "1000px",
+              transform: "translate(-50%, -50%) rotate(304.42deg)",
+              zIndex: 1,
+            }}
+          >
+            <img
+              src="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=1024"
+              alt=""
+              className="w-full h-full object-cover opacity-60"
+            />
+          </div>
+        </div>
+
+        {/* Image 1 (Front) - spins clockwise */}
+        <div className="absolute inset-0 animate-spin-slow">
+          <div
+            className="absolute top-1/2 left-1/2"
+            style={{
+              width: "800px",
+              height: "800px",
+              transform: "translate(-50%, -50%) rotate(48.33deg)",
+              zIndex: 2,
+            }}
+          >
+            <img
+              src="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png"
+              alt="App Icon"
+              className="w-full h-full object-cover opacity-80"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Animated gradient background and mouse follow */}
       <div className="absolute inset-0 z-0">
         <div
           className="absolute inset-0"
@@ -176,80 +344,93 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 </p>
               </motion.div>
 
-              <motion.form
-                onSubmit={handleSubmit}
-                noValidate
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.8, delay: 1.5, ease: [0.23, 1, 0.32, 1] }}
-                className="w-full max-w-sm space-y-3"
-              >
-                <div className="relative">
-                  <input
-                    name="email"
-                    type="email"
-                    aria-label="Email address"
-                    autoComplete="email"
-                    placeholder="YOUR EMAIL"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setErrorText('');
-                    }}
-                    disabled={isLoading}
-                    className="w-full bg-white/[0.04] border border-white/[0.1] rounded-full px-6 py-4 text-white placeholder-white/30 font-mono tracking-[0.15em] text-sm outline-none transition-all duration-150 focus:border-[#FF6B00]"
-                  />
-                  <AnimatePresence>
+              <div className="w-full max-w-sm relative">
+                {/* Click-through Confetti Canvas */}
+                <canvas
+                  ref={canvasRef}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none z-50"
+                />
+
+                <motion.form
+                  onSubmit={handleSubmit}
+                  noValidate
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.8, delay: 1.5, ease: [0.23, 1, 0.32, 1] }}
+                  className="w-full space-y-6"
+                >
+                  <div className="relative group">
+                    <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#FF6B00] transition-colors" />
+                    <input
+                      name="email"
+                      type="email"
+                      aria-label="Email address"
+                      autoComplete="email"
+                      placeholder="YOUR EMAIL"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setErrorText('');
+                      }}
+                      disabled={isLoading}
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-full pl-13 pr-6 py-4.5 text-white placeholder-white/20 font-mono tracking-[0.15em] text-sm outline-none transition-all duration-300 focus:border-[#FF6B00] focus:bg-white/[0.06] focus:ring-1 focus:ring-[#FF6B00]/30 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]"
+                    />
+                  </div>
+
+                  <AnimatePresence mode="wait">
                     {errorText && (
-                      <motion.p
-                        initial={{ opacity: 0, y: -5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute -bottom-6 left-4 text-[#FF6B00] text-xs font-mono"
+                      <motion.div
+                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                        animate={{ opacity: 1, height: 'auto', marginTop: 4 }}
+                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                        className="overflow-hidden w-full flex justify-center"
                       >
-                        {errorText}
-                      </motion.p>
+                        <p className="text-[#FF6B00] text-xs font-mono text-center tracking-[0.1em] uppercase">
+                          ⚠ {errorText}
+                        </p>
+                      </motion.div>
                     )}
-                  </AnimatePresence>
-                  <AnimatePresence>
                     {helperText && (
-                      <motion.p
-                        initial={{ opacity: 0, y: -5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute -bottom-6 left-4 text-[#CCFF00] text-xs font-mono"
+                      <motion.div
+                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                        animate={{ opacity: 1, height: 'auto', marginTop: 4 }}
+                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                        className="overflow-hidden w-full flex justify-center"
                       >
-                        {helperText}
-                      </motion.p>
+                        <p className="text-[#CCFF00] text-xs font-mono text-center tracking-[0.12em] uppercase animate-pulse">
+                          ⚡ {helperText}
+                        </p>
+                      </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
 
-                <div className="flex flex-col gap-4">
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="btn-tiger --primary w-full py-4 text-sm flex items-center justify-center gap-2"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        <span>CONNECTING...</span>
-                      </>
-                    ) : (
-                      'JOIN THE WAITLIST'
-                    )}
-                  </button>
+                  <div className="flex flex-col gap-5">
+                    <GlassButton
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full py-4.5 text-sm font-mono tracking-[0.2em] font-black uppercase text-white shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] transition-all duration-300 border border-[#FF6B00]/25 hover:border-[#FF6B00]/50"
+                      glassColor="rgba(255, 107, 0, 0.38)"
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span>CONNECTING...</span>
+                        </>
+                      ) : (
+                        'JOIN THE WAITLIST'
+                      )}
+                    </GlassButton>
 
-                  <button
-                    type="button"
-                    onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="text-white/20 hover:text-[#FF6B00] font-mono text-[10px] tracking-[0.3em] uppercase transition-colors"
-                  >
-                    [ CALCULATE YOUR TIMELINE ]
-                  </button>
-                </div>
-              </motion.form>
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="text-white/20 hover:text-[#FF6B00] font-mono text-[10px] tracking-[0.3em] uppercase transition-colors pt-2"
+                    >
+                      [ CALCULATE YOUR TIMELINE ]
+                    </button>
+                  </div>
+                </motion.form>
+              </div>
             </motion.div>
           ) : (
             <motion.div

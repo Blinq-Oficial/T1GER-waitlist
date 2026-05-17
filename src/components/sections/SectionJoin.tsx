@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Heart, Mail, Copy, Check, Share2, Sparkles, MessageCircle, Send } from 'lucide-react';
+import { Loader2, Heart, Copy, Check, Share2, Sparkles, MessageCircle, Send, ShieldCheck } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
-
+import { RatingInteraction } from '../ui/emoji-rating';
 
 interface Props {
   onSuccess: (position: number, shareUrl?: string) => void;
@@ -11,21 +11,78 @@ interface Props {
   waitlistShareUrl: string;
 }
 
-/**
- * SectionJoin — CTA section with post-signup experience.
- *
- * Before signup: heading + email form + donate CTA
- * After signup: position number + share link + donation
- */
 export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, waitlistShareUrl }: Props) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [errorText, setErrorText] = useState('');
   const [copied, setCopied] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const triggerError = (msg: string) => {
     setErrorText(msg);
     setTimeout(() => setErrorText(''), 3000);
+  };
+
+  // --- Confetti Logic ---
+  const fireConfetti = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const particles: any[] = [];
+    const colors = ["#FF6B00", "#10b981", "#fbbf24", "#f472b6", "#fff"];
+
+    canvas.width = 600;
+    canvas.height = 600;
+
+    const createParticle = () => {
+      return {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        vx: (Math.random() - 0.5) * 16, // Random spread X
+        vy: (Math.random() - 1.8) * 12, // Upward velocity
+        life: 100,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: Math.random() * 5 + 3,
+      };
+    };
+
+    for (let i = 0; i < 65; i++) {
+      particles.push(createParticle());
+    }
+
+    const animate = () => {
+      if (particles.length === 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.45; // Gravity
+        p.life -= 1.8;
+
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.life / 100);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          i--;
+        }
+      }
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,6 +100,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
       const data = await joinWaitlist(email);
       setStatus('success');
       onSuccess(data.position || 0, data.shareUrl);
+      fireConfetti();
     } catch (err: unknown) {
       console.error('Network Error:', err);
       triggerError(err instanceof Error ? err.message : 'Connection failed. Please try again.');
@@ -77,27 +135,138 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
   return (
     <section
       id="join"
-      className="relative px-6 sm:px-12 md:pl-40 flex flex-col items-center justify-center bg-section-warm"
+      className="relative px-6 sm:px-12 md:pl-40 flex flex-col items-center justify-center bg-section-warm overflow-hidden"
       style={{
         minHeight: '90vh',
         paddingTop: 'clamp(5rem, 10vw, 10rem)',
         paddingBottom: 'clamp(5rem, 10vw, 10rem)',
       }}
     >
-      {/* Ambient glow */}
+      {/* Immersive Style Tags for waitlist-hero check animations */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes success-pulse {
+          0% { transform: scale(0.5); opacity: 0; }
+          50% { transform: scale(1.1); }
+          70% { transform: scale(0.95); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes success-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+          50% { box-shadow: 0 0 60px rgba(16, 185, 129, 0.8), 0 0 100px rgba(16, 185, 129, 0.4); }
+        }
+        @keyframes checkmark-draw {
+          0% { stroke-dashoffset: 24; }
+          100% { stroke-dashoffset: 0; }
+        }
+        @keyframes celebration-ring {
+          0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+        .animate-success-pulse {
+          animation: success-pulse 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .animate-success-glow {
+          animation: success-glow 2s ease-in-out infinite;
+        }
+        .animate-checkmark {
+          stroke-dasharray: 24;
+          stroke-dashoffset: 24;
+          animation: checkmark-draw 0.4s ease-out 0.3s forwards;
+        }
+        .animate-ring {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          animation: celebration-ring 0.8s ease-out forwards;
+        }
+      `}} />
+
+      {/* Immersive 3D Spinning Background Discs */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(255,107,0,0.06) 0%, transparent 50%)',
+          perspective: "1200px",
+          transform: "perspective(1200px) rotateX(15deg)",
+          transformOrigin: "center bottom",
+          opacity: 0.35,
+        }}
+      >
+        {/* Image 3 (Back) - spins clockwise */}
+        <div className="absolute inset-0 animate-spin-slow">
+          <div
+            className="absolute top-1/2 left-1/2"
+            style={{
+              width: "2000px",
+              height: "2000px",
+              transform: "translate(-50%, -50%) rotate(279.05deg)",
+              zIndex: 0,
+            }}
+          >
+            <img
+              src="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=2048"
+              alt=""
+              className="w-full h-full object-cover opacity-30"
+            />
+          </div>
+        </div>
+
+        {/* Image 2 (Middle) - spins counter-clockwise */}
+        <div className="absolute inset-0 animate-spin-slow-reverse">
+          <div
+            className="absolute top-1/2 left-1/2"
+            style={{
+              width: "1000px",
+              height: "1000px",
+              transform: "translate(-50%, -50%) rotate(304.42deg)",
+              zIndex: 1,
+            }}
+          >
+            <img
+              src="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=1024"
+              alt=""
+              className="w-full h-full object-cover opacity-40"
+            />
+          </div>
+        </div>
+
+        {/* Image 1 (Front) - spins clockwise */}
+        <div className="absolute inset-0 animate-spin-slow">
+          <div
+            className="absolute top-1/2 left-1/2"
+            style={{
+              width: "800px",
+              height: "800px",
+              transform: "translate(-50%, -50%) rotate(48.33deg)",
+              zIndex: 2,
+            }}
+          >
+            <img
+              src="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png"
+              alt="App Icon"
+              className="w-full h-full object-cover opacity-60"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Gradient Overlay */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to top, #050505 10%, rgba(5,5,5,0.85) 45%, transparent 100%)',
         }}
       />
 
-      <div className="relative z-10 max-w-md mx-auto">
+      <div className="relative z-20 w-full max-w-lg mx-auto flex flex-col items-center">
         <AnimatePresence mode="wait">
           {!isSignedUp ? (
             <motion.div
               key="join-form"
               exit={{ opacity: 0, y: -20 }}
+              className="w-full flex flex-col items-center"
             >
               {/* Section label */}
               <motion.div
@@ -107,7 +276,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                 transition={{ duration: 0.7, ease: [0.19, 1, 0.22, 1] }}
                 className="text-center mb-6"
               >
-                <span className="font-mono text-[#FF6B00]/40 tracking-[0.3em] text-xs uppercase">
+                <span className="font-mono text-[#FF6B00]/40 tracking-[0.3em] text-[10px] sm:text-xs uppercase font-black">
                   ● Secure Your Position
                 </span>
               </motion.div>
@@ -121,69 +290,82 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                 className="text-center mb-10"
               >
                 <h2
-                  className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.9]"
-                  style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}
+                  className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.9] text-[2.5rem] sm:text-[4rem]"
                 >
                   CLAIM YOUR{' '}
                   <span className="text-[#FF6B00]">SPOT</span>
                 </h2>
-                <p className="mt-3 text-white/30 font-mono text-sm tracking-wider">
+                <p className="mt-3 text-white/30 font-mono text-xs sm:text-sm tracking-wider">
                   The protocol activates soon. Secure your position.
                 </p>
               </motion.div>
 
-              {/* Form */}
+              {/* Form Container with floating Confetti canvas */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
-                className="relative bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 md:p-8"
+                className="w-full relative px-4"
               >
+                <canvas
+                  ref={canvasRef}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none z-50"
+                />
 
-                <form onSubmit={handleSubmit} noValidate className="space-y-4">
-                  <div className="relative">
-                    <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/15" />
-                    <input
-                      type="email"
-                      aria-label="Email address"
-                      autoComplete="email"
-                      placeholder="YOUR EMAIL"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setErrorText('');
+                <form
+                  onSubmit={handleSubmit}
+                  noValidate
+                  className="relative w-full h-[60px] group transition-all duration-300 rounded-full"
+                >
+                  <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#FF6B00] transition-colors z-20" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="YOUR EMAIL"
+                    value={email}
+                    disabled={status === 'loading'}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setErrorText('');
+                    }}
+                    className="w-full h-[60px] pl-13 pr-[160px] rounded-full outline-none transition-all duration-300 placeholder-white/25 text-white font-mono tracking-[0.15em] text-xs sm:text-sm bg-white/[0.03] border border-white/10 focus:border-[#FF6B00] focus:bg-white/[0.06] focus:ring-1 focus:ring-[#FF6B00]/30 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]"
+                  />
+
+                  <div className="absolute top-[6px] right-[6px] bottom-[6px] z-10">
+                    <button
+                      type="submit"
+                      disabled={status === 'loading'}
+                      className="h-full px-5 sm:px-6 rounded-full font-mono text-[10px] tracking-[0.15em] font-black uppercase text-white transition-all duration-300 active:scale-95 hover:brightness-110 disabled:opacity-50 disabled:cursor-wait flex items-center justify-center min-w-[130px] border border-[#FF6B00]/25 shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)]"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255, 107, 0, 0.6) 0%, rgba(255, 107, 0, 0.9) 100%)',
+                        backdropFilter: 'blur(8px)',
                       }}
-                      disabled={status !== 'idle'}
-                      className="w-full bg-white/[0.04] border border-white/[0.08] rounded-full pl-12 pr-6 py-4 text-white placeholder-white/15 font-mono tracking-[0.15em] text-sm outline-none transition-all duration-500 focus:border-[#FF6B00]/40 focus:bg-white/[0.06]"
-                    />
-                    <AnimatePresence>
-                      {errorText && (
-                        <motion.p
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                          className="absolute -bottom-5 left-4 text-[#FF6B00] text-xs font-mono"
-                        >
-                          {errorText}
-                        </motion.p>
+                    >
+                      {status === 'loading' ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        'JOIN WAITLIST'
                       )}
-                    </AnimatePresence>
+                    </button>
                   </div>
-
-                  <button
-                    type="submit"
-                    disabled={status !== 'idle'}
-                    className="btn-tiger --primary w-full py-4 text-sm"
-                  >
-                    {status === 'loading' ? (
-                      <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-                    ) : (
-                      'JOIN THE WAITLIST'
-                    )}
-                  </button>
                 </form>
               </motion.div>
+
+              <AnimatePresence mode="wait">
+                {errorText && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    className="overflow-hidden w-full flex justify-center z-20"
+                  >
+                    <p className="text-[#FF6B00] text-xs font-mono text-center tracking-[0.1em] uppercase">
+                      ⚠ {errorText}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Donate */}
               <motion.div
@@ -191,14 +373,14 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 0.7 }}
-                className="mt-6 text-center"
+                className="mt-10 text-center z-20"
               >
                 <button
                   onClick={() => window.open('https://donate.worldwildlife.org/give/tigers', '_blank')}
                   className="inline-flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-full px-5 py-2.5 group hover:border-red-500/20 transition-all duration-500 cursor-pointer"
                 >
                   <Heart className="w-3.5 h-3.5 text-red-500/40 group-hover:text-red-500 transition-colors" />
-                  <span className="text-white/30 text-sm font-mono group-hover:text-white/50 transition-colors">
+                  <span className="text-white/30 text-xs font-mono group-hover:text-white/50 transition-colors">
                     Donate $1 to save real tigers
                   </span>
                 </button>
@@ -211,8 +393,23 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
               initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center text-center"
+              className="flex flex-col items-center text-center w-full z-20"
             >
+              {/* Immersive drawing checkmark bubble from waitlist-hero */}
+              <div className="relative w-16 h-16 rounded-full bg-[#10b981] flex items-center justify-center mx-auto mb-6 shadow-[0_0_40px_rgba(16,185,129,0.5)] animate-success-pulse animate-success-glow">
+                <div className="absolute inset-0 rounded-full border border-emerald-400 animate-ring" style={{ animationDelay: "0s" }} />
+                <div className="absolute inset-0 rounded-full border border-emerald-300 animate-ring" style={{ animationDelay: "0.15s" }} />
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    className="animate-checkmark"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+
               {/* Badge */}
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -233,7 +430,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                 transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
                 className="mb-8"
               >
-                <span className="font-mono text-white/20 text-[10px] tracking-[0.4em] uppercase block mb-2">
+                <span className="font-mono text-white/20 text-[10px] tracking-[0.4em] uppercase block mb-2 font-black">
                   YOU ARE T1GER NO.
                 </span>
                 <span
@@ -268,7 +465,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                 <div className="relative group">
                   <div className="absolute -inset-[1px] bg-gradient-to-r from-white/10 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="relative flex items-center bg-white/[0.02] border border-white/10 rounded-full overflow-hidden backdrop-blur-sm">
-                    <span className="flex-1 px-5 py-3 font-mono text-[10px] text-white/25 truncate">
+                    <span className="flex-1 px-5 py-3 font-mono text-[10px] text-white/25 truncate text-left">
                       {shareUrl}
                     </span>
                     <button
@@ -313,6 +510,22 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Optional Experience Rating Widget */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-16 flex flex-col items-center justify-center bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-md max-w-sm mx-auto z-20 text-center"
+        >
+          <span className="font-mono text-white/30 tracking-[0.2em] text-[9px] uppercase mb-4 block font-black">
+            OPINION DE OPERADOR
+          </span>
+          <h4 className="font-outfit font-bold text-white text-xs uppercase tracking-wider mb-6">
+            RATE YOUR DISCIPLINE PROTOCOL EXPERIENCE
+          </h4>
+          <RatingInteraction />
+        </motion.div>
       </div>
     </section>
   );

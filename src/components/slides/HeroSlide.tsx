@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import AnimatedText from '../animations/AnimatedText';
+import { GlassButton } from '../ui/apple-tahoe-liquid-glass-button';
 
 interface Props {
   onSuccess: () => void;
@@ -70,7 +71,7 @@ export default function HeroSlide({ onSuccess }: Props) {
           <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#FF6B00] to-transparent opacity-50" />
 
           <form onSubmit={handleSubmit} className="w-full space-y-4">
-            <div className="space-y-2 relative">
+            <div className="space-y-2">
               <input
                 type="email"
                 placeholder="ENTER EMAIL ADDRESS"
@@ -79,30 +80,26 @@ export default function HeroSlide({ onSuccess }: Props) {
                 disabled={status !== 'idle'}
                 className="w-full bg-transparent border border-white/20 focus:border-[#FF6B00] rounded-xl px-6 py-4 text-white placeholder-white/40 font-mono tracking-widest text-sm outline-none transition-all focus:shadow-[inset_0_0_15px_rgba(255,107,0,0.2),_0_0_15px_rgba(255,107,0,0.3)]"
               />
-              <AnimatePresence>
+              <AnimatePresence mode="wait">
                 {errorText && (
-                  <motion.p 
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-[#FF6B00] text-xs font-mono font-bold pl-2 absolute -bottom-5 left-0"
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: 'auto', marginTop: 4 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    className="overflow-hidden"
                   >
-                    {errorText}
-                  </motion.p>
+                    <p className="text-[#FF6B00] text-xs font-mono font-bold pl-2">⚠ {errorText.toUpperCase()}</p>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            <motion.button
+            <GlassButton
               type="submit"
               disabled={status !== 'idle'}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="w-full bg-[#FF6B00] text-[#050505] py-4 rounded-xl flex items-center justify-center gap-3 font-black text-xl uppercase tracking-widest relative overflow-hidden group shadow-[0_0_20px_rgba(255,107,0,0.4)] hover:shadow-[0_0_40px_rgba(255,107,0,0.6)] transition-shadow duration-300"
+              className="w-full py-4.5 rounded-xl flex items-center justify-center gap-3 font-black text-xl uppercase tracking-widest text-white shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] transition-all duration-300 border border-[#FF6B00]/25 hover:border-[#FF6B00]/50"
+              glassColor="rgba(255, 107, 0, 0.38)"
             >
-              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[glint_1s_ease-out_infinite]" />
-
               {status === 'loading' ? (
                 <Loader2 className="w-6 h-6 animate-spin" />
               ) : status === 'success' ? (
@@ -110,7 +107,7 @@ export default function HeroSlide({ onSuccess }: Props) {
               ) : (
                 <span>JOIN THE PRIDE</span>
               )}
-            </motion.button>
+            </GlassButton>
           </form>
         </motion.div>
       </div>
