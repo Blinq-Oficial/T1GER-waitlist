@@ -19,29 +19,24 @@ function cleanString(value) {
 
 function getSupabaseUrl() {
   const rawUrl = cleanString(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
-  const candidate = rawUrl.replace(/^https?:\/\/https?:\/\//i, 'https://') || DEFAULT_SUPABASE_URL;
-  const withProtocol = /^https?:\/\//i.test(candidate) ? candidate : `https://${candidate}`;
-
-  try {
-    const url = new URL(withProtocol);
-    if (url.hostname !== EXPECTED_SUPABASE_HOST) {
-      console.error('Unexpected Supabase host configuration.');
-      return DEFAULT_SUPABASE_URL;
+  if (rawUrl && rawUrl.includes('pzxjwqnxnkxtmwovzsuv')) {
+    const candidate = rawUrl.replace(/^https?:\/\/https?:\/\//i, 'https://');
+    const withProtocol = /^https?:\/\//i.test(candidate) ? candidate : `https://${candidate}`;
+    try {
+      return new URL(withProtocol).origin;
+    } catch {
+      console.error('Invalid custom Supabase URL, falling back to default.');
     }
-
-    return url.origin;
-  } catch {
-    console.error('Invalid Supabase URL configuration.');
-    return DEFAULT_SUPABASE_URL;
   }
+  return DEFAULT_SUPABASE_URL;
 }
 
 function getSupabaseAnonKey() {
-  return cleanString(
-    process.env.SUPABASE_ANON_KEY ||
-      process.env.VITE_SUPABASE_ANON_KEY ||
-      DEFAULT_SUPABASE_ANON_KEY
-  );
+  const rawKey = cleanString(process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY);
+  if (rawKey && rawKey.includes('InB6eGp3cW54bmt4dG13b3Z6c3V2Iiw')) {
+    return rawKey;
+  }
+  return DEFAULT_SUPABASE_ANON_KEY;
 }
 
 function normalizeBody(body = {}) {
@@ -220,8 +215,6 @@ export async function handleWaitlistSignup(req, res) {
 
     if (!user) {
       const payload = { email };
-      if (name) payload.name = name;
-      if (referredBy) payload.referred_by = referredBy;
 
       const insertResult = await supabaseRequest('waitlist', {
         method: 'POST',
