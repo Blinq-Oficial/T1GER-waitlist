@@ -1,21 +1,58 @@
 import { Resend } from 'resend';
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://pzxjwqnxnkxtmwovzsuv.supabase.co';
-const SUPABASE_ANON_KEY =
-  process.env.SUPABASE_ANON_KEY ||
-  process.env.VITE_SUPABASE_ANON_KEY ||
+const DEFAULT_SUPABASE_URL = 'https://pzxjwqnxnkxtmwovzsuv.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6eGp3cW54bmt4dG13b3Z6c3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjQyNDAsImV4cCI6MjA5MzQwMDI0MH0.3aS948dQbncMdO5ihsJPWuxs9Mxq2HZPCZEZIHGlwVc';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function jsonResponse(res, status, body) {
+  res.setHeader?.('Cache-Control', 'no-store');
   return res.status(status).json(body);
 }
 
+function cleanString(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function getSupabaseUrl() {
+  const rawUrl = cleanString(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
+  const candidate = rawUrl || DEFAULT_SUPABASE_URL;
+  const withProtocol = /^https?:\/\//i.test(candidate) ? candidate : `https://${candidate}`;
+
+  try {
+    return new URL(withProtocol).origin;
+  } catch {
+    console.error('Invalid Supabase URL configuration.');
+    return DEFAULT_SUPABASE_URL;
+  }
+}
+
+function getSupabaseAnonKey() {
+  return cleanString(
+    process.env.SUPABASE_ANON_KEY ||
+      process.env.VITE_SUPABASE_ANON_KEY ||
+      DEFAULT_SUPABASE_ANON_KEY
+  );
+}
+
+function normalizeBody(body = {}) {
+  if (typeof body === 'string') {
+    try {
+      return JSON.parse(body);
+    } catch {
+      return {};
+    }
+  }
+
+  return body && typeof body === 'object' ? body : {};
+}
+
 function normalizeSignup(body = {}) {
-  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
-  const name = typeof body.name === 'string' ? body.name.trim() : '';
-  const referredBy = typeof body.referredBy === 'string' ? body.referredBy.trim() : '';
+  const data = normalizeBody(body);
+  const email = typeof data.email === 'string' ? data.email.trim().toLowerCase() : '';
+  const name = typeof data.name === 'string' ? data.name.trim() : '';
+  const referredBy = typeof data.referredBy === 'string' ? data.referredBy.trim() : '';
 
   return {
     email,
@@ -25,17 +62,28 @@ function normalizeSignup(body = {}) {
 }
 
 async function supabaseRequest(path, options = {}) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+  const supabaseUrl = getSupabaseUrl();
+  const supabaseAnonKey = getSupabaseAnonKey();
+  const response = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
     ...options,
     headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      apikey: supabaseAnonKey,
+      Authorization: `Bearer ${supabaseAnonKey}`,
       ...options.headers,
     },
   });
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
+  let data = null;
+
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { message: text.slice(0, 500) };
+    }
+  }
+
   return { response, data };
 }
 
@@ -68,15 +116,24 @@ function getRefCode(user, position) {
   return `T1GER-${position}`;
 }
 
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 async function sendWelcomeEmail({ email, name, position, refCode }) {
   if (!process.env.RESEND_API_KEY) {
     console.warn('RESEND_API_KEY is not set; waitlist email was skipped.');
-    return;
+    return false;
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const shareUrl = `https://t1ger.app/?ref=${encodeURIComponent(refCode)}`;
-  const greeting = name ? `, ${name}` : '';
+  const greeting = name ? `, ${escapeHtml(name)}` : '';
 
   await resend.emails.send({
     from: process.env.RESEND_FROM || 'T1GER <equipo@t1ger.app>',
@@ -98,6 +155,8 @@ async function sendWelcomeEmail({ email, name, position, refCode }) {
       </div>
     `,
   });
+
+  return true;
 }
 
 export async function handleWaitlistSignup(req, res) {
@@ -105,7 +164,7 @@ export async function handleWaitlistSignup(req, res) {
     return jsonResponse(res, 405, { error: 'Method not allowed' });
   }
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  if (!getSupabaseUrl() || !getSupabaseAnonKey()) {
     console.error('Missing Supabase configuration.');
     return jsonResponse(res, 500, { error: 'Server configuration error.' });
   }
@@ -167,17 +226,18 @@ export async function handleWaitlistSignup(req, res) {
     const position = getPosition(user, totalCount);
     const refCode = getRefCode(user, position);
 
-    if (!alreadyJoined) {
-      try {
-        await sendWelcomeEmail({ email, name, position, refCode });
-      } catch (emailError) {
-        console.error('Resend email error:', emailError);
-      }
+    let emailSent = false;
+
+    try {
+      emailSent = await sendWelcomeEmail({ email, name, position, refCode });
+    } catch (emailError) {
+      console.error('Resend email error:', emailError);
     }
 
     return jsonResponse(res, 200, {
       success: true,
       alreadyJoined,
+      emailSent,
       position,
       refCode,
       shareUrl: `https://t1ger.app/?ref=${encodeURIComponent(refCode)}`,
