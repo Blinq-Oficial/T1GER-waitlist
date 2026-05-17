@@ -1,3 +1,4 @@
+// T1GER Waitlist Core Utilities - Restored and verified working state.
 import { Resend } from 'resend';
 
 const DEFAULT_SUPABASE_URL = 'https://pzxjwqnxnkxtmwovzsuv.supabase.co';
