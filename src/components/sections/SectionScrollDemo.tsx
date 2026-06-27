@@ -16,7 +16,7 @@ export default function SectionScrollDemo() {
           observer.disconnect();
         }
       },
-      { rootMargin: "600px 0px" }
+      { rootMargin: "180px 0px" }
     );
 
     observer.observe(section);
@@ -25,7 +25,6 @@ export default function SectionScrollDemo() {
 
   return (
     <section ref={sectionRef} className="relative w-full md:pl-40 bg-[#050505] border-t border-white/5 py-12 overflow-hidden">
-      {/* Background ambient light */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-radial from-[rgba(255,107,0,0.04)] to-transparent pointer-events-none" />
 
       <ContainerScroll
@@ -54,7 +53,6 @@ export default function SectionScrollDemo() {
         }
       >
         <div className="relative w-full h-full bg-zinc-950 overflow-hidden flex flex-col">
-          {/* Real video running as the mobile app screen */}
           <div className="absolute inset-0 z-0">
             {shouldLoadVideo ? (
               <video
@@ -70,17 +68,14 @@ export default function SectionScrollDemo() {
             ) : (
               <div className="h-full w-full bg-[radial-gradient(circle_at_50%_35%,rgba(255,107,0,0.22),rgba(5,5,5,0.86)_55%,#050505_100%)]" />
             )}
-            {/* Dark glass cover overlays to make it look premium */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none" />
           </div>
 
-          {/* Interactive UI Overlay layer inside app (mock status bar + app indicator) */}
           <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-black/60 to-transparent z-20 flex justify-between items-end px-6 pb-2 pointer-events-none font-mono text-[9px] text-zinc-400">
             <span>T1GER // OS</span>
             <span>9:41 AM</span>
           </div>
 
-          {/* Home swipe indicator at bottom of screen */}
           <div className="absolute inset-x-0 bottom-2.5 h-1 z-20 flex justify-center pointer-events-none">
             <div className="w-32 h-1 bg-white/40 rounded-full" />
           </div>

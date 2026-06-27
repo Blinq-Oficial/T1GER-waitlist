@@ -117,7 +117,7 @@ export default function Sidebar({ isPreloaded }: Props) {
             aria-label="Join the waitlist"
             className="rounded-full bg-[#FF6B00] px-4 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-black shadow-[0_0_12px_rgba(255,107,0,0.3)] hover:scale-105 transition-transform"
           >
-            Unirse
+            Get Rank
           </button>
 
           <button

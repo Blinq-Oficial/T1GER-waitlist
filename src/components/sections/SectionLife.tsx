@@ -105,10 +105,10 @@ export default function SectionLife() {
                   onChange={(e) => setAge(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="00"
-                  className="w-24 sm:w-32 bg-transparent border-none text-center font-outfit font-black text-white outline-none focus:ring-0 placeholder-white/5"
-                  style={{ fontSize: 'clamp(4rem, 15vw, 7rem)', lineHeight: 1 }}
+                  className="w-32 sm:w-40 bg-transparent border-none pb-3 text-center font-outfit font-black text-white outline-none focus:ring-0 placeholder-white/10"
+                  style={{ fontSize: 'clamp(4rem, 14vw, 7rem)', lineHeight: 1.08 }}
                 />
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 sm:w-32 h-[1px] bg-gradient-to-r from-transparent via-[#FF6B00] to-transparent opacity-50" />
+                <div className="absolute -bottom-1 left-1/2 h-[1px] w-32 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#FF6B00] to-transparent opacity-70 sm:w-40" />
               </div>
               <button
                 onClick={handleSubmitAge}

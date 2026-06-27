@@ -215,8 +215,11 @@ export async function handleWaitlistSignup(req, res) {
 
     if (!user) {
       const payload = { email };
+      if (referredBy) {
+        payload.referred_by = referredBy;
+      }
 
-      const insertResult = await supabaseRequest('waitlist', {
+      let insertResult = await supabaseRequest('waitlist', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,6 +227,18 @@ export async function handleWaitlistSignup(req, res) {
         },
         body: JSON.stringify(payload),
       });
+
+      if (!insertResult.response.ok && referredBy && insertResult.data?.code === 'PGRST204') {
+        console.warn('waitlist.referred_by is not available; retrying signup without referral metadata.');
+        insertResult = await supabaseRequest('waitlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Prefer: 'return=representation',
+          },
+          body: JSON.stringify({ email }),
+        });
+      }
 
       if (!insertResult.response.ok) {
         if (insertResult.data?.code === '23505') {

@@ -137,7 +137,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
     }
   };
 
-  const shareUrl = waitlistShareUrl || `https://t1ger.app/?ref=${waitlistPosition}`;
+  const shareUrl = waitlistShareUrl || 'https://t1ger.app/';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -303,9 +303,9 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.8, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
-                className="mb-4 md:mb-8"
+                className="mb-4 md:mb-6"
               >
-                <span className="font-mono text-white/30 tracking-[0.5em] text-xs sm:text-sm uppercase">
+                <span className="inline-flex rounded-full border border-[#FF6B00]/30 bg-[#FF6B00]/10 px-4 py-2 font-mono text-[#FF6B00] tracking-[0.22em] text-[10px] sm:text-xs uppercase font-black shadow-[0_0_24px_rgba(255,107,0,0.08)]">
                   THE DUOLINGO FOR FOUNDERS
                 </span>
               </motion.div>
@@ -314,13 +314,13 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 initial={{ opacity: 0, y: 20 }}
                 animate={isPreloaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.7, delay: 0.25, ease: [0.23, 1, 0.32, 1] }}
-                className="mb-5 md:mb-8 max-w-3xl"
+                className="mb-4 md:mb-6 max-w-3xl"
               >
-                <h1 className="font-outfit font-black text-white uppercase leading-[0.96] tracking-tight text-[clamp(1.95rem,7.5vw,4.75rem)]">
-                  Build discipline through daily missions.
+                <h1 className="font-outfit font-black text-white uppercase leading-[0.98] tracking-tight text-[clamp(1.85rem,6.3vw,4.05rem)]">
+                  Learn and build discipline daily.
                 </h1>
                 <p className="mt-3 mx-auto max-w-2xl text-white/75 font-mono text-[10px] sm:text-xs leading-relaxed tracking-[0.08em] uppercase">
-                  Submit proof. Earn XP. Build streaks. Compete with your squad.
+                  Daily missions. Proof-based XP. Squad accountability.
                 </p>
               </motion.div>
 
@@ -328,13 +328,13 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 initial={{ opacity: 0 }}
                 animate={isPreloaded ? { opacity: 1 } : { opacity: 0 }}
                 transition={{ duration: 1.5, delay: 0.3 }}
-                className="mb-4 md:mb-8 relative"
+                className="mb-4 md:mb-6 relative"
               >
                 <div
                   aria-hidden="true"
                   className="font-outfit font-black uppercase leading-[0.82] select-none"
                   style={{
-                    fontSize: 'clamp(4rem, 18vw, 16rem)',
+                    fontSize: 'clamp(3.5rem, 14vw, 12rem)',
                     letterSpacing: '-0.02em',
                     color: 'rgba(255,255,255,0.07)',
                     WebkitTextStroke: '1.5px rgba(255,255,255,0.34)',
@@ -364,7 +364,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.8, delay: 1.2, ease: [0.23, 1, 0.32, 1] }}
-                className="mb-7 md:mb-10"
+                className="mb-6 md:mb-8"
               >
                 <p
                   className="font-outfit font-black text-white/90 uppercase tracking-[0.06em]"
@@ -374,7 +374,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   <span className="text-[#CCFF00]">HUNT GREATNESS.</span>
                 </p>
                 <p className="mt-3 font-mono text-[#CCFF00]/80 text-[10px] sm:text-xs tracking-[0.18em] uppercase">
-                  Private August waitlist now open.
+                  Private beta waitlist now open.
                 </p>
               </motion.div>
 
@@ -449,10 +449,10 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                       {isLoading ? (
                         <>
                           <Loader2 className="w-5 h-5 animate-spin text-white" />
-                          <span>CARGANDO...</span>
+                          <span>SECURING...</span>
                         </>
                       ) : (
-                        'UNIRSE A LA WAITLIST'
+                        'GET MY EARLY ACCESS RANK'
                       )}
                     </GlassButton>
 
@@ -466,7 +466,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   </div>
                 </motion.form>
                 <p className="mt-5 text-white/45 font-mono text-[10px] leading-relaxed tracking-[0.08em] uppercase">
-                  No spam. Your rank and referral link appear instantly after joining.
+                  Instant rank. Referral link after signup. No spam.
                 </p>
               </div>
             </motion.div>

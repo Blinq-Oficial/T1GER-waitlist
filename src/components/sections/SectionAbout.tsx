@@ -55,7 +55,7 @@ export default function SectionAbout() {
           <TextReveal
             className="text-white leading-[0.95] text-[3rem] md:text-[5rem] lg:text-[7rem] font-outfit font-black tracking-tighter uppercase"
           >
-            PRODUCTIVITY, WEAPONIZED.
+            PROOF BEATS MOTIVATION.
           </TextReveal>
 
           <div className="mt-12 max-w-2xl">
@@ -63,7 +63,7 @@ export default function SectionAbout() {
               className="text-white/40 leading-[1.4] text-xl md:text-3xl font-sans font-light tracking-tight"
               delay={150}
             >
-              Traditional to-do lists fail because they lack consequence. T1GER fuses gamification with ruthless survival mechanics.
+              T1GER gives founders one daily mission, one proof check, and one score that compounds.
             </TextReveal>
           </div>
         </div>
@@ -81,26 +81,23 @@ export default function SectionAbout() {
               title: 'DAILY MISSIONS',
               col: 'lg:col-span-5',
               description: [
-                "Bite-sized tracks in business, mindset, and execution.",
-                "Build your 7-day streak and level up real-world skills."
+                "One clear action every day."
               ],
               delay: 0,
             },
             {
-              title: 'SURVIVAL MECHANICS',
+              title: 'PROOF CHECKS',
               col: 'lg:col-span-6 lg:col-start-7',
               description: [
-                "Meet Tigo, your digital apex predator.",
-                "Discipline feeds him. Procrastination starves him."
+                "Upload evidence before XP counts."
               ],
               delay: 150,
             },
             {
-              title: 'MEMENTO MORI',
+              title: 'STREAKS',
               col: 'lg:col-span-5',
               description: [
-                "A psychological visualizer maps your exact lifespan.",
-                "Watch your time disappear. Stop scrolling. Start hunting."
+                "Consistency turns into status."
               ],
               delay: 300,
             },
@@ -108,8 +105,7 @@ export default function SectionAbout() {
               title: 'SQUAD ACCOUNTABILITY',
               col: 'lg:col-span-6 lg:col-start-7',
               description: [
-                "Skip a task, and your entire squad's pride takes damage.",
-                "We turned social pressure into a weapon for mutual growth."
+                "Your team sees the standard."
               ],
               delay: 450,
             },

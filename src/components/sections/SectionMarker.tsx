@@ -94,7 +94,7 @@ export default function SectionMarker() {
         </h2>
 
         <p className="font-sans text-xs sm:text-sm text-zinc-500 tracking-[0.05em] max-w-lg mt-10 leading-relaxed font-medium uppercase">
-          T1GER is built specifically to cultivate relentless focus, mechanical consistency, and elite execution for high-performance operators.
+          Built for founders who need proof, pressure, and momentum.
         </p>
       </div>
     </section>

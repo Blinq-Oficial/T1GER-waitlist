@@ -118,7 +118,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
     }
   };
 
-  const shareUrl = waitlistShareUrl || `https://t1ger.app/?ref=${waitlistPosition}`;
+  const shareUrl = waitlistShareUrl || 'https://t1ger.app/';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -329,9 +329,9 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                 <form
                   onSubmit={handleSubmit}
                   noValidate
-                  className="relative w-full h-[60px] group transition-all duration-300 rounded-full"
+                  className="relative flex w-full flex-col gap-3 rounded-[2rem] transition-all duration-300 sm:h-[60px] sm:flex-row sm:rounded-full group"
                 >
-                  <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#FF6B00] transition-colors z-20" />
+                  <ShieldCheck className="absolute left-5 top-[30px] -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#FF6B00] transition-colors z-20 sm:top-1/2" />
                   <input
                     id="join-email"
                     name="email"
@@ -346,14 +346,14 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                       setEmail(e.target.value);
                       setErrorText('');
                     }}
-                    className="w-full h-[60px] pl-13 pr-[160px] rounded-full outline-none transition-all duration-300 placeholder-white/25 text-white font-mono tracking-[0.15em] text-xs sm:text-sm bg-white/[0.03] border border-white/10 focus:border-[#FF6B00] focus:bg-white/[0.06] focus:ring-1 focus:ring-[#FF6B00]/30 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]"
+                    className="w-full h-[60px] pl-13 pr-6 sm:pr-[160px] rounded-full outline-none transition-all duration-300 placeholder-white/25 text-white font-mono tracking-[0.15em] text-xs sm:text-sm bg-white/[0.03] border border-white/10 focus:border-[#FF6B00] focus:bg-white/[0.06] focus:ring-1 focus:ring-[#FF6B00]/30 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]"
                   />
 
-                  <div className="absolute top-[6px] right-[6px] bottom-[6px] z-10">
+                  <div className="z-10 sm:absolute sm:top-[6px] sm:right-[6px] sm:bottom-[6px]">
                     <button
                       type="submit"
                       disabled={status === 'loading'}
-                      className="h-full px-5 sm:px-6 rounded-full font-mono text-[10px] tracking-[0.15em] font-black uppercase text-white transition-all duration-300 active:scale-95 hover:brightness-110 disabled:opacity-50 disabled:cursor-wait flex items-center justify-center min-w-[140px] border border-[#FF6B00]/25 shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] gap-2"
+                      className="h-[54px] w-full px-5 sm:h-full sm:w-auto sm:px-6 rounded-full font-mono text-[10px] tracking-[0.15em] font-black uppercase text-white transition-all duration-300 active:scale-95 hover:brightness-110 disabled:opacity-50 disabled:cursor-wait flex items-center justify-center sm:min-w-[140px] border border-[#FF6B00]/25 shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] gap-2"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255, 107, 0, 0.6) 0%, rgba(255, 107, 0, 0.9) 100%)',
                         backdropFilter: 'blur(8px)',
@@ -362,10 +362,10 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                       {status === 'loading' ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin text-white" />
-                          <span>CARGANDO...</span>
+                          <span>SECURING...</span>
                         </>
                       ) : (
-                        'UNIRSE A LA WAITLIST'
+                        'GET MY EARLY ACCESS RANK'
                       )}
                     </button>
                   </div>

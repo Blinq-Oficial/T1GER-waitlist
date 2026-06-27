@@ -10,13 +10,19 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+
+    if (prefersReducedMotion || isTouchDevice) {
+      return;
+    }
+
     const lenis = new Lenis({
       lerp: 0.08, // Physics-based smoothing for a lighter feel
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1.0, // Standard wheel speed
-      touchMultiplier: 1.5, // Better mobile feel
     });
 
     lenisRef.current = lenis;
