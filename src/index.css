@@ -16,9 +16,9 @@
   --animate-pulse-slow: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* ─── CSS Custom Properties ─── */
+/* ─── Elite CSS Custom Properties ─── */
 :root {
-  --page-margin: 1.5625rem;
+  --page-margin: 3rem;
   --header-height: 3.0625rem;
   --ease-reveal: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
@@ -30,10 +30,18 @@
 }
 
 @media (min-width: 768px) {
-  :root { --page-margin: 2.1875rem; }
+  :root { --page-margin: 5rem; }
 }
 @media (min-width: 1024px) {
-  :root { --page-margin: 2.8125rem; }
+  :root { --page-margin: 8rem; }
+}
+
+/* ─── Hardware Acceleration ─── */
+.hw-accel {
+  will-change: transform, opacity, filter;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 /* ─── Global Reset & Base ─── */
@@ -46,9 +54,6 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
   position: relative;
 }
 
@@ -64,6 +69,17 @@ body {
 
 section {
   position: relative;
+}
+
+:focus-visible {
+  outline: 2px solid #CCFF00;
+  outline-offset: 4px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  box-shadow: 0 0 0 4px rgba(204, 255, 0, 0.18);
 }
 
 /* Hide default cursor on desktop (custom cursor takes over) */

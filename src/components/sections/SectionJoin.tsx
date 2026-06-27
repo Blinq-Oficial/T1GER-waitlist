@@ -4,6 +4,16 @@ import { Loader2, Heart, Copy, Check, Share2, Sparkles, MessageCircle, Send, Shi
 import { joinWaitlist } from '../../lib/waitlistSignup';
 import { RatingInteraction } from '../ui/emoji-rating';
 
+type ConfettiParticle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  color: string;
+  size: number;
+};
+
 interface Props {
   onSuccess: (position: number, shareUrl?: string) => void;
   isSignedUp: boolean;
@@ -30,7 +40,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const particles: any[] = [];
+    const particles: ConfettiParticle[] = [];
     const colors = ["#FF6B00", "#10b981", "#fbbf24", "#f472b6", "#fff"];
 
     canvas.width = 600;
@@ -135,11 +145,11 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
   return (
     <section
       id="join"
-      className="relative px-6 sm:px-12 md:pl-40 flex flex-col items-center justify-center bg-section-warm overflow-hidden"
+      className="relative px-6 sm:px-12 md:pl-40 flex flex-col items-center justify-center bg-[#020202] overflow-hidden hw-accel"
       style={{
-        minHeight: '90vh',
-        paddingTop: 'clamp(5rem, 10vw, 10rem)',
-        paddingBottom: 'clamp(5rem, 10vw, 10rem)',
+        minHeight: '100vh',
+        paddingTop: 'clamp(8rem, 15vw, 15rem)',
+        paddingBottom: 'clamp(8rem, 15vw, 15rem)',
       }}
     >
       {/* Immersive Style Tags for waitlist-hero check animations */}
@@ -186,7 +196,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
 
       {/* Immersive 3D Spinning Background Discs */}
       <div
-        className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0"
+        className="absolute inset-0 hidden md:block w-full h-full pointer-events-none overflow-hidden z-0"
         style={{
           perspective: "1200px",
           transform: "perspective(1200px) rotateX(15deg)",
@@ -208,6 +218,8 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
             <img
               src="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=2048"
               alt=""
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover opacity-30"
             />
           </div>
@@ -227,6 +239,8 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
             <img
               src="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=1024"
               alt=""
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover opacity-40"
             />
           </div>
@@ -245,7 +259,9 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
           >
             <img
               src="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png"
-              alt="App Icon"
+              alt=""
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover opacity-60"
             />
           </div>
@@ -283,20 +299,17 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
 
               {/* Heading */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-                className="text-center mb-10"
+                viewport={{ once: true, margin: "-10%" }}
+                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                className="text-center mb-16 relative z-10 hw-accel"
               >
-                <h2
-                  className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.9] text-[2.5rem] sm:text-[4rem]"
-                >
-                  CLAIM YOUR{' '}
-                  <span className="text-[#FF6B00]">SPOT</span>
+                <h2 className="font-outfit font-black text-white text-[3rem] md:text-[5rem] lg:text-[7rem] leading-[0.9] tracking-tighter uppercase mb-6">
+                  CLAIM YOUR<br />POSITION.
                 </h2>
-                <p className="mt-3 text-white/30 font-mono text-xs sm:text-sm tracking-wider">
-                  The protocol activates soon. Secure your position.
+                <p className="text-white/40 font-mono text-xs sm:text-sm tracking-[0.2em] uppercase max-w-xl mx-auto font-bold">
+                  Only the top 1% survive the waitlist.
                 </p>
               </motion.div>
 
@@ -320,8 +333,12 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                 >
                   <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#FF6B00] transition-colors z-20" />
                   <input
+                    id="join-email"
+                    name="email"
                     type="email"
                     required
+                    aria-label="Email address"
+                    autoComplete="email"
                     placeholder="YOUR EMAIL"
                     value={email}
                     disabled={status === 'loading'}
@@ -336,16 +353,19 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                     <button
                       type="submit"
                       disabled={status === 'loading'}
-                      className="h-full px-5 sm:px-6 rounded-full font-mono text-[10px] tracking-[0.15em] font-black uppercase text-white transition-all duration-300 active:scale-95 hover:brightness-110 disabled:opacity-50 disabled:cursor-wait flex items-center justify-center min-w-[130px] border border-[#FF6B00]/25 shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)]"
+                      className="h-full px-5 sm:px-6 rounded-full font-mono text-[10px] tracking-[0.15em] font-black uppercase text-white transition-all duration-300 active:scale-95 hover:brightness-110 disabled:opacity-50 disabled:cursor-wait flex items-center justify-center min-w-[140px] border border-[#FF6B00]/25 shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] gap-2"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255, 107, 0, 0.6) 0%, rgba(255, 107, 0, 0.9) 100%)',
                         backdropFilter: 'blur(8px)',
                       }}
                     >
                       {status === 'loading' ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <span>CARGANDO...</span>
+                        </>
                       ) : (
-                        'JOIN WAITLIST'
+                        'UNIRSE A LA WAITLIST'
                       )}
                     </button>
                   </div>
@@ -367,24 +387,6 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                 )}
               </AnimatePresence>
 
-              {/* Donate */}
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5, duration: 0.7 }}
-                className="mt-10 text-center z-20"
-              >
-                <button
-                  onClick={() => window.open('https://donate.worldwildlife.org/give/tigers', '_blank')}
-                  className="inline-flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-full px-5 py-2.5 group hover:border-red-500/20 transition-all duration-500 cursor-pointer"
-                >
-                  <Heart className="w-3.5 h-3.5 text-red-500/40 group-hover:text-red-500 transition-colors" />
-                  <span className="text-white/30 text-xs font-mono group-hover:text-white/50 transition-colors">
-                    Donate $1 to save real tigers
-                  </span>
-                </button>
-              </motion.div>
             </motion.div>
           ) : (
             /* ─── POST-SIGNUP ─── */
@@ -511,21 +513,35 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
           )}
         </AnimatePresence>
 
-        {/* Optional Experience Rating Widget */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-16 flex flex-col items-center justify-center bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-md max-w-sm mx-auto z-20 text-center"
-        >
-          <span className="font-mono text-white/30 tracking-[0.2em] text-[9px] uppercase mb-4 block font-black">
-            OPINION DE OPERADOR
-          </span>
-          <h4 className="font-outfit font-bold text-white text-xs uppercase tracking-wider mb-6">
-            RATE YOUR DISCIPLINE PROTOCOL EXPERIENCE
-          </h4>
-          <RatingInteraction />
-        </motion.div>
+        {isSignedUp && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16 flex flex-col items-center justify-center gap-6 max-w-sm mx-auto z-20 text-center"
+          >
+            <button
+              type="button"
+              onClick={() => window.open('https://donate.worldwildlife.org/give/tigers', '_blank')}
+              className="inline-flex items-center gap-3 bg-white/[0.02] border border-white/[0.08] rounded-full px-5 py-2.5 group hover:border-red-500/30 transition-all duration-500"
+            >
+              <Heart className="w-3.5 h-3.5 text-red-400/70 group-hover:text-red-400 transition-colors" />
+              <span className="text-white/55 text-xs font-mono group-hover:text-white/80 transition-colors">
+                Donate $1 to save real tigers
+              </span>
+            </button>
+
+            <div className="w-full flex flex-col items-center justify-center bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-md">
+              <span className="font-mono text-white/45 tracking-[0.2em] text-[9px] uppercase mb-4 block font-black">
+                Operator feedback
+              </span>
+              <h4 className="font-outfit font-bold text-white text-xs uppercase tracking-wider mb-6">
+                Rate your discipline protocol experience
+              </h4>
+              <RatingInteraction />
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );

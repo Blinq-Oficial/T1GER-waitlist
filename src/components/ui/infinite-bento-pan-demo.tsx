@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { type ComponentType, useMemo } from "react";
 import { Player } from "@remotion/player";
 import { InfiniteBentoPan } from "@/components/ui/infinite-bento-pan";
 
@@ -11,7 +11,7 @@ export default function InfiniteBentoPanDemo() {
     <div className="flex w-full min-h-screen items-center justify-center overflow-hidden bg-background p-6 md:p-10">
       <div className="w-full max-w-[1200px]">
         <Player
-          component={InfiniteBentoPan as any}
+          component={InfiniteBentoPan as ComponentType<Record<string, unknown>>}
           inputProps={props}
           durationInFrames={240}
           fps={30}
@@ -21,6 +21,7 @@ export default function InfiniteBentoPanDemo() {
           loop
           controls={false}
           clickToPlay={false}
+          acknowledgeRemotionLicense
           style={{
             width: "100%",
             height: "auto",

@@ -141,4 +141,5 @@ const GlassButton = React.forwardRef<HTMLButtonElement, GlassButtonProps>(
 );
 GlassButton.displayName = "GlassButton";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { GlassButton, glassButtonVariants };

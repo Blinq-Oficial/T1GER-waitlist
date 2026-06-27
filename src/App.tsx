@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { Suspense, lazy, type ReactNode, useEffect, useRef, useState, useCallback } from 'react';
 import SmoothScroll from './components/animations/SmoothScroll';
 import Preloader from './components/animations/Preloader';
 import CustomCursor from './components/animations/CustomCursor';
@@ -6,17 +6,45 @@ import Sidebar from './components/navigation/Sidebar';
 
 // Sections (in order)
 import SectionHero from './components/sections/SectionHero';
-import SectionMarker from './components/sections/SectionMarker';
-import SectionShowcase from './components/sections/SectionShowcase';
-import SectionScrollDemo from './components/sections/SectionScrollDemo';
-import SectionAbout from './components/sections/SectionAbout';
-import SectionVision from './components/sections/SectionVision';
-import SectionProtocol from './components/sections/SectionProtocol';
-import SectionLife from './components/sections/SectionLife';
-import SectionJoin from './components/sections/SectionJoin';
-import SectionFAQ from './components/sections/SectionFAQ';
+const SectionMarker = lazy(() => import('./components/sections/SectionMarker'));
+const SectionShowcase = lazy(() => import('./components/sections/SectionShowcase'));
+const SectionScrollDemo = lazy(() => import('./components/sections/SectionScrollDemo'));
+const SectionAbout = lazy(() => import('./components/sections/SectionAbout'));
+const SectionVision = lazy(() => import('./components/sections/SectionVision'));
+const SectionProtocol = lazy(() => import('./components/sections/SectionProtocol'));
+const SectionLife = lazy(() => import('./components/sections/SectionLife'));
+const SectionJoin = lazy(() => import('./components/sections/SectionJoin'));
+const SectionFAQ = lazy(() => import('./components/sections/SectionFAQ'));
+const Footer = lazy(() => import('./components/sections/Footer'));
 
-import Footer from './components/sections/Footer';
+function DeferredSection({ children, minHeight = '60vh' }: { children: ReactNode; minHeight?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shouldRender, setShouldRender] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldRender(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '900px 0px' }
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={!shouldRender ? { minHeight } : undefined}>
+      {shouldRender ? children : null}
+    </div>
+  );
+}
 
 export default function App() {
   const [isPreloaded, setIsPreloaded] = useState(false);
@@ -55,37 +83,57 @@ export default function App() {
           />
 
           {/* Section 2: Cinematic Video Bridge */}
-          <SectionMarker />
-          <SectionScrollDemo />
+          <Suspense fallback={null}>
+            <DeferredSection minHeight="55vh">
+              <SectionMarker />
+            </DeferredSection>
+            <DeferredSection minHeight="55rem">
+              <SectionScrollDemo />
+            </DeferredSection>
 
           {/* Section 3: Visual Showcase (purely visual, no text) */}
-          <SectionShowcase />
+          <DeferredSection minHeight="90vh">
+            <SectionShowcase />
+          </DeferredSection>
 
           {/* Section 3: About (visual statement → text) */}
-          <SectionAbout />
+          <DeferredSection minHeight="100vh">
+            <SectionAbout />
+          </DeferredSection>
 
           {/* Section 4: Vision (Numbered Pillars) */}
-          <SectionVision />
+          <DeferredSection minHeight="100vh">
+            <SectionVision />
+          </DeferredSection>
 
           {/* Section 5: The Protocol (Sticker Text Reveals) */}
-          <SectionProtocol />
+          <DeferredSection minHeight="100vh">
+            <SectionProtocol />
+          </DeferredSection>
 
           {/* Section 6: Life Visualizer */}
-          <SectionLife />
+          <DeferredSection minHeight="100vh">
+            <SectionLife />
+          </DeferredSection>
 
           {/* Section 7: Join / Donate */}
-          <SectionJoin
-            onSuccess={handleSignup}
-            isSignedUp={isSignedUp}
-            waitlistPosition={waitlistPosition}
-            waitlistShareUrl={waitlistShareUrl}
-          />
+          <DeferredSection minHeight="100vh">
+            <SectionJoin
+              onSuccess={handleSignup}
+              isSignedUp={isSignedUp}
+              waitlistPosition={waitlistPosition}
+              waitlistShareUrl={waitlistShareUrl}
+            />
+          </DeferredSection>
 
           {/* Section 8: FAQ */}
-          <SectionFAQ />
+          <DeferredSection minHeight="80vh">
+            <SectionFAQ />
 
           {/* Section 9: Footer */}
-          <Footer />
+            <Footer />
+          </DeferredSection>
+          </Suspense>
         </div>
       </div>
     </SmoothScroll>

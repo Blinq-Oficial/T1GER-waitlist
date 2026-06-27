@@ -14,8 +14,8 @@ export default function SectionMarker() {
   // Word cycling logic
   useEffect(() => {
     if (!isInView) {
-      setHighlightActive(false);
-      return;
+      const resetTimeout = setTimeout(() => setHighlightActive(false), 0);
+      return () => clearTimeout(resetTimeout);
     }
 
     // Initial delay highlight trigger when scrolling in

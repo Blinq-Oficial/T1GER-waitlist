@@ -4,6 +4,16 @@ import { Loader2, Sparkles, ChevronRight, ShieldCheck } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
 import { GlassButton } from '../ui/apple-tahoe-liquid-glass-button';
 
+type ConfettiParticle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  color: string;
+  size: number;
+};
+
 interface Props {
   onSuccess: (position: number, shareUrl?: string) => void;
   isSignedUp: boolean;
@@ -31,7 +41,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const particles: any[] = [];
+    const particles: ConfettiParticle[] = [];
     const colors = ["#FF6B00", "#10b981", "#fbbf24", "#f472b6", "#fff"];
 
     canvas.width = 600;
@@ -181,7 +191,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
 
       {/* 3D Perspective Spinning Backdrop Layer */}
       <div
-        className="absolute inset-0 w-full h-full pointer-events-none z-0"
+        className="absolute inset-0 hidden md:block w-full h-full pointer-events-none z-0"
         style={{
           perspective: "1200px",
           transform: "perspective(1200px) rotateX(15deg)",
@@ -203,6 +213,8 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
             <img
               src="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=2048"
               alt=""
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover opacity-50"
             />
           </div>
@@ -222,6 +234,8 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
             <img
               src="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=1024"
               alt=""
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover opacity-60"
             />
           </div>
@@ -240,7 +254,9 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
           >
             <img
               src="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png"
-              alt="App Icon"
+              alt=""
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover opacity-80"
             />
           </div>
@@ -275,7 +291,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
 
       <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-noise" />
 
-      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
+      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto pt-20 md:pt-0">
         <AnimatePresence mode="wait">
           {!isSignedUp ? (
             <motion.div
@@ -287,7 +303,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.8, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
-                className="mb-8"
+                className="mb-4 md:mb-8"
               >
                 <span className="font-mono text-white/30 tracking-[0.5em] text-xs sm:text-sm uppercase">
                   THE DUOLINGO FOR FOUNDERS
@@ -295,19 +311,34 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
               </motion.div>
 
               <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isPreloaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.7, delay: 0.25, ease: [0.23, 1, 0.32, 1] }}
+                className="mb-5 md:mb-8 max-w-3xl"
+              >
+                <h1 className="font-outfit font-black text-white uppercase leading-[0.96] tracking-tight text-[clamp(1.95rem,7.5vw,4.75rem)]">
+                  Build discipline through daily missions.
+                </h1>
+                <p className="mt-3 mx-auto max-w-2xl text-white/75 font-mono text-[10px] sm:text-xs leading-relaxed tracking-[0.08em] uppercase">
+                  Submit proof. Earn XP. Build streaks. Compete with your squad.
+                </p>
+              </motion.div>
+
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={isPreloaded ? { opacity: 1 } : { opacity: 0 }}
                 transition={{ duration: 1.5, delay: 0.3 }}
-                className="mb-8 relative"
+                className="mb-4 md:mb-8 relative"
               >
-                <h1
+                <div
+                  aria-hidden="true"
                   className="font-outfit font-black uppercase leading-[0.82] select-none"
                   style={{
-                    fontSize: 'clamp(3.5rem, 18vw, 18rem)',
+                    fontSize: 'clamp(4rem, 18vw, 16rem)',
                     letterSpacing: '-0.02em',
-                    color: 'transparent',
-                    WebkitTextStroke: '1px rgba(255,255,255,0.15)',
-                    filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))',
+                    color: 'rgba(255,255,255,0.07)',
+                    WebkitTextStroke: '1.5px rgba(255,255,255,0.34)',
+                    filter: 'drop-shadow(0 8px 22px rgba(255,107,0,0.22)) drop-shadow(0 4px 12px rgba(0,0,0,0.6))',
                   }}
                 >
                   {'T1GER'.split('').map((char, i) => (
@@ -326,14 +357,14 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                       {char}
                     </motion.span>
                   ))}
-                </h1>
+                </div>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.8, delay: 1.2, ease: [0.23, 1, 0.32, 1] }}
-                className="mb-12"
+                className="mb-7 md:mb-10"
               >
                 <p
                   className="font-outfit font-black text-white/90 uppercase tracking-[0.06em]"
@@ -342,9 +373,12 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   BUILD DISCIPLINE.<br className="md:hidden" />{' '}
                   <span className="text-[#CCFF00]">HUNT GREATNESS.</span>
                 </p>
+                <p className="mt-3 font-mono text-[#CCFF00]/80 text-[10px] sm:text-xs tracking-[0.18em] uppercase">
+                  Private August waitlist now open.
+                </p>
               </motion.div>
 
-              <div className="w-full max-w-sm relative">
+              <div className="w-full max-w-md relative">
                 {/* Click-through Confetti Canvas */}
                 <canvas
                   ref={canvasRef}
@@ -362,6 +396,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   <div className="relative group">
                     <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#FF6B00] transition-colors" />
                     <input
+                      id="hero-email"
                       name="email"
                       type="email"
                       aria-label="Email address"
@@ -373,7 +408,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                         setErrorText('');
                       }}
                       disabled={isLoading}
-                      className="w-full bg-white/[0.03] border border-white/10 rounded-full pl-13 pr-6 py-4.5 text-white placeholder-white/20 font-mono tracking-[0.15em] text-sm outline-none transition-all duration-300 focus:border-[#FF6B00] focus:bg-white/[0.06] focus:ring-1 focus:ring-[#FF6B00]/30 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]"
+                      className="w-full bg-white/[0.06] border border-white/20 rounded-full pl-13 pr-6 py-4.5 text-white placeholder-white/35 font-mono tracking-[0.12em] text-sm outline-none transition-all duration-300 focus:border-[#FF6B00] focus:bg-white/[0.08] focus:ring-2 focus:ring-[#FF6B00]/50 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]"
                     />
                   </div>
 
@@ -408,28 +443,31 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                     <GlassButton
                       type="submit"
                       disabled={isLoading}
-                      className="w-full py-4.5 text-sm font-mono tracking-[0.2em] font-black uppercase text-white shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] transition-all duration-300 border border-[#FF6B00]/25 hover:border-[#FF6B00]/50"
+                      className="w-full py-4.5 text-sm font-mono tracking-[0.2em] font-black uppercase text-white shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] transition-all duration-300 border border-[#FF6B00]/25 hover:border-[#FF6B00]/50 flex items-center justify-center gap-3"
                       glassColor="rgba(255, 107, 0, 0.38)"
                     >
                       {isLoading ? (
                         <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          <span>CONNECTING...</span>
+                          <Loader2 className="w-5 h-5 animate-spin text-white" />
+                          <span>CARGANDO...</span>
                         </>
                       ) : (
-                        'JOIN THE WAITLIST'
+                        'UNIRSE A LA WAITLIST'
                       )}
                     </GlassButton>
 
                     <button
                       type="button"
                       onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="text-white/20 hover:text-[#FF6B00] font-mono text-[10px] tracking-[0.3em] uppercase transition-colors pt-2"
+                      className="text-white/45 hover:text-[#FF6B00] focus-visible:text-[#FF6B00] font-mono text-[10px] tracking-[0.2em] uppercase transition-colors pt-2"
                     >
-                      [ CALCULATE YOUR TIMELINE ]
+                      Calculate your timeline
                     </button>
                   </div>
                 </motion.form>
+                <p className="mt-5 text-white/45 font-mono text-[10px] leading-relaxed tracking-[0.08em] uppercase">
+                  No spam. Your rank and referral link appear instantly after joining.
+                </p>
               </div>
             </motion.div>
           ) : (

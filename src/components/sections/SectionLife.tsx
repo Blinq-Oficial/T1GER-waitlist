@@ -73,8 +73,8 @@ export default function SectionLife() {
             <span className="font-mono text-[10px] text-[#FF6B00] tracking-[0.4em] uppercase">Biological Countdown</span>
             <span className="w-12 h-[1px] bg-[#FF6B00]/30" />
           </div>
-          <h2 className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.88] text-[clamp(2.5rem,8vw,5.5rem)]">
-            YOUR LIFE <br />
+          <h2 className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.88] text-[clamp(2.5rem,10vw,5.5rem)] text-center w-full">
+            YOUR LIFE <br className="md:hidden" />
             <span className="text-[#FF6B00]">IN MONTHS.</span>
           </h2>
         </motion.div>
@@ -87,25 +87,33 @@ export default function SectionLife() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.98, filter: 'blur(20px)' }}
-              className="flex flex-col items-center bg-black/40 border border-white/10 rounded-3xl p-10 md:p-16 backdrop-blur-xl shadow-2xl"
+              className="flex flex-col items-center justify-center bg-black/40 border border-white/10 rounded-3xl p-8 md:p-16 backdrop-blur-xl shadow-2xl w-full max-w-md mx-auto text-center"
             >
-              <p className="text-white/40 font-mono text-xs tracking-widest uppercase mb-8">Confirm your biological level</p>
-              <div className="relative mb-12">
+              <p className="text-white/40 font-mono text-[10px] sm:text-xs tracking-widest uppercase mb-8 text-center">Confirm your biological level</p>
+              <div className="relative mb-12 flex justify-center w-full">
+                <label htmlFor="life-age" className="sr-only">
+                  Age in years
+                </label>
                 <input
+                  id="life-age"
                   type="number"
+                  inputMode="numeric"
+                  min="1"
+                  max="100"
+                  aria-label="Age in years"
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="00"
-                  className="w-32 bg-transparent border-none text-center font-outfit font-black text-white outline-none focus:ring-0 placeholder-white/5"
-                  style={{ fontSize: '7rem', lineHeight: 1 }}
+                  className="w-24 sm:w-32 bg-transparent border-none text-center font-outfit font-black text-white outline-none focus:ring-0 placeholder-white/5"
+                  style={{ fontSize: 'clamp(4rem, 15vw, 7rem)', lineHeight: 1 }}
                 />
-                <div className="absolute -bottom-2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF6B00] to-transparent opacity-50" />
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 sm:w-32 h-[1px] bg-gradient-to-r from-transparent via-[#FF6B00] to-transparent opacity-50" />
               </div>
               <button
                 onClick={handleSubmitAge}
                 disabled={!isValidAge}
-                className="group relative px-16 py-6 rounded-full bg-[#FF6B00] text-black font-outfit font-black text-sm tracking-[0.2em] uppercase transition-all hover:bg-white hover:scale-105 active:scale-95 disabled:opacity-10 shadow-[0_0_40px_rgba(255,107,0,0.2)]"
+                className="group relative px-8 sm:px-16 py-5 sm:py-6 rounded-full bg-[#FF6B00] text-black font-outfit font-black text-xs sm:text-sm tracking-[0.2em] uppercase transition-all hover:bg-white hover:scale-105 active:scale-95 disabled:opacity-10 shadow-[0_0_40px_rgba(255,107,0,0.2)]"
               >
                 REVEAL TIMELINE <ChevronRight className="inline-block w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
               </button>
@@ -134,6 +142,7 @@ export default function SectionLife() {
                 </div>
                 <button 
                   onClick={handleReset}
+                  aria-label="Reset age timeline"
                   className="bg-white/[0.03] border border-white/5 p-6 rounded-2xl hover:bg-white/10 transition-all flex items-center justify-center"
                 >
                   <RotateCcw className="w-6 h-6 text-white/30" />
@@ -219,6 +228,7 @@ export default function SectionLife() {
                 className="mt-20 w-full flex flex-col items-center"
               >
                 <button
+                  type="button"
                   onClick={() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' })}
                   className="group relative flex items-center gap-6 bg-white text-black px-14 py-6 rounded-full font-outfit font-black text-base uppercase tracking-[0.2em] transition-all hover:bg-[#FF6B00] hover:text-white hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(255,107,0,0.15)]"
                 >

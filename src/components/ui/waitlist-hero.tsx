@@ -2,6 +2,16 @@
 
 import { useState, useRef } from "react"
 
+type ConfettiParticle = {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  life: number
+  color: string
+  size: number
+}
+
 export const WaitlistHero = () => {
   const [email, setEmail] = useState("")
   const [status, setStatus] = useState("idle") // 'idle' | 'loading' | 'success'
@@ -28,7 +38,7 @@ export const WaitlistHero = () => {
 
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    const particles: any[] = []
+    const particles: ConfettiParticle[] = []
     const colors = ["#0079da", "#10b981", "#fbbf24", "#f472b6", "#fff"]
 
     // Resize canvas to cover the button area mostly

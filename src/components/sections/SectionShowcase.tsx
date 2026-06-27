@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { type ComponentType, useRef, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Player } from '@remotion/player';
 import { InfiniteBentoPan } from '../ui/infinite-bento-pan';
@@ -97,7 +97,7 @@ export default function SectionShowcase() {
           className="text-center px-6 my-8"
         >
           <h2
-            className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.88]"
+            className="font-outfit font-black text-white uppercase tracking-tighter leading-[0.88] hw-accel"
             style={{ fontSize: 'clamp(2.5rem, 7vw, 6rem)' }}
           >
             DISCIPLINE IS THE
@@ -116,11 +116,11 @@ export default function SectionShowcase() {
 
         {/* Floating SaaS Tactical Dashboard Container */}
         <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          initial={{ opacity: 0, y: 50, scale: 0.95 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-          className="relative w-[90vw] max-w-[850px] mx-auto mt-6 mb-10 aspect-[16/9] rounded-2xl md:rounded-3xl border border-white/10 bg-black/40 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.85),_inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-md z-20 pointer-events-none"
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-[90vw] max-w-[850px] mx-auto mt-10 mb-16 aspect-[16/9] rounded-[24px] md:rounded-[32px] border border-white/[0.04] bg-black/40 overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.95),_inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-xl z-20 pointer-events-none hw-accel"
         >
           {/* Mac window header */}
           <div className="h-10 bg-white/[0.03] border-b border-white/5 flex items-center justify-between px-6 z-30 relative">
@@ -138,7 +138,7 @@ export default function SectionShowcase() {
           {/* Interactive Player content */}
           <div className="absolute inset-0 top-10 overflow-hidden z-10">
             <Player
-              component={InfiniteBentoPan as any}
+              component={InfiniteBentoPan as ComponentType<Record<string, unknown>>}
               inputProps={{ speed: 0.4, accentColor: "#FF6B00" }}
               durationInFrames={240}
               fps={30}
@@ -148,6 +148,7 @@ export default function SectionShowcase() {
               loop
               controls={false}
               clickToPlay={false}
+              acknowledgeRemotionLicense
               style={{ width: "100%", height: "100%" }}
             />
           </div>

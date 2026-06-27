@@ -23,116 +23,115 @@ export default function SectionAbout() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-20 md:py-40 px-6 sm:px-12 md:pl-40 lg:px-24 flex flex-col items-center overflow-x-hidden bg-section-warm"
+      className="relative py-32 md:py-64 px-6 sm:px-12 md:pl-40 lg:px-24 flex flex-col items-center overflow-hidden bg-[#020202]"
       style={{ minHeight: '100vh', position: 'relative' }}
     >
-      {/* Animated ambient glow */}
+      {/* Animated ambient glow (Hardware Accelerated) */}
       <motion.div
-        className="absolute inset-0 pointer-events-none z-0"
+        className="absolute inset-0 pointer-events-none z-0 hw-accel"
         style={{
           opacity: bgOpacity,
-          background: 'radial-gradient(ellipse at 30% 40%, rgba(255,107,0,0.08) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse at 30% 40%, rgba(255,107,0,0.06) 0%, transparent 70%)',
         }}
       />
 
-      <div className="relative z-10 w-full max-w-5xl mx-auto">
-        {/* ─── Text Content (below the visual) ─── */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto">
+        {/* ─── Elite Editorial Layout ─── */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-          className="mb-8 md:mb-10"
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-16 md:mb-24 flex items-center gap-4 hw-accel"
         >
-          <span className="t-label text-[#FF6B00]/60 tracking-[0.3em]">
-            ● THE TRANSITION
+          <div className="w-12 h-[1px] bg-[#FF6B00]/40" />
+          <span className="font-mono text-[10px] text-[#FF6B00]/80 tracking-[0.4em] uppercase font-black">
+            The Transition
           </span>
         </motion.div>
 
-        {/* Main text paragraphs */}
-        <div className="mb-12">
+        {/* Aggressive Typographic Hero */}
+        <div className="mb-24 md:mb-40 max-w-4xl">
           <TextReveal
-            className="text-white/85 leading-[1.6] text-xl md:text-2xl lg:text-3xl font-sans font-light"
+            className="text-white leading-[0.95] text-[3rem] md:text-[5rem] lg:text-[7rem] font-outfit font-black tracking-tighter uppercase"
           >
             PRODUCTIVITY, WEAPONIZED.
           </TextReveal>
+
+          <div className="mt-12 max-w-2xl">
+            <TextReveal
+              className="text-white/40 leading-[1.4] text-xl md:text-3xl font-sans font-light tracking-tight"
+              delay={150}
+            >
+              Traditional to-do lists fail because they lack consequence. T1GER fuses gamification with ruthless survival mechanics.
+            </TextReveal>
+          </div>
         </div>
 
-        <div className="mb-16">
-          <TextReveal
-            className="text-white/55 leading-[1.6] text-lg md:text-xl lg:text-2xl font-sans font-light"
-            delay={200}
-          >
-            Traditional to-do lists don't work because they don't punish you for failing. T1GER combines gamified learning with ruthless survival mechanics.
-          </TextReveal>
-        </div>
-
-        {/* Feature highlights */}
+        {/* Asymmetric Bento/Editorial Grid */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 mt-12 md:mt-16"
+          viewport={{ once: true, margin: '-10%' }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-y-16 md:gap-y-24 gap-x-12 mt-20 hw-accel text-center lg:text-left"
         >
           {[
             {
-              title: '[ DAILY MISSIONS & XP ]',
+              title: 'DAILY MISSIONS',
+              col: 'lg:col-span-5',
               description: [
-                "Bite-sized, actionable tracks in business, mindset, and execution.",
-                "Build your 7-day streak, earn XP, and level up your real-world skills.",
-                "It’s like Duolingo for building an empire, designed specifically for the top 1%."
+                "Bite-sized tracks in business, mindset, and execution.",
+                "Build your 7-day streak and level up real-world skills."
               ],
               delay: 0,
             },
             {
-              title: '[ SURVIVAL MECHANICS ]',
+              title: 'SURVIVAL MECHANICS',
+              col: 'lg:col-span-6 lg:col-start-7',
               description: [
                 "Meet Tigo, your digital apex predator.",
-                "Your daily discipline feeds him; your procrastination starves him.",
-                "If you try to switch to TikTok during Focus Time, he roars.",
-                "If you abandon your streak, he dies. Actions have real consequences."
+                "Discipline feeds him. Procrastination starves him."
               ],
               delay: 150,
             },
             {
-              title: '[ MEMENTO MORI ]',
+              title: 'MEMENTO MORI',
+              col: 'lg:col-span-5',
               description: [
-                "Stop acting like you have endless time.",
-                "T1GER's psychological visualizer maps out your exact lifespan in individual dots on your screen.",
-                "Watch your time slowly disappear so you finally stop scrolling and start hunting."
+                "A psychological visualizer maps your exact lifespan.",
+                "Watch your time disappear. Stop scrolling. Start hunting."
               ],
               delay: 300,
             },
             {
-              title: '[ WEAPONIZED ACCOUNTABILITY ]',
+              title: 'SQUAD ACCOUNTABILITY',
+              col: 'lg:col-span-6 lg:col-start-7',
               description: [
-                'Invite up to 3 friends to form your "Squad."',
-                "If you skip your daily tasks, everyone's pet takes damage.",
-                "We turned social pressure into a tool for mutual growth.",
-                "You don't just let yourself down; you let the Pride down."
+                "Skip a task, and your entire squad's pride takes damage.",
+                "We turned social pressure into a weapon for mutual growth."
               ],
               delay: 450,
             },
           ].map((feature) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: feature.delay / 1000, ease: [0.19, 1, 0.22, 1] }}
-              className="flex flex-col"
+              viewport={{ once: true, margin: "-5%" }}
+              transition={{ duration: 1, delay: feature.delay / 1000, ease: [0.16, 1, 0.3, 1] }}
+              className={`flex flex-col items-center lg:items-start hw-accel ${feature.col}`}
             >
-              <HighlightSweep delay={feature.delay} className="mb-4 block">
-                <span className="font-outfit font-black text-xl text-white uppercase tracking-wide">
-                  {feature.title}
+              <HighlightSweep delay={feature.delay} className="mb-4 lg:mb-6 block">
+                <span className="font-mono text-sm md:text-base text-white/90 uppercase tracking-[0.2em] font-bold">
+                  // {feature.title}
                 </span>
               </HighlightSweep>
 
               <MultiLineReveal
                 lines={feature.description}
                 delay={feature.delay + 200}
-                lineClassName="text-white/45 text-base leading-relaxed font-sans"
+                lineClassName="text-white/50 text-lg md:text-xl leading-[1.6] font-sans font-light tracking-tight"
               />
             </motion.div>
           ))}

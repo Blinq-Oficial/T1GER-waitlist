@@ -64,9 +64,9 @@ export default function SectionProtocol() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
-          className="mt-16 px-6 text-center max-w-lg"
+          className="mt-16 px-4 md:px-6 text-center max-w-lg mx-auto"
         >
-          <TextReveal className="text-white/35 font-mono text-sm tracking-wider leading-relaxed">
+          <TextReveal className="text-white/40 font-mono text-xs sm:text-sm md:text-base tracking-wider leading-relaxed">
             Your consistency is your weapon. The protocol tracks every habit, every lesson, every win. There is no hiding.
           </TextReveal>
         </motion.div>
