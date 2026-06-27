@@ -187,78 +187,126 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
         .animate-ring {
           animation: celebration-ring 0.8s ease-out forwards;
         }
+        .hero-orbit-backdrop {
+          perspective: 900px;
+          transform: perspective(900px) rotateX(10deg);
+          transform-origin: center bottom;
+          opacity: 0.72;
+        }
+        .hero-orbit-disc {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) rotate(var(--orbit-rotation));
+          z-index: var(--orbit-z);
+          width: var(--orbit-size-mobile);
+          height: var(--orbit-size-mobile);
+          will-change: transform;
+        }
+        @media (min-width: 768px) {
+          .hero-orbit-backdrop {
+            perspective: 1200px;
+            transform: perspective(1200px) rotateX(15deg);
+            opacity: 1;
+          }
+          .hero-orbit-disc {
+            width: var(--orbit-size-desktop);
+            height: var(--orbit-size-desktop);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-spin-slow,
+          .animate-spin-slow-reverse {
+            animation-duration: 180s;
+          }
+        }
       `}} />
 
       {/* 3D Perspective Spinning Backdrop Layer */}
       <div
-        className="absolute inset-0 hidden md:block w-full h-full pointer-events-none z-0"
-        style={{
-          perspective: "1200px",
-          transform: "perspective(1200px) rotateX(15deg)",
-          transformOrigin: "center bottom",
-          opacity: 1,
-        }}
+        className="hero-orbit-backdrop absolute inset-0 block w-full h-full pointer-events-none z-0"
       >
         {/* Image 3 (Back) - spins clockwise */}
         <div className="absolute inset-0 animate-spin-slow">
           <div
-            className="absolute top-1/2 left-1/2"
+            className="hero-orbit-disc"
             style={{
-              width: "2000px",
-              height: "2000px",
-              transform: "translate(-50%, -50%) rotate(279.05deg)",
-              zIndex: 0,
-            }}
+              '--orbit-size-mobile': '920px',
+              '--orbit-size-desktop': '2000px',
+              '--orbit-rotation': '279.05deg',
+              '--orbit-z': 0,
+            } as React.CSSProperties}
           >
-            <img
-              src="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=2048"
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover opacity-50"
-            />
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=1024"
+              />
+              <img
+                src="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=2048"
+                alt=""
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                className="w-full h-full object-cover opacity-35 md:opacity-50"
+              />
+            </picture>
           </div>
         </div>
 
         {/* Image 2 (Middle) - spins counter-clockwise */}
         <div className="absolute inset-0 animate-spin-slow-reverse">
           <div
-            className="absolute top-1/2 left-1/2"
+            className="hero-orbit-disc"
             style={{
-              width: "1000px",
-              height: "1000px",
-              transform: "translate(-50%, -50%) rotate(304.42deg)",
-              zIndex: 1,
-            }}
+              '--orbit-size-mobile': '620px',
+              '--orbit-size-desktop': '1000px',
+              '--orbit-rotation': '304.42deg',
+              '--orbit-z': 1,
+            } as React.CSSProperties}
           >
-            <img
-              src="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=1024"
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover opacity-60"
-            />
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=512"
+              />
+              <img
+                src="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=1024"
+                alt=""
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                className="w-full h-full object-cover opacity-45 md:opacity-60"
+              />
+            </picture>
           </div>
         </div>
 
         {/* Image 1 (Front) - spins clockwise */}
         <div className="absolute inset-0 animate-spin-slow">
           <div
-            className="absolute top-1/2 left-1/2"
+            className="hero-orbit-disc"
             style={{
-              width: "800px",
-              height: "800px",
-              transform: "translate(-50%, -50%) rotate(48.33deg)",
-              zIndex: 2,
-            }}
+              '--orbit-size-mobile': '460px',
+              '--orbit-size-desktop': '800px',
+              '--orbit-rotation': '48.33deg',
+              '--orbit-z': 2,
+            } as React.CSSProperties}
           >
-            <img
-              src="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png"
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover opacity-80"
-            />
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png?scale-down-to=512"
+              />
+              <img
+                src="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png"
+                alt=""
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                className="w-full h-full object-cover opacity-60 md:opacity-80"
+              />
+            </picture>
           </div>
         </div>
       </div>
