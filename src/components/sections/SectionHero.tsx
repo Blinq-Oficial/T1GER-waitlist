@@ -151,7 +151,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
     <section
       id="hero"
       ref={sectionRef}
-      className="relative flex flex-col items-center justify-center px-6 sm:px-12 md:pl-40 overflow-hidden"
+      className="relative flex flex-col items-center justify-center overflow-hidden px-6 sm:px-12 md:px-40"
       style={{ minHeight: '100vh' }}
     >
       {/* Animation Styles */}
@@ -408,7 +408,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 </div>
               </motion.div>
 
-              <div className="relative w-full max-w-4xl">
+              <div className="relative flex w-full max-w-4xl flex-col items-center">
                 {/* Click-through Confetti Canvas */}
                 <canvas
                   ref={canvasRef}
@@ -419,7 +419,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.55, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                  className="mx-auto mt-10 grid w-full max-w-[720px] gap-3 text-left md:mt-8 md:grid-cols-2 md:gap-5"
+                  className="mt-10 grid w-full max-w-[720px] gap-3 text-left md:mt-8 md:grid-cols-2 md:gap-5"
                 >
                   <button
                     type="button"

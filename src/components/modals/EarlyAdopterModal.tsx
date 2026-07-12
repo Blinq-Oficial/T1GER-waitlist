@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Flame, Heart, ShieldCheck, Trophy, X, Zap } from 'lucide-react';
 
@@ -33,6 +34,12 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
     document.body.style.overflow = 'hidden';
     closeButtonRef.current?.focus();
 
@@ -62,12 +69,13 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
       window.removeEventListener('keydown', handleKeyDown);
       previouslyFocused?.focus();
     };
   }, [isOpen, onClose]);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -77,6 +85,7 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onMouseDown={(event) => event.target === event.currentTarget && onClose()}
+          data-lenis-prevent
         >
           <motion.div
             ref={dialogRef}
@@ -84,11 +93,12 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
             aria-modal="true"
             aria-labelledby={titleId}
             aria-describedby={descriptionId}
-            className="relative max-h-[95dvh] w-full max-w-4xl overflow-y-auto rounded-t-[8px] border border-white/15 bg-[#090909] shadow-[0_-20px_80px_rgba(0,0,0,0.75)] sm:rounded-[8px] sm:shadow-[0_30px_100px_rgba(0,0,0,0.8)]"
+            className="relative max-h-[95dvh] w-full max-w-4xl overscroll-contain overflow-y-auto rounded-t-[8px] border border-white/15 bg-[#090909] shadow-[0_-20px_80px_rgba(0,0,0,0.75)] sm:rounded-[8px] sm:shadow-[0_30px_100px_rgba(0,0,0,0.8)]"
             initial={{ opacity: 0, y: 32, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.98 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            data-lenis-prevent
           >
             <div className="h-1.5 w-full bg-[#FF6B00]" />
             <button
@@ -177,6 +187,7 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
