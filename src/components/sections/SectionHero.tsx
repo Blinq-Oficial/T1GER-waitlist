@@ -227,7 +227,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
         className="hero-orbit-backdrop absolute inset-0 block w-full h-full pointer-events-none z-0"
       >
         {/* Image 3 (Back) - spins clockwise */}
-        <div className="absolute inset-0 animate-spin-slow">
+        <div className="absolute inset-0 hidden animate-spin-slow md:block">
           <div
             className="hero-orbit-disc"
             style={{
@@ -240,14 +240,14 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
             <picture>
               <source
                 media="(max-width: 767px)"
-                srcSet="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=1024"
+                srcSet="/images/hero/hero-orbit-back.png"
               />
               <img
-                src="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=2048"
+                src="/images/hero/hero-orbit-back.png"
                 alt=""
-                loading="eager"
+                loading="lazy"
                 decoding="async"
-                fetchPriority="high"
+                fetchPriority="low"
                 className="w-full h-full object-cover opacity-35 md:opacity-50"
               />
             </picture>
@@ -268,14 +268,14 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
             <picture>
               <source
                 media="(max-width: 767px)"
-                srcSet="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=512"
+                srcSet="/images/hero/hero-orbit-middle.png"
               />
               <img
-                src="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=1024"
+                src="/images/hero/hero-orbit-middle.png"
                 alt=""
-                loading="eager"
+                loading="lazy"
                 decoding="async"
-                fetchPriority="high"
+                fetchPriority="low"
                 className="w-full h-full object-cover opacity-45 md:opacity-60"
               />
             </picture>
@@ -296,10 +296,10 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
             <picture>
               <source
                 media="(max-width: 767px)"
-                srcSet="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png?scale-down-to=512"
+                srcSet="/images/hero/hero-orbit-front.png"
               />
               <img
-                src="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png"
+                src="/images/hero/hero-orbit-front.png"
                 alt=""
                 loading="eager"
                 decoding="async"
@@ -417,14 +417,14 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
 
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
-                  animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.8, delay: 1.1, ease: [0.23, 1, 0.32, 1] }}
-                  className="mx-auto grid w-full max-w-[820px] gap-3 text-left md:grid-cols-2 md:gap-5"
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.55, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                  className="mx-auto mt-4 grid w-full max-w-[760px] gap-4 text-left md:mt-6 md:grid-cols-2 md:gap-6"
                 >
                   <button
                     type="button"
                     onClick={onOpenEarlyAdopter}
-                    className="group relative min-h-[184px] overflow-hidden rounded-[8px] border border-[#FF6B00] bg-[#FF6B00] p-4 text-black shadow-[0_18px_60px_rgba(255,107,0,0.18)] transition-transform hover:-translate-y-1 sm:p-5"
+                    className="group relative min-h-[168px] overflow-hidden rounded-[8px] border border-[#FF6B00] bg-[#FF6B00] p-4 text-black shadow-[0_18px_60px_rgba(255,107,0,0.18)] transition-transform hover:-translate-y-1"
                   >
                     <span className="absolute -right-3 -top-7 font-outfit text-[7rem] font-black leading-none text-black/[0.07]">$5+</span>
                     <span className="relative flex h-full flex-col">
@@ -432,7 +432,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                         <Heart className="h-3.5 w-3.5 fill-black" aria-hidden="true" />
                         Access + tiger impact
                       </span>
-                      <span className="mt-2 block font-outfit text-[1.55rem] font-black uppercase leading-[0.92] sm:text-[1.8rem]">Early Adopter</span>
+                      <span className="mt-1.5 block font-outfit text-[1.45rem] font-black uppercase leading-[0.92] sm:text-[1.65rem]">Early Adopter</span>
                       <span className="mt-1.5 block max-w-[18rem] text-[11px] font-semibold leading-relaxed text-black/65 sm:text-xs">Start at $5. Add more at checkout to support wild tiger conservation.</span>
                       <span className="mt-auto flex min-h-11 items-center justify-between gap-3 rounded-[6px] bg-black px-4 py-2.5 font-mono text-[10px] font-black uppercase tracking-[0.08em] text-white sm:text-[11px]">
                         Claim access · Give $5+
@@ -444,16 +444,16 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   <form
                     onSubmit={handleSubmit}
                     noValidate
-                    className="flex min-h-[184px] flex-col rounded-[8px] border border-white/20 bg-black/55 p-4 backdrop-blur-md sm:p-5"
+                    className="flex min-h-[168px] flex-col rounded-[8px] border border-white/20 bg-black/55 p-4 backdrop-blur-md"
                   >
                     <span className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#CCFF00]">Free · No card required</span>
-                    <span className="mt-2 flex items-center gap-2 font-outfit text-[1.55rem] font-black uppercase leading-none text-white sm:text-[1.8rem]">
+                    <span className="mt-1.5 flex items-center gap-2 font-outfit text-[1.45rem] font-black uppercase leading-none text-white sm:text-[1.65rem]">
                       <Mail className="h-5 w-5 text-[#CCFF00]" aria-hidden="true" />
                       Join Waitlist
                     </span>
                     <p className="mt-1.5 text-[11px] leading-relaxed text-white/50 sm:text-xs">Get your rank instantly and move up by sharing your referral link.</p>
 
-                    <div className="relative mt-auto pt-4">
+                    <div className="relative mt-auto pt-3">
                       <ShieldCheck className="absolute bottom-4 left-4 h-4 w-4 text-white/25" aria-hidden="true" />
                       <input
                         id="hero-email"

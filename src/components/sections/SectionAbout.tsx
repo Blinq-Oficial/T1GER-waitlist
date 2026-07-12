@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useScroll, useTransform, motion } from 'framer-motion';
-import TextReveal, { MultiLineReveal } from '../animations/TextReveal';
+import { MultiLineReveal } from '../animations/TextReveal';
 import HighlightSweep from '../animations/HighlightSweep';
 
 
@@ -46,25 +46,29 @@ export default function SectionAbout() {
         >
           <div className="w-12 h-[1px] bg-[#FF6B00]/40" />
           <span className="font-mono text-[10px] text-[#FF6B00]/80 tracking-[0.4em] uppercase font-black">
-            The Transition
+            The System
           </span>
         </motion.div>
 
         {/* Aggressive Typographic Hero */}
-        <div className="mb-24 md:mb-40 max-w-4xl">
-          <TextReveal
-            className="text-white leading-[0.95] text-[3rem] md:text-[5rem] lg:text-[7rem] font-outfit font-black tracking-tighter uppercase"
-          >
-            PROOF BEATS MOTIVATION.
-          </TextReveal>
+        <div className="mb-20 max-w-4xl md:mb-32">
+          <h2 className="font-outfit text-[2.45rem] font-black uppercase leading-[0.94] text-white sm:text-6xl md:text-[5rem] lg:text-[6.25rem]">
+            <MultiLineReveal
+              lines={['ACTION BUILDS', 'MOMENTUM.']}
+              lineClassName="block"
+            />
+          </h2>
 
-          <div className="mt-12 max-w-2xl">
-            <TextReveal
-              className="text-white/40 leading-[1.4] text-xl md:text-3xl font-sans font-light tracking-tight"
-              delay={150}
+          <div className="mt-8 max-w-2xl md:mt-12">
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.15 }}
+              className="max-w-xl text-lg font-light leading-relaxed text-white/50 sm:text-xl md:text-2xl"
             >
-              T1GER gives founders one daily mission, one proof check, and one score that compounds.
-            </TextReveal>
+              One clear mission each day. Complete it, show the work, and build a streak you can see.
+            </motion.p>
           </div>
         </div>
 
@@ -78,18 +82,18 @@ export default function SectionAbout() {
         >
           {[
             {
-              title: 'DAILY MISSIONS',
+              title: 'ONE DAILY MISSION',
               col: 'lg:col-span-5',
               description: [
-                "One clear action every day."
+                "Know exactly what to do today."
               ],
               delay: 0,
             },
             {
-              title: 'PROOF CHECKS',
+              title: 'LOG THE WORK',
               col: 'lg:col-span-6 lg:col-start-7',
               description: [
-                "Upload evidence before XP counts."
+                "Mark the mission complete with proof."
               ],
               delay: 150,
             },
@@ -97,15 +101,15 @@ export default function SectionAbout() {
               title: 'STREAKS',
               col: 'lg:col-span-5',
               description: [
-                "Consistency turns into status."
+                "Make your consistency visible."
               ],
               delay: 300,
             },
             {
-              title: 'SQUAD ACCOUNTABILITY',
+              title: 'BUILD TOGETHER',
               col: 'lg:col-span-6 lg:col-start-7',
               description: [
-                "Your team sees the standard."
+                "Show up alongside people doing the work."
               ],
               delay: 450,
             },

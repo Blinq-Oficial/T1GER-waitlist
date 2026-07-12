@@ -11,6 +11,12 @@ const benefits = [
   { icon: ShieldCheck, title: 'Risk-Free Before Launch', description: 'Request a full refund any time before global launch.' },
 ];
 
+const contributionExamples = [
+  { amount: '$10', tiger: '🐯', label: 'A good start' },
+  { amount: '$25', tiger: '🐯✨', label: 'More habitat' },
+  { amount: '$50+', tiger: '🐯🧡', label: 'Big impact' },
+];
+
 interface EarlyAdopterModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -95,29 +101,19 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
 
-            <div className="grid md:grid-cols-[0.88fr_1.12fr]">
-              <aside className="relative min-h-[230px] overflow-hidden border-b border-white/10 bg-black md:min-h-[620px] md:border-b-0 md:border-r">
-                <video
-                  className="absolute inset-0 h-full w-full object-cover object-center opacity-90"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  aria-label="Wild tiger moving through a dark cinematic scene"
-                >
-                  <source src="/Tiger_lunges_swipes_glass_202604282106.mp4" type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/20 md:bg-gradient-to-t md:from-black md:via-transparent md:to-black/30" />
-                <div className="relative flex h-full min-h-[230px] flex-col justify-end p-5 text-white md:min-h-[620px] md:p-7">
-                  <p className="font-mono text-[9px] font-black uppercase tracking-[0.2em] text-[#CCFF00]">Founding access · Tiger impact</p>
-                  <div className="mt-2 flex items-end justify-between gap-4">
-                    <div>
-                      <p className="font-outfit text-3xl font-black uppercase leading-[0.92] md:text-5xl">Give<br />More Wild</p>
-                    </div>
+            <div className="grid md:grid-cols-[0.76fr_1.24fr]">
+              <aside className="relative min-h-[165px] overflow-hidden border-b border-black/20 bg-[#FF6B00] text-black md:min-h-[570px] md:border-b-0 md:border-r">
+                <div className="absolute inset-0 opacity-10 [background:repeating-linear-gradient(115deg,#000_0,#000_12px,transparent_12px,transparent_34px)]" />
+                <div className="relative flex h-full min-h-[165px] items-end justify-between gap-5 p-5 md:min-h-[570px] md:flex-col md:items-start md:justify-between md:p-7">
+                  <div>
+                    <p className="font-mono text-[9px] font-black uppercase tracking-[0.2em]">Founding access · Tiger impact</p>
+                    <p className="mt-2 font-outfit text-3xl font-black uppercase leading-[0.9] md:text-5xl">Give<br />More Wild</p>
+                  </div>
+                  <div className="flex items-end gap-3 md:w-full md:justify-between">
+                    <span className="text-5xl leading-none md:text-7xl" role="img" aria-label="Happy tiger">🐯</span>
                     <div className="text-right">
-                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.15em] text-white/60">Starts at</p>
-                      <p className="font-outfit text-5xl font-black leading-none text-[#FF6B00] md:text-7xl">$5+</p>
+                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.15em] opacity-60">Starts at</p>
+                      <p className="font-outfit text-5xl font-black leading-none md:text-6xl">$5+</p>
                     </div>
                   </div>
                 </div>
@@ -128,23 +124,25 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
                 <h2 id={titleId} className="max-w-lg pr-10 font-outfit text-[1.75rem] font-black uppercase leading-[0.98] text-white sm:text-4xl">Unlock T1GER. Help Protect Tigers.</h2>
                 <p id={descriptionId} className="mt-3 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">Pay $5 for founding access. Choose a higher amount at checkout to support wild tiger conservation.</p>
 
-                <div className="my-5 grid grid-cols-3 gap-2" aria-label="Example contribution amounts">
-                  {['$10', '$25', '$50+'].map((amount) => (
-                    <div key={amount} className="rounded-[6px] border border-[#FF6B00]/30 bg-[#FF6B00]/10 px-2 py-2.5 text-center">
-                      <span className="font-outfit text-lg font-black text-[#FF6B00]">{amount}</span>
+                <div className="my-6 grid grid-cols-3 gap-2.5" aria-label="Example contribution amounts">
+                  {contributionExamples.map(({ amount, tiger, label }) => (
+                    <div key={amount} className="flex min-h-[72px] flex-col items-center justify-center rounded-[6px] border border-[#FF6B00]/30 bg-[#FF6B00]/10 px-2 py-2 text-center">
+                      <span className="text-xl leading-none" aria-hidden="true">{tiger}</span>
+                      <span className="mt-1 font-outfit text-base font-black text-[#FF6B00]">{amount}</span>
+                      <span className="font-mono text-[7px] font-bold uppercase tracking-[0.08em] text-white/35">{label}</span>
                     </div>
                   ))}
                 </div>
 
-                <ul className="grid gap-3 sm:grid-cols-2">
+                <ul className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
                   {benefits.map(({ icon: Icon, title, description }) => (
-                    <li key={title} className="grid grid-cols-[32px_1fr] gap-2.5">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-[6px] border border-[#FF6B00]/25 bg-[#FF6B00]/10 text-[#FF6B00]">
-                        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                    <li key={title} className="grid grid-cols-[28px_1fr] gap-2.5">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#FF6B00]/25 bg-[#FF6B00]/10 text-[#FF6B00]">
+                        <Icon className="h-3 w-3" aria-hidden="true" />
                       </span>
                       <div>
-                        <h3 className="font-outfit text-sm font-extrabold text-white">{title}</h3>
-                        <p className="mt-0.5 text-[11px] leading-relaxed text-white/45">{description}</p>
+                        <h3 className="font-outfit text-[13px] font-extrabold leading-tight text-white">{title}</h3>
+                        <p className="mt-1 text-[10px] leading-relaxed text-white/45">{description}</p>
                       </div>
                     </li>
                   ))}

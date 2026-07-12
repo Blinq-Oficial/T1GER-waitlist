@@ -30,14 +30,15 @@ export default function App() {
     setWaitlistShareUrl(shareUrl || 'https://t1ger.app/');
     setIsSignedUp(true);
   }, []);
+  const handlePreloadComplete = useCallback(() => setIsPreloaded(true), []);
 
   const path = window.location.pathname.replace(/\/$/, '') || '/';
-  if (path === '/terms') return <LegalPage type="terms" />;
-  if (path === '/privacy') return <LegalPage type="privacy" />;
+  if (path === '/terms') return <><CustomCursor /><LegalPage type="terms" /></>;
+  if (path === '/privacy') return <><CustomCursor /><LegalPage type="privacy" /></>;
 
   return (
     <SmoothScroll>
-      <Preloader onComplete={() => setIsPreloaded(true)} />
+      <Preloader onComplete={handlePreloadComplete} />
       <CustomCursor />
       <div className="relative w-full min-h-screen text-white font-sans">
         <div className="fixed inset-0 z-0 bg-[#050505]">
