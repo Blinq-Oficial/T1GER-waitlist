@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { Sparkle } from 'lucide-react';
 
 /**
  * CustomCursor — Chainzoku style
@@ -12,6 +13,8 @@ export default function CustomCursor() {
     }
     return false;
   });
+  const [isInteractive, setIsInteractive] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
   
   // Track raw mouse position
   const mouseX = useMotionValue(-100);
@@ -38,12 +41,24 @@ export default function CustomCursor() {
     };
 
     const handleMouseLeave = () => setIsVisible(false);
+    const handlePointerOver = (event: PointerEvent) => {
+      const target = event.target;
+      setIsInteractive(target instanceof Element && Boolean(target.closest('a, button, input, textarea, [role="button"]')));
+    };
+    const handlePointerDown = () => setIsPressed(true);
+    const handlePointerUp = () => setIsPressed(false);
 
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('pointerover', handlePointerOver);
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointerup', handlePointerUp);
     document.body.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('pointerover', handlePointerOver);
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
       document.body.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [mouseX, mouseY, isVisible]);
@@ -52,9 +67,19 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Invisible instant dot (optional, keeping it clean by just using the trailing star) */}
-      
-      {/* Trailing Star */}
+      <motion.div
+        className="fixed left-0 top-0 z-[9999] rounded-full border pointer-events-none"
+        style={{ x: smoothX, y: smoothY, translateX: '-50%', translateY: '-50%' }}
+        animate={{
+          width: isInteractive ? 46 : 28,
+          height: isInteractive ? 46 : 28,
+          borderColor: isInteractive ? 'rgba(204,255,0,0.65)' : 'rgba(255,107,0,0.45)',
+          backgroundColor: isInteractive ? 'rgba(204,255,0,0.05)' : 'rgba(255,107,0,0.02)',
+          scale: isPressed ? 0.78 : 1,
+        }}
+        transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+      />
+
       <motion.div
         className="fixed top-0 left-0 pointer-events-none z-[10000] flex items-center justify-center text-[#FF6B00]"
         style={{
@@ -62,23 +87,12 @@ export default function CustomCursor() {
           y: smoothY,
           translateX: '-50%',
           translateY: '-50%',
-          fontSize: '24px',
-          lineHeight: 1,
           filter: 'drop-shadow(0 0 8px rgba(255,107,0,0.6))',
         }}
+        animate={{ scale: isPressed ? 0.65 : isInteractive ? 1.15 : 0.9, rotate: isInteractive ? 45 : 0 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 22 }}
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 0L13.82 8.18L22 10L13.82 11.82L12 20L10.18 11.82L2 10L10.18 8.18L12 0Z"
-            fill="currentColor"
-          />
-        </svg>
+        <Sparkle className="h-4 w-4 fill-current" aria-hidden="true" />
       </motion.div>
     </>
   );
