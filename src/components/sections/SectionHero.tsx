@@ -419,22 +419,22 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.55, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                  className="mx-auto mt-4 grid w-full max-w-[760px] gap-4 text-left md:mt-6 md:grid-cols-2 md:gap-6"
+                  className="mx-auto mt-10 grid w-full max-w-[720px] gap-3 text-left md:mt-8 md:grid-cols-2 md:gap-5"
                 >
                   <button
                     type="button"
                     onClick={onOpenEarlyAdopter}
-                    className="group relative min-h-[168px] overflow-hidden rounded-[8px] border border-[#FF6B00] bg-[#FF6B00] p-4 text-black shadow-[0_18px_60px_rgba(255,107,0,0.18)] transition-transform hover:-translate-y-1"
+                    className="group relative flex min-h-[112px] overflow-hidden rounded-[8px] border border-[#FF6B00] bg-[#FF6B00] p-3 text-black shadow-[0_18px_60px_rgba(255,107,0,0.18)] transition-transform hover:-translate-y-1 sm:min-h-[148px] sm:p-4"
                   >
-                    <span className="absolute -right-3 -top-7 font-outfit text-[7rem] font-black leading-none text-black/[0.07]">$5+</span>
-                    <span className="relative flex h-full flex-col">
-                      <span className="flex items-center gap-2 font-mono text-[9px] font-black uppercase tracking-[0.19em]">
-                        <Heart className="h-3.5 w-3.5 fill-black" aria-hidden="true" />
+                    <span className="absolute -right-3 -top-7 hidden font-outfit text-[7rem] font-black leading-none text-black/[0.07] sm:block">$5+</span>
+                    <span className="relative flex w-full flex-col">
+                      <span className="flex items-center gap-1.5 font-mono text-[8px] font-black uppercase tracking-[0.16em] sm:text-[9px]">
+                        <Heart className="h-3 w-3 fill-black sm:h-3.5 sm:w-3.5" aria-hidden="true" />
                         Access + tiger impact
                       </span>
-                      <span className="mt-1.5 block font-outfit text-[1.45rem] font-black uppercase leading-[0.92] sm:text-[1.65rem]">Early Adopter</span>
-                      <span className="mt-1.5 block max-w-[18rem] text-[11px] font-semibold leading-relaxed text-black/65 sm:text-xs">Start at $5. Add more at checkout to support wild tiger conservation.</span>
-                      <span className="mt-auto flex min-h-11 items-center justify-between gap-3 rounded-[6px] bg-black px-4 py-2.5 font-mono text-[10px] font-black uppercase tracking-[0.08em] text-white sm:text-[11px]">
+                      <span className="mt-1 block font-outfit text-[1.25rem] font-black uppercase leading-none sm:text-[1.55rem]">Early Adopter</span>
+                      <span className="mt-1.5 hidden max-w-[18rem] text-[11px] font-semibold leading-relaxed text-black/65 sm:block">Start at $5. Add more at checkout to support wild tiger conservation.</span>
+                      <span className="mt-2 flex min-h-9 items-center justify-between gap-3 rounded-[6px] bg-black px-3 py-1.5 font-mono text-[8px] font-black uppercase tracking-[0.07em] text-white sm:mt-auto sm:min-h-11 sm:px-4 sm:py-2 sm:text-[10px]">
                         Claim access · Give $5+
                         <ArrowUpRight className="h-4 w-4 shrink-0 text-[#CCFF00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                       </span>
@@ -444,17 +444,17 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   <form
                     onSubmit={handleSubmit}
                     noValidate
-                    className="flex min-h-[168px] flex-col rounded-[8px] border border-white/20 bg-black/55 p-4 backdrop-blur-md"
+                    className="flex min-h-[116px] flex-col rounded-[8px] border border-white/20 bg-black/55 p-3 backdrop-blur-md sm:min-h-[148px] sm:p-4"
                   >
-                    <span className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#CCFF00]">Free · No card required</span>
-                    <span className="mt-1.5 flex items-center gap-2 font-outfit text-[1.45rem] font-black uppercase leading-none text-white sm:text-[1.65rem]">
-                      <Mail className="h-5 w-5 text-[#CCFF00]" aria-hidden="true" />
+                    <span className="font-mono text-[8px] font-black uppercase tracking-[0.18em] text-[#CCFF00] sm:text-[9px]">Free · No card required</span>
+                    <span className="mt-1 flex items-center gap-1.5 font-outfit text-[1.35rem] font-black uppercase leading-none text-white sm:mt-1.5 sm:gap-2 sm:text-[1.55rem]">
+                      <Mail className="h-4 w-4 text-[#CCFF00] sm:h-5 sm:w-5" aria-hidden="true" />
                       Join Waitlist
                     </span>
-                    <p className="mt-1.5 text-[11px] leading-relaxed text-white/50 sm:text-xs">Get your rank instantly and move up by sharing your referral link.</p>
+                    <p className="mt-1.5 hidden text-[11px] leading-relaxed text-white/50 sm:block">Get your rank instantly and move up by sharing your referral link.</p>
 
-                    <div className="relative mt-auto pt-3">
-                      <ShieldCheck className="absolute bottom-4 left-4 h-4 w-4 text-white/25" aria-hidden="true" />
+                    <div className="relative mt-auto pt-1.5 sm:pt-3">
+                      <ShieldCheck className="absolute bottom-2.5 left-3 h-3.5 w-3.5 text-white/25 sm:bottom-4 sm:left-4 sm:h-4 sm:w-4" aria-hidden="true" />
                       <input
                         id="hero-email"
                         name="email"
@@ -468,12 +468,12 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                           setErrorText('');
                         }}
                         disabled={isLoading}
-                        className="h-12 w-full rounded-[6px] border border-white/15 bg-white/[0.06] pl-11 pr-32 font-mono text-xs tracking-[0.08em] text-white outline-none transition-all placeholder:text-white/30 focus:border-[#CCFF00] focus:ring-2 focus:ring-[#CCFF00]/20"
+                        className="h-9 w-full rounded-[6px] border border-white/15 bg-white/[0.06] pl-9 pr-[7.25rem] font-mono text-[9px] tracking-[0.08em] text-white outline-none transition-all placeholder:text-white/30 focus:border-[#CCFF00] focus:ring-2 focus:ring-[#CCFF00]/20 sm:h-12 sm:pl-11 sm:pr-32 sm:text-xs"
                       />
                       <button
                         type="submit"
                         disabled={isLoading}
-                        className="absolute bottom-1.5 right-1.5 flex h-9 min-w-[112px] items-center justify-center rounded-[5px] bg-white px-3 font-mono text-[9px] font-black uppercase tracking-[0.08em] text-black transition-colors hover:bg-[#CCFF00] disabled:opacity-60"
+                        className="absolute bottom-1 right-1 flex h-7 min-w-[100px] items-center justify-center rounded-[5px] bg-white px-2 font-mono text-[8px] font-black uppercase tracking-[0.06em] text-black transition-colors hover:bg-[#CCFF00] disabled:opacity-60 sm:bottom-1.5 sm:right-1.5 sm:h-9 sm:min-w-[112px] sm:px-3 sm:text-[9px]"
                       >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Joining waitlist" /> : 'Join Waitlist'}
                       </button>

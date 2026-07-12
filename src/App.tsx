@@ -6,6 +6,7 @@ import Sidebar from './components/navigation/Sidebar';
 import SectionHero from './components/sections/SectionHero';
 import EarlyAdopterModal from './components/modals/EarlyAdopterModal';
 import LegalPage from './components/legal/LegalPage';
+import EarlyAccessSuccess from './components/early-access/EarlyAccessSuccess';
 
 const SectionMarker = lazy(() => import('./components/sections/SectionMarker'));
 const SectionShowcase = lazy(() => import('./components/sections/SectionShowcase'));
@@ -33,6 +34,7 @@ export default function App() {
   const handlePreloadComplete = useCallback(() => setIsPreloaded(true), []);
 
   const path = window.location.pathname.replace(/\/$/, '') || '/';
+  if (path === '/early-access/success') return <><CustomCursor /><EarlyAccessSuccess /></>;
   if (path === '/terms') return <><CustomCursor /><LegalPage type="terms" /></>;
   if (path === '/privacy') return <><CustomCursor /><LegalPage type="privacy" /></>;
 

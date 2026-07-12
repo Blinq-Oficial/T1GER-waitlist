@@ -157,12 +157,13 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
 
                 <a
                   href={PAYMENT_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="mt-4 flex min-h-14 w-full items-center justify-center gap-2 rounded-[6px] bg-[#FF6B00] px-5 py-4 text-center font-mono text-[11px] font-black uppercase tracking-[0.08em] text-black transition-colors hover:bg-[#CCFF00] sm:text-xs"
                 >
                   Choose $5+ &amp; Claim Founder Access
                   <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                </a>
+                <a href="/early-access/success?demo=1" className="mt-3 block text-center font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-white/45 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white">
+                  Preview what happens after payment
                 </a>
                 <p className="mt-3 text-center text-[10px] leading-relaxed text-white/35">Amounts above the $5 access price are intended for tiger conservation, net of applicable costs. Not tax-deductible. See <a href="/terms#payments-taxes-and-refunds" className="underline underline-offset-2 hover:text-white">Terms</a>.</p>
                 <div className="mt-3 flex items-center justify-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">
