@@ -10,7 +10,7 @@ import EarlyAccessSuccess from './components/early-access/EarlyAccessSuccess';
 
 const SectionMarker = lazy(() => import('./components/sections/SectionMarker'));
 const SectionShowcase = lazy(() => import('./components/sections/SectionShowcase'));
-const SectionGlobalLearning = lazy(() => import('./components/sections/SectionGlobalLearning'));
+const SectionScrollDemo = lazy(() => import('./components/sections/SectionScrollDemo'));
 const SectionAbout = lazy(() => import('./components/sections/SectionAbout'));
 const SectionVision = lazy(() => import('./components/sections/SectionVision'));
 const SectionProtocol = lazy(() => import('./components/sections/SectionProtocol'));
@@ -62,7 +62,7 @@ export default function App() {
           <Suspense fallback={null}>
             <SectionMarker />
             <SectionLife />
-            <SectionGlobalLearning />
+            <SectionScrollDemo />
             <SectionShowcase />
             <SectionAbout />
             <SectionVision />
