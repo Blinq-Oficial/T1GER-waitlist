@@ -6,27 +6,32 @@ const faqs = [
   {
     question: 'What exactly is T1GER?',
     answer:
-      'It’s the first productivity app with actual consequences. Think of it like Duolingo, but for building your business and leveling up your mindset. You complete daily, bite-sized missions to earn XP and build your streak.',
+      'T1GER turns discipline into a daily game. Complete focused, bite-sized missions, submit proof, earn XP, and build momentum alongside your Squad.',
   },
   {
     question: 'What happens if my tiger dies?',
     answer:
-      'If you slack off, procrastinate, or leave the app during Focus Time, your digital apex predator takes damage. If he dies, your streak burns, your multipliers reset, and your Squad is penalized. Actions have real consequences here.',
+      'Missing missions or leaving during Focus Time reduces your tiger’s health. If it reaches zero, your current streak and multipliers reset. The mechanic makes consistency feel tangible without blocking you from starting again.',
   },
   {
     question: 'How does the "Squad" feature work?',
     answer:
-      'Weaponized peer pressure. You link your account with up to 3 friends. If one of you misses a daily mission, the entire Squad’s pet takes a hit. You grow together, or you fail together. You don\'t just let yourself down; you let the Pride down.',
+      'Squads create shared accountability with up to three friends. You can see each other’s progress, protect a shared streak, and help the group stay consistent.',
   },
   {
     question: 'Why do you show my lifespan in dots?',
     answer:
-      "Memento Mori. We visualize your exact estimated lifespan on your screen. It's a psychological trigger designed to wake you up. Stop acting like you have infinite time to build your empire. Watch your time disappear, stop scrolling, and start hunting.",
+      'The timeline is a simple Memento Mori exercise based on an estimated lifespan. It turns abstract time into something visible so you can choose what deserves your attention today.',
   },
   {
     question: 'When do I get access to the app?',
     answer:
-      'We are currently in the closed waitlist phase. By entering your email, you secure your spot in line. Want to get in faster? After you sign up, you\'ll get a unique referral link. Share it with your network to skip ahead, or upgrade to T1GER PRO to bypass the line entirely.',
+      'Joining the waitlist secures your place for the upcoming beta. You can move up by sharing your referral link, or purchase Early Adopter Access for $5 to receive priority entry to the Closed Beta.',
+  },
+  {
+    question: 'What is included with Early Adopter Access?',
+    answer:
+      'You get priority Closed Beta access, six months of T1GER Premium, and a permanent Founder badge. You can request a full refund anytime before the global launch.',
   },
 ];
 

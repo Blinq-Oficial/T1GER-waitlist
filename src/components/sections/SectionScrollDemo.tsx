@@ -47,7 +47,7 @@ export default function SectionScrollDemo() {
               </span>
             </h2>
             <p className="max-w-md mx-auto text-zinc-500 font-sans text-sm md:text-base mb-2">
-              Watch the interactive console transition into a high-performance tactical interface in real-time.
+              See how daily missions, streaks, and proof-based progress come together inside T1GER.
             </p>
           </div>
         }

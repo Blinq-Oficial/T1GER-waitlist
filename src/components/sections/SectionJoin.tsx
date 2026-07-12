@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Heart, Copy, Check, Share2, Sparkles, MessageCircle, Send, ShieldCheck } from 'lucide-react';
+import { Loader2, Copy, Check, Share2, Sparkles, MessageCircle, Send, ShieldCheck, Zap } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
 import { RatingInteraction } from '../ui/emoji-rating';
 
@@ -19,9 +19,10 @@ interface Props {
   isSignedUp: boolean;
   waitlistPosition: number;
   waitlistShareUrl: string;
+  onOpenEarlyAdopter: () => void;
 }
 
-export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, waitlistShareUrl }: Props) {
+export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, waitlistShareUrl, onOpenEarlyAdopter }: Props) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [errorText, setErrorText] = useState('');
@@ -309,7 +310,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                   CLAIM YOUR<br />POSITION.
                 </h2>
                 <p className="text-white/40 font-mono text-xs sm:text-sm tracking-[0.2em] uppercase max-w-xl mx-auto font-bold">
-                  Only the top 1% survive the waitlist.
+                  Join free. Earn a higher rank by sharing.
                 </p>
               </motion.div>
 
@@ -370,6 +371,10 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                     </button>
                   </div>
                 </form>
+                <button type="button" onClick={onOpenEarlyAdopter} className="mx-auto mt-5 flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#FF6B00]/25 bg-black/20 px-5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white/60 transition-all hover:border-[#FF6B00]/60 hover:text-white">
+                  <Zap className="h-3.5 w-3.5 text-[#FF6B00]" aria-hidden="true" />
+                  Or skip the line for $5
+                </button>
               </motion.div>
 
               <AnimatePresence mode="wait">
@@ -520,17 +525,15 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
             viewport={{ once: true }}
             className="mt-16 flex flex-col items-center justify-center gap-6 max-w-sm mx-auto z-20 text-center"
           >
-            <button
-              type="button"
-              onClick={() => window.open('https://donate.worldwildlife.org/give/tigers', '_blank')}
-              className="inline-flex items-center gap-3 bg-white/[0.02] border border-white/[0.08] rounded-full px-5 py-2.5 group hover:border-red-500/30 transition-all duration-500"
-            >
-              <Heart className="w-3.5 h-3.5 text-red-400/70 group-hover:text-red-400 transition-colors" />
-              <span className="text-white/55 text-xs font-mono group-hover:text-white/80 transition-colors">
-                Donate $1 to save real tigers
+            <button type="button" onClick={onOpenEarlyAdopter} className="w-full rounded-[8px] border border-[#FF6B00]/35 bg-[#FF6B00]/10 px-5 py-5 text-left transition-all hover:border-[#FF6B00] hover:bg-[#FF6B00]/15">
+              <span className="flex items-center justify-between gap-4">
+                <span>
+                  <span className="block font-mono text-[9px] font-black uppercase tracking-[0.2em] text-[#FF6B00]">Optional upgrade</span>
+                  <span className="mt-1 block font-outfit text-base font-black uppercase text-white">Founder access from $5 + tiger impact</span>
+                </span>
+                <Zap className="h-5 w-5 shrink-0 text-[#CCFF00]" aria-hidden="true" />
               </span>
             </button>
-
             <div className="w-full flex flex-col items-center justify-center bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-md">
               <span className="font-mono text-white/45 tracking-[0.2em] text-[9px] uppercase mb-4 block font-black">
                 Operator feedback

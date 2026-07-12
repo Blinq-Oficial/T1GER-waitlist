@@ -5,9 +5,9 @@ import TextReveal from '../animations/TextReveal';
 const stickers = [
   { type: 'italic', text: 'Core features.', bg: 'var(--color-electric-orange)' },
   { type: 'bold', text: '7-DAY', bg: 'var(--color-acid-green)' },
-  { type: 'italic', text: 'Zero excuses.', bg: 'var(--color-electric-orange)' },
+  { type: 'italic', text: 'Build momentum.', bg: 'var(--color-electric-orange)' },
   { type: 'bold', text: 'STREAK', bg: 'var(--color-acid-green)' },
-  { type: 'italic', text: 'The pressure never stops.', bg: 'var(--color-electric-orange)' },
+  { type: 'italic', text: 'Make progress visible.', bg: 'var(--color-electric-orange)' },
   { type: 'bold', text: 'TOP 5%', bg: 'var(--color-acid-green)' },
 ];
 
@@ -67,7 +67,7 @@ export default function SectionProtocol() {
           className="mt-16 px-4 md:px-6 text-center max-w-lg mx-auto"
         >
           <TextReveal className="text-white/40 font-mono text-xs sm:text-sm md:text-base tracking-wider leading-relaxed">
-            Your consistency is your weapon. The protocol tracks every habit, every lesson, every win. There is no hiding.
+            Consistency becomes visible. T1GER tracks every habit, lesson, and win so you always know what to do next.
           </TextReveal>
         </motion.div>
       </div>

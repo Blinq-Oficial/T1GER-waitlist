@@ -5,17 +5,17 @@ const pillars = [
   {
     number: '01',
     title: 'Habits',
-    description: 'Gamified streaks that punish laziness and reward consistency. Every day you show up, your rank climbs.',
+    description: 'Gamified streaks that reward consistency and make momentum visible. Every day you show up, your rank climbs.',
   },
   {
     number: '02',
     title: 'Learn',
-    description: 'Bite-sized daily lessons on finance, marketing, and strategy. Real knowledge designed for predators.',
+    description: 'Bite-sized daily lessons on finance, marketing, and strategy, designed to help you take action today.',
   },
   {
     number: '03',
     title: 'Compete',
-    description: 'Global leaderboards. Weekly tournaments. Your progress is public. The pride watches.',
+    description: 'Global leaderboards and weekly challenges turn personal progress into friendly competition.',
   },
   {
     number: '04',
@@ -30,7 +30,7 @@ const pillars = [
   {
     number: '06',
     title: 'Accountability',
-    description: 'No empty roadmaps. T1GER launches with the protocol ready. This is just the beginning.',
+    description: 'Your Squad sees the standard, celebrates your wins, and helps you stay consistent when motivation drops.',
   },
 ];
 

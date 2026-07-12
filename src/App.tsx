@@ -4,6 +4,8 @@ import Preloader from './components/animations/Preloader';
 import CustomCursor from './components/animations/CustomCursor';
 import Sidebar from './components/navigation/Sidebar';
 import SectionHero from './components/sections/SectionHero';
+import EarlyAdopterModal from './components/modals/EarlyAdopterModal';
+import LegalPage from './components/legal/LegalPage';
 
 const SectionMarker = lazy(() => import('./components/sections/SectionMarker'));
 const SectionShowcase = lazy(() => import('./components/sections/SectionShowcase'));
@@ -21,12 +23,17 @@ export default function App() {
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [waitlistPosition, setWaitlistPosition] = useState(0);
   const [waitlistShareUrl, setWaitlistShareUrl] = useState('');
+  const [isEarlyAdopterOpen, setIsEarlyAdopterOpen] = useState(false);
 
   const handleSignup = useCallback((position: number, shareUrl?: string) => {
     setWaitlistPosition(position);
     setWaitlistShareUrl(shareUrl || 'https://t1ger.app/');
     setIsSignedUp(true);
   }, []);
+
+  const path = window.location.pathname.replace(/\/$/, '') || '/';
+  if (path === '/terms') return <LegalPage type="terms" />;
+  if (path === '/privacy') return <LegalPage type="privacy" />;
 
   return (
     <SmoothScroll>
@@ -46,26 +53,29 @@ export default function App() {
             waitlistPosition={waitlistPosition}
             waitlistShareUrl={waitlistShareUrl}
             isPreloaded={isPreloaded}
+            onOpenEarlyAdopter={() => setIsEarlyAdopterOpen(true)}
           />
 
           <Suspense fallback={null}>
             <SectionMarker />
+            <SectionLife />
             <SectionScrollDemo />
             <SectionShowcase />
             <SectionAbout />
             <SectionVision />
             <SectionProtocol />
-            <SectionLife />
             <SectionJoin
               onSuccess={handleSignup}
               isSignedUp={isSignedUp}
               waitlistPosition={waitlistPosition}
               waitlistShareUrl={waitlistShareUrl}
+              onOpenEarlyAdopter={() => setIsEarlyAdopterOpen(true)}
             />
             <SectionFAQ />
             <Footer />
           </Suspense>
         </main>
+        <EarlyAdopterModal isOpen={isEarlyAdopterOpen} onClose={() => setIsEarlyAdopterOpen(false)} />
       </div>
     </SmoothScroll>
   );

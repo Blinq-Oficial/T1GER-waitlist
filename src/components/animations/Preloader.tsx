@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion';
  * Features:
  * - Letter-by-letter "T1GER" reveal with staggered delays
  * - SVG liquid-glitch filter for chromatic aberration
- * - Aggressive strikethrough line
  * - Loading progress text
  * - Smooth exit (slides up with the signature easing)
  */
@@ -37,7 +36,7 @@ export default function Preloader({ onComplete }: Props) {
     const timer = setTimeout(() => {
       setIsLoading(false);
       onComplete?.();
-    }, 2200);
+    }, 1800);
 
     return () => {
       clearTimeout(timer);
@@ -150,14 +149,6 @@ export default function Preloader({ onComplete }: Props) {
                 ))}
               </div>
 
-              {/* Strikethrough line */}
-              <motion.div
-                initial={{ scaleX: 0, opacity: 0 }}
-                animate={{ scaleX: 1, opacity: [0, 1, 0.5, 1] }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="absolute top-1/2 left-[-10%] right-[-10%] h-0.5 bg-[#FF6B00] z-20 origin-left"
-                style={{ filter: 'blur(1px)', mixBlendMode: 'screen' }}
-              />
             </div>
 
             {/* Progress indicator */}

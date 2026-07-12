@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import { Loader2, Sparkles, ChevronRight, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Heart, Loader2, Mail, Sparkles, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
-import { GlassButton } from '../ui/apple-tahoe-liquid-glass-button';
 
 type ConfettiParticle = {
   x: number;
@@ -20,12 +19,13 @@ interface Props {
   waitlistPosition: number;
   waitlistShareUrl: string;
   isPreloaded: boolean;
+  onOpenEarlyAdopter: () => void;
 }
 
 /**
  * SectionHero — Chainzoku-inspired hero with outlined typography.
  */
-export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, waitlistShareUrl, isPreloaded }: Props) {
+export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, waitlistShareUrl, isPreloaded, onOpenEarlyAdopter }: Props) {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
@@ -339,7 +339,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
 
       <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-noise" />
 
-      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto pt-20 md:pt-0">
+      <div className="relative z-10 flex w-full max-w-5xl flex-col items-center pt-20 text-center md:pt-0">
         <AnimatePresence mode="wait">
           {!isSignedUp ? (
             <motion.div
@@ -362,7 +362,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 initial={{ opacity: 0, y: 20 }}
                 animate={isPreloaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.7, delay: 0.25, ease: [0.23, 1, 0.32, 1] }}
-                className="mb-4 md:mb-6 max-w-3xl"
+                className="mb-3 max-w-3xl md:mb-4"
               >
                 <h1 className="font-outfit font-black text-white uppercase leading-[0.98] tracking-tight text-[clamp(1.85rem,6.3vw,4.05rem)]">
                   Learn and build discipline daily.
@@ -376,13 +376,13 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 initial={{ opacity: 0 }}
                 animate={isPreloaded ? { opacity: 1 } : { opacity: 0 }}
                 transition={{ duration: 1.5, delay: 0.3 }}
-                className="mb-4 md:mb-6 relative"
+                className="relative mb-3 md:mb-4"
               >
                 <div
                   aria-hidden="true"
                   className="font-outfit font-black uppercase leading-[0.82] select-none"
                   style={{
-                    fontSize: 'clamp(3.5rem, 14vw, 12rem)',
+                    fontSize: 'clamp(3.5rem, 12vw, 9rem)',
                     letterSpacing: '-0.02em',
                     color: 'rgba(255,255,255,0.07)',
                     WebkitTextStroke: '1.5px rgba(255,255,255,0.34)',
@@ -408,113 +408,93 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 </div>
               </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.8, delay: 1.2, ease: [0.23, 1, 0.32, 1] }}
-                className="mb-6 md:mb-8"
-              >
-                <p
-                  className="font-outfit font-black text-white/90 uppercase tracking-[0.06em]"
-                  style={{ fontSize: 'clamp(1rem, 2.5vw, 1.8rem)' }}
-                >
-                  BUILD DISCIPLINE.<br className="md:hidden" />{' '}
-                  <span className="text-[#CCFF00]">HUNT GREATNESS.</span>
-                </p>
-                <p className="mt-3 font-mono text-[#CCFF00]/80 text-[10px] sm:text-xs tracking-[0.18em] uppercase">
-                  Private beta waitlist now open.
-                </p>
-              </motion.div>
-
-              <div className="w-full max-w-md relative">
+              <div className="relative w-full max-w-4xl">
                 {/* Click-through Confetti Canvas */}
                 <canvas
                   ref={canvasRef}
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none z-50"
                 />
 
-                <motion.form
-                  onSubmit={handleSubmit}
-                  noValidate
+                <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={isPreloaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.8, delay: 1.5, ease: [0.23, 1, 0.32, 1] }}
-                  className="w-full space-y-6"
+                  transition={{ duration: 0.8, delay: 1.1, ease: [0.23, 1, 0.32, 1] }}
+                  className="mx-auto grid w-full max-w-[820px] gap-3 text-left md:grid-cols-2 md:gap-5"
                 >
-                  <div className="relative group">
-                    <ShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-[#FF6B00] transition-colors" />
-                    <input
-                      id="hero-email"
-                      name="email"
-                      type="email"
-                      aria-label="Email address"
-                      autoComplete="email"
-                      placeholder="YOUR EMAIL"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setErrorText('');
-                      }}
-                      disabled={isLoading}
-                      className="w-full bg-white/[0.06] border border-white/20 rounded-full pl-13 pr-6 py-4.5 text-white placeholder-white/35 font-mono tracking-[0.12em] text-sm outline-none transition-all duration-300 focus:border-[#FF6B00] focus:bg-white/[0.08] focus:ring-2 focus:ring-[#FF6B00]/50 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]"
-                    />
-                  </div>
+                  <button
+                    type="button"
+                    onClick={onOpenEarlyAdopter}
+                    className="group relative min-h-[184px] overflow-hidden rounded-[8px] border border-[#FF6B00] bg-[#FF6B00] p-4 text-black shadow-[0_18px_60px_rgba(255,107,0,0.18)] transition-transform hover:-translate-y-1 sm:p-5"
+                  >
+                    <span className="absolute -right-3 -top-7 font-outfit text-[7rem] font-black leading-none text-black/[0.07]">$5+</span>
+                    <span className="relative flex h-full flex-col">
+                      <span className="flex items-center gap-2 font-mono text-[9px] font-black uppercase tracking-[0.19em]">
+                        <Heart className="h-3.5 w-3.5 fill-black" aria-hidden="true" />
+                        Access + tiger impact
+                      </span>
+                      <span className="mt-2 block font-outfit text-[1.55rem] font-black uppercase leading-[0.92] sm:text-[1.8rem]">Early Adopter</span>
+                      <span className="mt-1.5 block max-w-[18rem] text-[11px] font-semibold leading-relaxed text-black/65 sm:text-xs">Start at $5. Add more at checkout to support wild tiger conservation.</span>
+                      <span className="mt-auto flex min-h-11 items-center justify-between gap-3 rounded-[6px] bg-black px-4 py-2.5 font-mono text-[10px] font-black uppercase tracking-[0.08em] text-white sm:text-[11px]">
+                        Claim access · Give $5+
+                        <ArrowUpRight className="h-4 w-4 shrink-0 text-[#CCFF00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+                      </span>
+                    </span>
+                  </button>
 
-                  <AnimatePresence mode="wait">
-                    {errorText && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                        animate={{ opacity: 1, height: 'auto', marginTop: 4 }}
-                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                        className="overflow-hidden w-full flex justify-center"
-                      >
-                        <p className="text-[#FF6B00] text-xs font-mono text-center tracking-[0.1em] uppercase">
-                          ⚠ {errorText}
-                        </p>
-                      </motion.div>
-                    )}
-                    {helperText && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                        animate={{ opacity: 1, height: 'auto', marginTop: 4 }}
-                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                        className="overflow-hidden w-full flex justify-center"
-                      >
-                        <p className="text-[#CCFF00] text-xs font-mono text-center tracking-[0.12em] uppercase animate-pulse">
-                          ⚡ {helperText}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <form
+                    onSubmit={handleSubmit}
+                    noValidate
+                    className="flex min-h-[184px] flex-col rounded-[8px] border border-white/20 bg-black/55 p-4 backdrop-blur-md sm:p-5"
+                  >
+                    <span className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#CCFF00]">Free · No card required</span>
+                    <span className="mt-2 flex items-center gap-2 font-outfit text-[1.55rem] font-black uppercase leading-none text-white sm:text-[1.8rem]">
+                      <Mail className="h-5 w-5 text-[#CCFF00]" aria-hidden="true" />
+                      Join Waitlist
+                    </span>
+                    <p className="mt-1.5 text-[11px] leading-relaxed text-white/50 sm:text-xs">Get your rank instantly and move up by sharing your referral link.</p>
 
-                  <div className="flex flex-col gap-5">
-                    <GlassButton
-                      type="submit"
-                      disabled={isLoading}
-                      className="w-full py-4.5 text-sm font-mono tracking-[0.2em] font-black uppercase text-white shadow-[0_0_20px_rgba(255,107,0,0.15)] hover:shadow-[0_0_35px_rgba(255,107,0,0.35)] transition-all duration-300 border border-[#FF6B00]/25 hover:border-[#FF6B00]/50 flex items-center justify-center gap-3"
-                      glassColor="rgba(255, 107, 0, 0.38)"
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin text-white" />
-                          <span>SECURING...</span>
-                        </>
-                      ) : (
-                        'GET MY EARLY ACCESS RANK'
+                    <div className="relative mt-auto pt-4">
+                      <ShieldCheck className="absolute bottom-4 left-4 h-4 w-4 text-white/25" aria-hidden="true" />
+                      <input
+                        id="hero-email"
+                        name="email"
+                        type="email"
+                        aria-label="Email address"
+                        autoComplete="email"
+                        placeholder="YOUR EMAIL"
+                        value={email}
+                        onChange={(event) => {
+                          setEmail(event.target.value);
+                          setErrorText('');
+                        }}
+                        disabled={isLoading}
+                        className="h-12 w-full rounded-[6px] border border-white/15 bg-white/[0.06] pl-11 pr-32 font-mono text-xs tracking-[0.08em] text-white outline-none transition-all placeholder:text-white/30 focus:border-[#CCFF00] focus:ring-2 focus:ring-[#CCFF00]/20"
+                      />
+                      <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="absolute bottom-1.5 right-1.5 flex h-9 min-w-[112px] items-center justify-center rounded-[5px] bg-white px-3 font-mono text-[9px] font-black uppercase tracking-[0.08em] text-black transition-colors hover:bg-[#CCFF00] disabled:opacity-60"
+                      >
+                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Joining waitlist" /> : 'Join Waitlist'}
+                      </button>
+                    </div>
+
+                    <AnimatePresence mode="wait">
+                      {(errorText || helperText) && (
+                        <motion.p
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className={`mt-2 font-mono text-[9px] uppercase tracking-[0.08em] ${errorText ? 'text-[#FF6B00]' : 'text-[#CCFF00]'}`}
+                        >
+                          {errorText || helperText}
+                        </motion.p>
                       )}
-                    </GlassButton>
-
-                    <button
-                      type="button"
-                      onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="text-white/45 hover:text-[#FF6B00] focus-visible:text-[#FF6B00] font-mono text-[10px] tracking-[0.2em] uppercase transition-colors pt-2"
-                    >
-                      Calculate your timeline
-                    </button>
-                  </div>
-                </motion.form>
-                <p className="mt-5 text-white/45 font-mono text-[10px] leading-relaxed tracking-[0.08em] uppercase">
-                  Instant rank. Referral link after signup. No spam.
+                    </AnimatePresence>
+                  </form>
+                </motion.div>
+                <p className="mt-3 text-center font-mono text-[9px] uppercase tracking-[0.12em] text-white/35">
+                  Secure checkout by Stripe · Free waitlist emails by Resend
                 </p>
               </div>
             </motion.div>
@@ -604,6 +584,16 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                     </a>
                   </div>
                 </div>
+
+                <button type="button" onClick={onOpenEarlyAdopter} className="w-full rounded-[8px] border border-[#FF6B00]/35 bg-[#FF6B00]/10 px-5 py-5 text-left transition-all hover:border-[#FF6B00] hover:bg-[#FF6B00]/15">
+                  <span className="flex items-center justify-between gap-4">
+                    <span>
+                      <span className="block font-mono text-[9px] font-black uppercase tracking-[0.2em] text-[#FF6B00]">Optional upgrade</span>
+                      <span className="mt-1 block font-outfit text-base font-black uppercase text-white">Get immediate beta access for $5</span>
+                    </span>
+                    <Zap className="h-5 w-5 shrink-0 text-[#CCFF00]" aria-hidden="true" />
+                  </span>
+                </button>
 
                 <button
                   onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}

@@ -24,6 +24,12 @@ export default function Footer() {
     { label: 'Contact', href: 'mailto:hello@t1ger.app' },
   ];
 
+  const legalLinks = [
+    { label: 'Terms', href: '/terms' },
+    { label: 'Privacy', href: '/privacy' },
+    { label: 'Refunds', href: '/terms#payments-taxes-and-refunds' },
+  ];
+
   return (
     <footer
       className="relative flex flex-col items-center justify-between overflow-hidden px-6 md:px-[6vw] md:pl-40 bg-section-jungle"
@@ -145,6 +151,13 @@ export default function Footer() {
             All rights reserved
           </span>
         </div>
+        <nav aria-label="Legal" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          {legalLinks.map((link) => (
+            <a key={link.label} href={link.href} className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/25 transition-colors hover:text-white">
+              {link.label}
+            </a>
+          ))}
+        </nav>
       </motion.div>
     </footer>
   );
