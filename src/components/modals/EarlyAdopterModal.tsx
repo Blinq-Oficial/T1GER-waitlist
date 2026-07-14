@@ -29,6 +29,39 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
+  const handleDemoPayment = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (window.location.hostname === 'localhost') {
+      e.preventDefault();
+      const testEmail = prompt("Simulador de Stripe (Local):\nIntroduce tu correo para enviarte el email real de Early Adopter:");
+      if (!testEmail) return;
+
+      const testAmount = prompt("Introduce el monto a pagar en USD (mínimo $5):", "5");
+      if (!testAmount) return;
+      const parsedAmount = parseInt(testAmount, 10);
+      if (isNaN(parsedAmount) || parsedAmount < 5) {
+        alert("El monto debe ser un número entero mayor o igual a 5.");
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/stripe-webhook', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ is_demo: true, email: testEmail, amountTotal: parsedAmount * 100 }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          alert(`¡Éxito! Tu pago demo de $${parsedAmount} fue registrado en Supabase.\nTu posición es #${data.waitlist_position}.\nEl correo real fue enviado a ${testEmail} via Resend.`);
+          window.location.href = `/early-access/success?demo=1`;
+        } else {
+          alert(`Error: ${data.error || 'No se pudo procesar'}`);
+        }
+      } catch (err: any) {
+        alert(`Error al conectar con la API local: ${err.message}`);
+      }
+    }
+  };
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -79,7 +112,7 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[120] flex items-end justify-center overflow-y-auto bg-black/85 p-0 backdrop-blur-md sm:items-center sm:p-6"
+          className="fixed inset-0 z-[120] flex items-end justify-center overflow-y-auto bg-black/95 p-0 sm:items-center sm:p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -167,6 +200,7 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
 
                 <a
                   href={PAYMENT_LINK}
+                  onClick={handleDemoPayment}
                   className="mt-4 flex min-h-14 w-full items-center justify-center gap-2 rounded-[6px] bg-[#FF6B00] px-5 py-4 text-center font-mono text-[11px] font-black uppercase tracking-[0.08em] text-black transition-colors hover:bg-[#CCFF00] sm:text-xs"
                 >
                   Choose $5+ &amp; Claim Founder Access

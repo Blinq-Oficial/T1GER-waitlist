@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 
-const TARGETS = ["FOUNDERS", "ENTREPRENEURS", "INVESTORS", "BUILDERS"];
+const TARGETS = ["STUDENTS", "PROFESSIONALS", "ENTREPRENEURS", "ATHLETES", "CREATORS"];
 
 export default function SectionMarker() {
   const [index, setIndex] = useState(0);
@@ -94,7 +94,7 @@ export default function SectionMarker() {
         </h2>
 
         <p className="font-sans text-xs sm:text-sm text-zinc-500 tracking-[0.05em] max-w-lg mt-10 leading-relaxed font-medium uppercase">
-          Built for founders who need proof, pressure, and momentum.
+          Built for high-performers who need proof, pressure, and momentum.
         </p>
       </div>
     </section>

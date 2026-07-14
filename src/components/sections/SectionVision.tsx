@@ -4,33 +4,33 @@ import { motion } from 'framer-motion';
 const pillars = [
   {
     number: '01',
-    title: 'Habits',
-    description: 'Gamified streaks that reward consistency and make momentum visible. Every day you show up, your rank climbs.',
+    title: 'Missions',
+    description: 'Gamified daily tasks designed to turn learning into active execution. Complete tasks to level up.',
   },
   {
     number: '02',
-    title: 'Learn',
-    description: 'Bite-sized daily lessons on finance, marketing, and strategy, designed to help you take action today.',
+    title: 'Curated Knowledge',
+    description: 'We compress the best resources on the web into fast, bite-sized daily lessons.',
   },
   {
     number: '03',
-    title: 'Compete',
-    description: 'Global leaderboards and weekly challenges turn personal progress into friendly competition.',
+    title: 'Real-World Proof',
+    description: 'A practical framework that forces you to execute what you learn and upload proof.',
   },
   {
     number: '04',
-    title: 'Track',
-    description: 'Every habit, every lesson, every win — all tracked and measured. Beautiful data that shows exactly where you stand.',
+    title: 'Squad Accountability',
+    description: 'Learn and build streaks alongside up to three friends who keep you consistent.',
   },
   {
     number: '05',
-    title: 'Community',
-    description: 'We build with the people who show up. Whether you are here for the grind, the growth, or the glory.',
+    title: 'Consistency',
+    description: 'Visual streak tracking that makes your learning momentum tangible and rewarding.',
   },
   {
     number: '06',
-    title: 'Accountability',
-    description: 'Your Squad sees the standard, celebrates your wins, and helps you stay consistent when motivation drops.',
+    title: 'Global Board',
+    description: 'Climb the global ranks and prove your dedication against high-performers worldwide.',
   },
 ];
 

@@ -90,10 +90,10 @@ export default function SectionShowcase() {
 
         {/* Center visual statement */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: 80, filter: 'blur(10px)' }}
+          initial={{ opacity: 0, scale: 0.95, y: 30, filter: 'blur(4px)' }}
           whileInView={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: "-25%" }}
-          transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="text-center px-6 my-8"
         >
           <h2

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowUpRight, Heart, Loader2, Mail, Sparkles, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
+import { Typewriter } from '../ui/typewriter-text';
 
 type ConfettiParticle = {
   x: number;
@@ -237,6 +238,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
               '--orbit-z': 0,
             } as React.CSSProperties}
           >
+
             <picture>
               <source
                 media="(max-width: 767px)"
@@ -337,6 +339,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
         />
       </div>
 
+
       <div className="absolute inset-0 z-[1] opacity-[0.03] pointer-events-none bg-noise" />
 
       <div className="relative z-10 flex w-full max-w-5xl flex-col items-center pt-20 text-center md:pt-0">
@@ -354,7 +357,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 className="mb-4 md:mb-6"
               >
                 <span className="inline-flex rounded-full border border-[#FF6B00]/30 bg-[#FF6B00]/10 px-4 py-2 font-mono text-[#FF6B00] tracking-[0.22em] text-[10px] sm:text-xs uppercase font-black shadow-[0_0_24px_rgba(255,107,0,0.08)]">
-                  THE DUOLINGO FOR FOUNDERS
+                  THE DUOLINGO FOR LEARNING
                 </span>
               </motion.div>
 
@@ -362,14 +365,21 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 initial={{ opacity: 0, y: 20 }}
                 animate={isPreloaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.7, delay: 0.25, ease: [0.23, 1, 0.32, 1] }}
-                className="mb-3 max-w-3xl md:mb-4"
+                className="mb-6 max-w-4xl md:mb-8"
               >
                 <h1 className="font-outfit font-black text-white uppercase leading-[0.98] tracking-tight text-[clamp(1.85rem,6.3vw,4.05rem)]">
-                  Learn and build discipline daily.
+                  Building the Duolingo <br />
+                  for <span className="text-[#CCFF00]">
+                    <Typewriter
+                      text={["BUSINESS", "TECH", "FINANCE", "STRATEGY", "PSYCHOLOGY", "INVESTMENT", "MARKETING", "HISTORY", "SCIENCE"]}
+                      loop={true}
+                      speed={100}
+                      deleteSpeed={50}
+                      delay={2000}
+                      cursor="_"
+                    />
+                  </span>
                 </h1>
-                <p className="mt-3 mx-auto max-w-2xl text-white/75 font-mono text-[10px] sm:text-xs leading-relaxed tracking-[0.08em] uppercase">
-                  Daily missions. Proof-based XP. Squad accountability.
-                </p>
               </motion.div>
 
               <motion.div

@@ -3,7 +3,6 @@ import { useScroll, useTransform, motion } from 'framer-motion';
 import { MultiLineReveal } from '../animations/TextReveal';
 import HighlightSweep from '../animations/HighlightSweep';
 
-
 /**
  * SectionAbout — Visual-first approach like Chainzoku.
  *
@@ -54,7 +53,7 @@ export default function SectionAbout() {
         <div className="mb-20 max-w-4xl md:mb-32">
           <h2 className="font-outfit text-[2.45rem] font-black uppercase leading-[0.94] text-white sm:text-6xl md:text-[5rem] lg:text-[6.25rem]">
             <MultiLineReveal
-              lines={['ACTION BUILDS', 'MOMENTUM.']}
+              lines={['LEARN AND', 'APPLY.']}
               lineClassName="block"
             />
           </h2>
@@ -67,7 +66,7 @@ export default function SectionAbout() {
               transition={{ duration: 0.7, delay: 0.15 }}
               className="max-w-xl text-lg font-light leading-relaxed text-white/50 sm:text-xl md:text-2xl"
             >
-              One clear mission each day. Complete it, show the work, and build a streak you can see.
+              We curate the world's best educational content across all subjects, package it into gamified Daily Lessons and Daily Missions, and build the real-world framework for you to apply it instantly.
             </motion.p>
           </div>
         </div>
@@ -82,34 +81,34 @@ export default function SectionAbout() {
         >
           {[
             {
-              title: 'ONE DAILY MISSION',
+              title: 'DAILY LESSONS',
               col: 'lg:col-span-5',
               description: [
-                "Know exactly what to do today."
+                "The absolute best curated knowledge from every field, compressed."
               ],
               delay: 0,
             },
             {
-              title: 'LOG THE WORK',
+              title: 'DAILY MISSIONS',
               col: 'lg:col-span-6 lg:col-start-7',
               description: [
-                "Mark the mission complete with proof."
+                "Gamified daily tasks structured in a Duolingo-style loop."
               ],
               delay: 150,
             },
             {
-              title: 'STREAKS',
+              title: 'REAL-WORLD EXECUTION',
               col: 'lg:col-span-5',
               description: [
-                "Make your consistency visible."
+                "A practical framework to apply what you learn in your daily life."
               ],
               delay: 300,
             },
             {
-              title: 'BUILD TOGETHER',
+              title: 'PROOF & accountability',
               col: 'lg:col-span-6 lg:col-start-7',
               description: [
-                "Show up alongside people doing the work."
+                "Upload proof of work, build streaks, and level up alongside your squad."
               ],
               delay: 450,
             },

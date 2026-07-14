@@ -3,12 +3,12 @@ import { motion } from 'framer-motion';
 import TextReveal from '../animations/TextReveal';
 
 const stickers = [
-  { type: 'italic', text: 'Core features.', bg: 'var(--color-electric-orange)' },
-  { type: 'bold', text: '7-DAY', bg: 'var(--color-acid-green)' },
-  { type: 'italic', text: 'Build momentum.', bg: 'var(--color-electric-orange)' },
-  { type: 'bold', text: 'STREAK', bg: 'var(--color-acid-green)' },
-  { type: 'italic', text: 'Make progress visible.', bg: 'var(--color-electric-orange)' },
-  { type: 'bold', text: 'TOP 5%', bg: 'var(--color-acid-green)' },
+  { type: 'italic', text: 'Curated knowledge.', bg: 'var(--color-electric-orange)' },
+  { type: 'bold', text: 'DAILY MISSIONS', bg: 'var(--color-acid-green)' },
+  { type: 'italic', text: 'Apply in real life.', bg: 'var(--color-electric-orange)' },
+  { type: 'bold', text: 'PROOF OF WORK', bg: 'var(--color-acid-green)' },
+  { type: 'italic', text: 'Build your streak.', bg: 'var(--color-electric-orange)' },
+  { type: 'bold', text: 'LEVEL UP', bg: 'var(--color-acid-green)' },
 ];
 
 /**
@@ -67,7 +67,7 @@ export default function SectionProtocol() {
           className="mt-16 px-4 md:px-6 text-center max-w-lg mx-auto"
         >
           <TextReveal className="text-white/40 font-mono text-xs sm:text-sm md:text-base tracking-wider leading-relaxed">
-            Consistency becomes visible. T1GER tracks every habit, lesson, and win so you always know what to do next.
+            T1GER converts passive learning into active execution. We supply the knowledge, you execute the mission, upload proof, and maintain your streak.
           </TextReveal>
         </motion.div>
       </div>

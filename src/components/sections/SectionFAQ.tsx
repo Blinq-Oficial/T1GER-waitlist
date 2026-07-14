@@ -6,32 +6,32 @@ const faqs = [
   {
     question: 'What exactly is T1GER?',
     answer:
-      'T1GER turns discipline into a daily game. Complete focused, bite-sized missions, submit proof, earn XP, and build momentum alongside your Squad.',
+      "T1GER packages the world's best educational content across all subjects into Duolingo-style daily missions. You learn the theory, execute the task in real life, submit proof, and maintain your consistency streak.",
   },
   {
     question: 'What happens if my tiger dies?',
     answer:
-      'Missing missions or leaving during Focus Time reduces your tiger’s health. If it reaches zero, your current streak and multipliers reset. The mechanic makes consistency feel tangible without blocking you from starting again.',
+      "If you miss your daily mission or fail to submit proof of execution, your tiger's health drops. If it hits zero, your streak and multipliers reset. The mechanic forces consistency in your learning habits.",
   },
   {
-    question: 'How does the "Squad" feature work?',
+    question: 'How does Squad Accountability work?',
     answer:
-      'Squads create shared accountability with up to three friends. You can see each other’s progress, protect a shared streak, and help the group stay consistent.',
+      "You can form learning squads with up to three friends. You share streaks, track each other's proof of work, and ensure no one falls behind on their daily lessons.",
   },
   {
     question: 'Why do you show my lifespan in dots?',
     answer:
-      'The timeline is a simple Memento Mori exercise based on an estimated lifespan. It turns abstract time into something visible so you can choose what deserves your attention today.',
+      "The timeline is a visual Memento Mori exercise based on your remaining weeks. It serves as a daily reminder to spend your time actively building and learning, rather than passively scrolling.",
   },
   {
     question: 'When do I get access to the app?',
     answer:
-      'Joining the waitlist secures your place for the upcoming beta. You can move up by sharing your referral link, or purchase Early Adopter Access for $5 to receive priority entry to the Closed Beta.',
+      'Joining the waitlist secures your priority access for the upcoming beta. High waitlist ranks get invited first. You can climb the leaderboard by inviting friends or purchasing Early Adopter Access.',
   },
   {
     question: 'What is included with Early Adopter Access?',
     answer:
-      'You get priority Closed Beta access, six months of T1GER Premium, and a permanent Founder badge. You can request a full refund anytime before the global launch.',
+      'For $5, you secure guaranteed priority Closed Beta access, six months of T1GER Premium, and a permanent Founder badge to show you were here since day one.',
   },
 ];
 
