@@ -357,7 +357,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 className="mb-4 md:mb-6"
               >
                 <span className="inline-flex rounded-full border border-[#FF6B00]/30 bg-[#FF6B00]/10 px-4 py-2 font-mono text-[#FF6B00] tracking-[0.22em] text-[10px] sm:text-xs uppercase font-black shadow-[0_0_24px_rgba(255,107,0,0.08)]">
-                  THE DUOLINGO FOR LEARNING
+                  LEARN AND BUILD
                 </span>
               </motion.div>
 
