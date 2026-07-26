@@ -1,5 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { SpotlightCard } from '../ui/spotlight-card';
+import { BorderBeam } from '../ui/border-beam';
 
 const pillars = [
   {
@@ -37,7 +39,7 @@ const pillars = [
 /**
  * SectionVision — Centered card grid with watermark numbers.
  * Chainzoku-style: properly centered, glassmorphism cards,
- * stagger reveal, hover effects.
+ * stagger reveal, 21st.dev spotlight & border beam hover effects.
  */
 export default function SectionVision() {
   return (
@@ -138,15 +140,27 @@ function VisionCard({
         delay: index * 0.08,
         ease: [0.23, 1, 0.32, 1],
       }}
-      className="relative group"
+      className="relative group h-full"
     >
-      <div className="relative bg-white/[0.03] border border-white/[0.06] rounded-lg p-8 md:p-10 overflow-hidden hover:bg-white/[0.06] hover:border-[#FF6B00]/40 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,107,0,0.05)] transition-all duration-300 cursor-default h-full flex flex-col items-start justify-start">
+      <SpotlightCard
+        spotlightColor="rgba(255, 107, 0, 0.2)"
+        className="relative bg-white/[0.03] border border-white/[0.06] rounded-lg p-8 md:p-10 overflow-hidden hover:bg-white/[0.06] hover:border-[#FF6B00]/50 hover:-translate-y-1 transition-all duration-300 cursor-default h-full flex flex-col items-start justify-start shadow-[0_10px_30px_rgba(0,0,0,0.5)] group-hover:shadow-[0_15px_35px_rgba(255,107,0,0.15)]"
+      >
+        {/* 21st.dev Animated Border Beam */}
+        <BorderBeam
+          size={180}
+          duration={8 + index * 2}
+          colorFrom="#FF6B00"
+          colorTo="#CCFF00"
+          className="opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        />
+
         {/* Number watermark */}
         <span
           className="absolute bottom-4 right-6 font-outfit font-black transition-colors duration-300 select-none pointer-events-none"
           style={{
             fontSize: 'clamp(3rem, 8vw, 6rem)',
-            color: inView ? 'rgba(255, 107, 0, 0.08)' : 'rgba(255, 107, 0, 0.02)',
+            color: inView ? 'rgba(255, 107, 0, 0.12)' : 'rgba(255, 107, 0, 0.02)',
             lineHeight: 1,
             zIndex: 0,
           }}
@@ -160,11 +174,10 @@ function VisionCard({
         </h3>
 
         {/* Description */}
-        <p className="text-white/40 text-sm leading-relaxed font-sans relative z-10 group-hover:text-white/60 transition-colors duration-300 text-left">
+        <p className="text-white/50 text-sm leading-relaxed font-sans relative z-10 group-hover:text-white/80 transition-colors duration-300 text-left">
           {description}
         </p>
-
-      </div>
+      </SpotlightCard>
     </motion.div>
   );
 }

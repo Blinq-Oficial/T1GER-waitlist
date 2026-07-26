@@ -2,6 +2,7 @@ import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Flame, Heart, ShieldCheck, Trophy, X, Zap } from 'lucide-react';
+import { BorderBeam } from '../ui/border-beam';
 
 const PAYMENT_LINK = 'https://buy.stripe.com/fZueVeaebe5T5pvdpQaZi01';
 
@@ -133,6 +134,7 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             data-lenis-prevent
           >
+            <BorderBeam size={300} duration={10} colorFrom="#FF6B00" colorTo="#CCFF00" />
             <div className="h-1.5 w-full bg-[#FF6B00]" />
             <button
               ref={closeButtonRef}

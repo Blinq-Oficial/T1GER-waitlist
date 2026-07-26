@@ -2,6 +2,8 @@ import { useRef } from 'react';
 import { useScroll, useTransform, motion } from 'framer-motion';
 import { MultiLineReveal } from '../animations/TextReveal';
 import HighlightSweep from '../animations/HighlightSweep';
+import { SpotlightCard } from '../ui/spotlight-card';
+import { BorderBeam } from '../ui/border-beam';
 
 /**
  * SectionAbout — Visual-first approach like Chainzoku.
@@ -77,7 +79,7 @@ export default function SectionAbout() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-10%' }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="grid grid-cols-1 lg:grid-cols-12 gap-y-16 md:gap-y-24 gap-x-12 mt-20 hw-accel text-center lg:text-left"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-y-8 md:gap-y-12 gap-x-8 mt-20 hw-accel text-center lg:text-left"
         >
           {[
             {
@@ -105,33 +107,46 @@ export default function SectionAbout() {
               delay: 300,
             },
             {
-              title: 'PROOF & accountability',
+              title: 'PROOF & ACCOUNTABILITY',
               col: 'lg:col-span-6 lg:col-start-7',
               description: [
                 "Upload proof of work, build streaks, and level up alongside your squad."
               ],
               delay: 450,
             },
-          ].map((feature) => (
+          ].map((feature, i) => (
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-5%" }}
               transition={{ duration: 1, delay: feature.delay / 1000, ease: [0.16, 1, 0.3, 1] }}
-              className={`flex flex-col items-center lg:items-start hw-accel ${feature.col}`}
+              className={`group flex flex-col items-center lg:items-start hw-accel ${feature.col}`}
             >
-              <HighlightSweep delay={feature.delay} className="mb-4 lg:mb-6 block">
-                <span className="font-mono text-sm md:text-base text-white/90 uppercase tracking-[0.2em] font-bold">
-                  // {feature.title}
-                </span>
-              </HighlightSweep>
+              <SpotlightCard
+                spotlightColor="rgba(255, 107, 0, 0.18)"
+                className="w-full bg-white/[0.02] border border-white/10 hover:border-[#FF6B00]/40 p-6 md:p-8 rounded-xl relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(255,107,0,0.1)]"
+              >
+                <BorderBeam
+                  size={160}
+                  duration={9 + i * 2}
+                  colorFrom="#FF6B00"
+                  colorTo="#CCFF00"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                />
 
-              <MultiLineReveal
-                lines={feature.description}
-                delay={feature.delay + 200}
-                lineClassName="text-white/50 text-lg md:text-xl leading-[1.6] font-sans font-light tracking-tight"
-              />
+                <HighlightSweep delay={feature.delay} className="mb-3 lg:mb-4 block">
+                  <span className="font-mono text-sm md:text-base text-white/90 uppercase tracking-[0.2em] font-bold">
+                    // {feature.title}
+                  </span>
+                </HighlightSweep>
+
+                <MultiLineReveal
+                  lines={feature.description}
+                  delay={feature.delay + 200}
+                  lineClassName="text-white/60 text-base md:text-lg leading-[1.6] font-sans font-light tracking-tight"
+                />
+              </SpotlightCard>
             </motion.div>
           ))}
         </motion.div>

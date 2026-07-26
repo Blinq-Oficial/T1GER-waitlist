@@ -556,3 +556,30 @@ html.lenis, html.lenis body {
     background-position: 0% -1000%;
   }
 }
+
+/* ═══════════════════════════════════════════
+   21ST.DEV & MAGIC UI ANIMATIONS
+   ═══════════════════════════════════════════ */
+
+@keyframes shimmer-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.animate-shimmer-spin {
+  animation: shimmer-spin var(--sk-speed, 3s) linear infinite;
+}
+
+.animate-border-beam {
+  animation: border-beam var(--duration, 12s) linear infinite;
+}

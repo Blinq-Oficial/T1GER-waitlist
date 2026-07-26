@@ -3,6 +3,8 @@ import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motio
 import { ArrowUpRight, Heart, Loader2, Mail, Sparkles, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
 import { Typewriter } from '../ui/typewriter-text';
+import { BorderBeam } from '../ui/border-beam';
+import { ShimmerButton } from '../ui/shimmer-button';
 
 type ConfettiParticle = {
   x: number;
@@ -446,8 +448,9 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                     onClick={onOpenEarlyAdopter}
                     className="group relative flex min-h-[112px] overflow-hidden rounded-[8px] border border-[#FF6B00] bg-[#FF6B00] p-3 text-black shadow-[0_18px_60px_rgba(255,107,0,0.18)] transition-transform hover:-translate-y-1 sm:min-h-[148px] sm:p-4"
                   >
+                    <BorderBeam size={160} duration={8} colorFrom="#000000" colorTo="#CCFF00" />
                     <span className="absolute -right-3 -top-7 hidden font-outfit text-[7rem] font-black leading-none text-black/[0.07] sm:block">$5+</span>
-                    <span className="relative flex w-full flex-col">
+                    <span className="relative flex w-full flex-col z-10">
                       <span className="flex items-center gap-1.5 font-mono text-[8px] font-black uppercase tracking-[0.16em] sm:text-[9px]">
                         <Heart className="h-3 w-3 fill-black sm:h-3.5 sm:w-3.5" aria-hidden="true" />
                         Access + tiger impact
@@ -464,8 +467,9 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   <form
                     onSubmit={handleSubmit}
                     noValidate
-                    className="flex min-h-[116px] flex-col rounded-[8px] border border-white/20 bg-black/55 p-3 backdrop-blur-md sm:min-h-[148px] sm:p-4"
+                    className="relative flex min-h-[116px] flex-col overflow-hidden rounded-[8px] border border-white/20 bg-black/55 p-3 backdrop-blur-md sm:min-h-[148px] sm:p-4"
                   >
+                    <BorderBeam size={160} duration={10} colorFrom="#CCFF00" colorTo="#FF6B00" />
                     <span className="font-mono text-[8px] font-black uppercase tracking-[0.18em] text-[#CCFF00] sm:text-[9px]">Free · No card required</span>
                     <span className="mt-1 flex items-center gap-1.5 font-outfit text-[1.35rem] font-black uppercase leading-none text-white sm:mt-1.5 sm:gap-2 sm:text-[1.55rem]">
                       <Mail className="h-4 w-4 text-[#CCFF00] sm:h-5 sm:w-5" aria-hidden="true" />
@@ -490,13 +494,15 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                         disabled={isLoading}
                         className="h-9 w-full rounded-[6px] border border-white/15 bg-white/[0.06] pl-9 pr-[7.25rem] font-mono text-[9px] tracking-[0.08em] text-white outline-none transition-all placeholder:text-white/30 focus:border-[#CCFF00] focus:ring-2 focus:ring-[#CCFF00]/20 sm:h-12 sm:pl-11 sm:pr-32 sm:text-xs"
                       />
-                      <button
+                      <ShimmerButton
                         type="submit"
                         disabled={isLoading}
-                        className="absolute bottom-1 right-1 flex h-7 min-w-[100px] items-center justify-center rounded-[5px] bg-white px-2 font-mono text-[8px] font-black uppercase tracking-[0.06em] text-black transition-colors hover:bg-[#CCFF00] disabled:opacity-60 sm:bottom-1.5 sm:right-1.5 sm:h-9 sm:min-w-[112px] sm:px-3 sm:text-[9px]"
+                        shimmerColor="#CCFF00"
+                        shimmerDuration="2.5s"
+                        className="absolute bottom-1 right-1 h-7 min-w-[100px] rounded-[5px] px-2 text-[8px] sm:bottom-1.5 sm:right-1.5 sm:h-9 sm:min-w-[112px] sm:px-3 sm:text-[9px]"
                       >
-                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Joining waitlist" /> : 'Join Waitlist'}
-                      </button>
+                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin text-[#CCFF00]" aria-label="Joining waitlist" /> : 'Join Waitlist'}
+                      </ShimmerButton>
                     </div>
 
                     <AnimatePresence mode="wait">
