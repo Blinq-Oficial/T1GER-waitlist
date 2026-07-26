@@ -2,10 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowUpRight, Heart, Loader2, Mail, Sparkles, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
-<<<<<<< HEAD
-=======
-import { GlassButton } from '../ui/apple-tahoe-liquid-glass-button';
->>>>>>> 16b38e4 (feat: update hero text to Building the Duolingo for Learning with INVESTING, AI, and MARKETING featured first)
 import { Typewriter } from '../ui/typewriter-text';
 
 type ConfettiParticle = {
