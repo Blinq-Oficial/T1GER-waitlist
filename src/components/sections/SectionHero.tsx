@@ -2,6 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowUpRight, Heart, Loader2, Mail, Sparkles, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
+<<<<<<< HEAD
+=======
+import { GlassButton } from '../ui/apple-tahoe-liquid-glass-button';
+>>>>>>> 16b38e4 (feat: update hero text to Building the Duolingo for Learning with INVESTING, AI, and MARKETING featured first)
 import { Typewriter } from '../ui/typewriter-text';
 
 type ConfettiParticle = {
@@ -368,10 +372,20 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 className="mb-6 max-w-4xl md:mb-8"
               >
                 <h1 className="font-outfit font-black text-white uppercase leading-[0.98] tracking-tight text-[clamp(1.85rem,6.3vw,4.05rem)]">
-                  Building the Duolingo <br />
-                  for <span className="text-[#CCFF00]">
+                  Building the Duolingo for Learning <br />
+                  <span className="text-[#CCFF00]">
                     <Typewriter
-                      text={["BUSINESS", "TECH", "FINANCE", "STRATEGY", "PSYCHOLOGY", "INVESTMENT", "MARKETING", "HISTORY", "SCIENCE"]}
+                      text={[
+                        "INVESTING",
+                        "AI",
+                        "MARKETING",
+                        "BUSINESS",
+                        "FINANCE",
+                        "STRATEGY",
+                        "TECH",
+                        "PSYCHOLOGY",
+                        "SCIENCE"
+                      ]}
                       loop={true}
                       speed={100}
                       deleteSpeed={50}

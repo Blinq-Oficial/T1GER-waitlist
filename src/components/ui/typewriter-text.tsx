@@ -1,7 +1,8 @@
 "use client";
 
+import * as React from "react";
 import { useEffect, useState } from "react";
- 
+
 export interface TypewriterProps {
   text: string | string[];
   speed?: number;
@@ -11,63 +12,58 @@ export interface TypewriterProps {
   delay?: number;
   className?: string;
 }
- 
+
 export function Typewriter({
   text,
   speed = 100,
-  cursor = "|",
-  loop = false,
+  cursor = "_",
+  loop = true,
   deleteSpeed = 50,
-  delay = 1500,
+  delay = 2000,
   className,
 }: TypewriterProps) {
   const [displayText, setDisplayText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [textArrayIndex, setTextArrayIndex] = useState(0);
- 
-  // Validate and process input text
-  const textArray = Array.isArray(text) ? text : [text];
-  const currentText = textArray[textArrayIndex] || "";
- 
+  const [textIndex, setTextIndex] = useState(0);
+
+  const textArray = React.useMemo(
+    () => (Array.isArray(text) ? text : [text]),
+    [text]
+  );
+
   useEffect(() => {
-    if (!currentText) return;
- 
-    const timeout = setTimeout(
-      () => {
-        if (!isDeleting) {
-          if (currentIndex < currentText.length) {
-            setDisplayText((prev) => prev + currentText[currentIndex]);
-            setCurrentIndex((prev) => prev + 1);
-          } else if (loop) {
+    const currentFullText = textArray[textIndex] || "";
+
+    const handleTyping = () => {
+      if (!isDeleting) {
+        if (currentIndex < currentFullText.length) {
+          setDisplayText(currentFullText.slice(0, currentIndex + 1));
+          setCurrentIndex((prev) => prev + 1);
+        } else {
+          if (loop || textIndex < textArray.length - 1) {
             setTimeout(() => setIsDeleting(true), delay);
           }
-        } else {
-          if (displayText.length > 0) {
-            setDisplayText((prev) => prev.slice(0, -1));
-          } else {
-            setIsDeleting(false);
-            setCurrentIndex(0);
-            setTextArrayIndex((prev) => (prev + 1) % textArray.length);
-          }
         }
-      },
-      isDeleting ? deleteSpeed : speed,
+      } else {
+        if (currentIndex > 0) {
+          setDisplayText(currentFullText.slice(0, currentIndex - 1));
+          setCurrentIndex((prev) => prev - 1);
+        } else {
+          setIsDeleting(false);
+          setTextIndex((prev) => (prev + 1) % textArray.length);
+        }
+      }
+    };
+
+    const timer = setTimeout(
+      handleTyping,
+      isDeleting ? deleteSpeed : speed
     );
- 
-    return () => clearTimeout(timeout);
-  }, [
-    currentIndex,
-    isDeleting,
-    currentText,
-    loop,
-    speed,
-    deleteSpeed,
-    delay,
-    displayText,
-    text,
-  ]);
- 
+
+    return () => clearTimeout(timer);
+  }, [currentIndex, isDeleting, textIndex, textArray, speed, deleteSpeed, delay, loop]);
+
   return (
     <span className={className}>
       {displayText}
