@@ -2,6 +2,7 @@
 import { Resend } from 'resend';
 
 const DEFAULT_SUPABASE_URL = 'https://pzxjwqnxnkxtmwovzsuv.supabase.co';
+const DEFAULT_SUPABASE_PROJECT_REF = new URL(DEFAULT_SUPABASE_URL).hostname.split('.')[0];
 const DEFAULT_SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6eGp3cW54bmt4dG13b3Z6c3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjQyNDAsImV4cCI6MjA5MzQwMDI0MH0.3aS948dQbncMdO5ihsJPWuxs9Mxq2HZPCZEZIHGlwVc';
 
@@ -21,13 +22,34 @@ function cleanString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-function getSupabaseUrl() {
+function getExpectedSupabaseProjectRef() {
+  return cleanString(process.env.SUPABASE_PROJECT_REF) || DEFAULT_SUPABASE_PROJECT_REF;
+}
+
+function getProjectRefFromKey(key) {
+  try {
+    const payload = key.split('.')[1];
+    if (!payload) return '';
+    return cleanString(JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')).ref);
+  } catch {
+    return '';
+  }
+}
+
+export function getSupabaseUrl() {
   const rawUrl = cleanString(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
   if (rawUrl) {
     const candidate = rawUrl.replace(/^https?:\/\/https?:\/\//i, 'https://');
     const withProtocol = /^https?:\/\//i.test(candidate) ? candidate : `https://${candidate}`;
     try {
-      return new URL(withProtocol).origin;
+      const parsedUrl = new URL(withProtocol);
+      const projectRef = parsedUrl.hostname.split('.')[0];
+
+      if (projectRef === getExpectedSupabaseProjectRef()) {
+        return parsedUrl.origin;
+      }
+
+      console.warn('Supabase URL points to a different project; using the T1GER project.');
     } catch {
       console.error('Invalid custom Supabase URL, falling back to default.');
     }
@@ -35,9 +57,16 @@ function getSupabaseUrl() {
   return DEFAULT_SUPABASE_URL;
 }
 
-function getSupabaseAnonKey() {
+export function getSupabaseAnonKey() {
   const rawKey = cleanString(process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY);
-  return rawKey || DEFAULT_SUPABASE_ANON_KEY;
+  if (rawKey) {
+    const projectRef = getProjectRefFromKey(rawKey);
+    if (!projectRef || projectRef === getExpectedSupabaseProjectRef()) return rawKey;
+
+    console.warn('Supabase key belongs to a different project; using the T1GER project key.');
+  }
+
+  return DEFAULT_SUPABASE_ANON_KEY;
 }
 
 function normalizeBody(body = {}) {

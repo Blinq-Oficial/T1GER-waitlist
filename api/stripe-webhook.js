@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { Resend } from 'resend';
+import { getSupabaseAnonKey, getSupabaseUrl } from './_waitlist-core.js';
 
 const stripe = new Stripe('sk_test_webhook_verification_only');
 const EARLY_ACCESS_PAYMENT_LINK_ID = 'plink_1TsRU5LEjuVoYn3flCJsRb80';
@@ -36,8 +37,8 @@ function getPaymentLinkId(session) {
 }
 
 async function callPurchaseRpc(functionName, body) {
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+  const supabaseUrl = getSupabaseUrl();
+  const supabaseAnonKey = getSupabaseAnonKey();
 
   if (!supabaseUrl || !supabaseAnonKey || !process.env.EARLY_ACCESS_DB_TOKEN) {
     throw new Error('Missing Early Adopter database configuration.');
