@@ -29,15 +29,6 @@ function cleanEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '';
 }
 
-function escapeHtml(value = '') {
-  return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-}
-
 function getPaymentLinkId(session) {
   return typeof session.payment_link === 'string'
     ? session.payment_link
@@ -81,7 +72,6 @@ async function sendEarlyAdopterEmail({ email, position, refCode, sessionId, amou
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const safeEmail = escapeHtml(email);
   const shareUrl = `https://t1ger.app/?ref=${encodeURIComponent(refCode)}`;
   
   const totalPaid = typeof amountTotal === 'number' ? (amountTotal / 100).toFixed(0) : '5';
@@ -98,7 +88,7 @@ async function sendEarlyAdopterEmail({ email, position, refCode, sessionId, amou
           <p style="margin: 20px 0; color: #c9c9c9; font-size: 16px; line-height: 1.6;">Gracias, pagaste $${totalPaid}. De esos $${totalPaid}, $${totalPaid} serán donados a una fundación de tigres.</p>
           <div style="margin: 28px 0; padding: 24px; background: #111; border: 1px solid rgba(255,107,0,.5);">
             <p style="margin: 0 0 14px; color: #FF6B00; font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">Your founder benefits</p>
-            <p style="margin: 8px 0; color: #fff;">Priority Closed Beta access</p>
+            <p style="margin: 8px 0; color: #fff;">Priority Closed Beta consideration</p>
             <p style="margin: 8px 0; color: #fff;">6 months of T1GER Premium</p>
             <p style="margin: 8px 0; color: #fff;">Permanent Founder badge</p>
             <p style="margin: 8px 0; color: #fff;">Full refund available before global launch</p>
@@ -164,7 +154,7 @@ export default async function handler(req, res) {
           amountTotal = mockAmount;
           isPaid = true;
         }
-      } catch (e) {
+      } catch {
         // Not a JSON body, continue to Stripe signature verification
       }
     }

@@ -6,7 +6,7 @@ const faqs = [
   {
     question: 'What exactly is T1GER?',
     answer:
-      "T1GER packages the world's best educational content across all subjects into Duolingo-style daily missions. You learn the theory, execute the task in real life, submit proof, and maintain your consistency streak.",
+      "T1GER turns high-quality learning into short daily missions. We are starting with investing: learn one idea, apply it in the real world, submit proof, and build a consistency streak. More learning tracks will follow.",
   },
   {
     question: 'What happens if my tiger dies?',
@@ -19,19 +19,14 @@ const faqs = [
       "You can form learning squads with up to three friends. You share streaks, track each other's proof of work, and ensure no one falls behind on their daily lessons.",
   },
   {
-    question: 'Why do you show my lifespan in dots?',
-    answer:
-      "The timeline is a visual Memento Mori exercise based on your remaining weeks. It serves as a daily reminder to spend your time actively building and learning, rather than passively scrolling.",
-  },
-  {
     question: 'When do I get access to the app?',
     answer:
-      'Joining the waitlist secures your priority access for the upcoming beta. High waitlist ranks get invited first. You can climb the leaderboard by inviting friends or purchasing Early Adopter Access.',
+      'Joining secures a stable waitlist position for the upcoming beta. Invitations will roll out in stages as capacity becomes available. Your referral link lets friends join you, but it does not currently change your position.',
   },
   {
     question: 'What is included with Early Adopter Access?',
     answer:
-      'For $5, you secure guaranteed priority Closed Beta access, six months of T1GER Premium, and a permanent Founder badge to show you were here since day one.',
+      'For $5, you receive priority consideration for the Closed Beta, six months of T1GER Premium when available, and a permanent Founder badge. Beta timing is not guaranteed; see the Terms for full details.',
   },
 ];
 
@@ -85,7 +80,7 @@ export default function SectionFAQ() {
         {/* Accordion items */}
         <div>
           {faqs.map((faq, i) => (
-            <FAQItem key={i} {...faq} index={i} isFirst={i === 0} />
+            <FAQItem key={faq.question} {...faq} index={i} isFirst={i === 0} />
           ))}
         </div>
       </div>
@@ -105,6 +100,8 @@ function FAQItem({
   isFirst: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const buttonId = `faq-question-${index}`;
+  const answerId = `faq-answer-${index}`;
 
   return (
     <motion.div
@@ -115,7 +112,11 @@ function FAQItem({
       className={`border-b border-black/5 ${isFirst ? 'border-t' : ''}`}
     >
       <button
+        id={buttonId}
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-controls={answerId}
         className="w-full flex items-center justify-between py-6 md:py-8 text-left cursor-pointer bg-transparent border-none group outline-none"
       >
         <span className="font-outfit font-bold text-black text-lg md:text-xl group-hover:text-[#FF6B00] transition-colors duration-500 leading-snug pr-8">
@@ -137,6 +138,9 @@ function FAQItem({
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id={answerId}
+            role="region"
+            aria-labelledby={buttonId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}

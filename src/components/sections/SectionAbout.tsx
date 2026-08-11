@@ -68,7 +68,7 @@ export default function SectionAbout() {
               transition={{ duration: 0.7, delay: 0.15 }}
               className="max-w-xl text-lg font-light leading-relaxed text-white/50 sm:text-xl md:text-2xl"
             >
-              We curate the world's best educational content across all subjects, package it into gamified Daily Lessons and Daily Missions, and build the real-world framework for you to apply it instantly.
+            We start with investing: curated ideas become focused Daily Lessons and Daily Missions, with a real-world framework that helps you apply each concept instead of merely consuming it.
             </motion.p>
           </div>
         </div>

@@ -8,7 +8,7 @@ export default function EarlyAccessSuccess() {
       <div className="mx-auto max-w-5xl">
         <header className="flex items-center justify-between border-b border-white/10 pb-5">
           <a href="/" className="font-syncopate text-sm font-bold tracking-[0.2em] text-white transition-colors hover:text-[#FF6B00]">T1GER</a>
-          <span className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-white/35">Secure checkout complete</span>
+          <span className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-white/55">Secure checkout return</span>
         </header>
 
         {isDemo && (
@@ -22,17 +22,19 @@ export default function EarlyAccessSuccess() {
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FF6B00] text-black">
               <Check className="h-5 w-5 stroke-[3]" aria-hidden="true" />
             </div>
-            <p className="mt-7 font-mono text-[10px] font-black uppercase tracking-[0.22em] text-[#FF6B00]">Payment received</p>
-            <h1 className="mt-3 max-w-xl font-outfit text-4xl font-black uppercase leading-[0.94] sm:text-6xl">Your Founder Access Is Reserved.</h1>
+            <p className="mt-7 font-mono text-[10px] font-black uppercase tracking-[0.22em] text-[#FF6B00]">{isDemo ? 'Demo preview' : 'Checkout submitted'}</p>
+            <h1 className="mt-3 max-w-xl font-outfit text-4xl font-black uppercase leading-[0.94] sm:text-6xl">{isDemo ? 'This is the confirmation experience.' : 'Check your email for confirmation.'}</h1>
             <p className="mt-5 max-w-lg text-sm leading-relaxed text-white/55 sm:text-base">
-              Stripe sends the payment confirmation to T1GER. We record your Early Adopter status and email your waitlist position and referral link.
+              {isDemo
+                ? 'No payment or benefit reservation occurred in this preview.'
+                : 'Stripe sends the verified payment event to T1GER. After it is recorded, we email your Founder benefits, waitlist position, and referral link.'}
             </p>
 
             <ol className="mt-8 divide-y divide-white/10 border-y border-white/10">
               {[
-                ['01', 'Payment confirmed by Stripe'],
-                ['02', 'Early Adopter status recorded'],
-                ['03', 'Rank and referral link sent by email'],
+                ['01', 'Stripe verifies the payment'],
+                ['02', 'T1GER records your Founder benefits'],
+                ['03', 'Your position and referral link arrive by email'],
               ].map(([number, label]) => (
                 <li key={number} className="flex items-center gap-4 py-3.5">
                   <span className="font-mono text-[9px] font-black text-[#CCFF00]">{number}</span>
@@ -66,7 +68,7 @@ export default function EarlyAccessSuccess() {
                   <p className="mt-1 font-outfit text-5xl font-black text-white">{isDemo ? '#247' : 'EMAIL'}</p>
                 </div>
                 <div className="space-y-2 text-xs text-white/55">
-                  <p>Priority Closed Beta access</p>
+                  <p>Priority Closed Beta consideration</p>
                   <p>6 months of T1GER Premium</p>
                   <p>Permanent Founder badge</p>
                 </div>

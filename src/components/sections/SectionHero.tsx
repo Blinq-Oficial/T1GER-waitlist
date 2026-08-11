@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowUpRight, Heart, Loader2, Mail, Sparkles, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
-import { Typewriter } from '../ui/typewriter-text';
+import { trackEvent } from '../../lib/analytics';
 import { BorderBeam } from '../ui/border-beam';
 import { ShimmerButton } from '../ui/shimmer-button';
 
@@ -33,11 +33,14 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
   const [helperText, setHelperText] = useState('');
-  const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
 
   const fireConfetti = () => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -106,6 +109,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
   const smoothY = useSpring(mouseY, { stiffness: 50, damping: 30 });
 
   useEffect(() => {
+    if (!window.matchMedia('(pointer: fine)').matches) return;
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX / window.innerWidth);
       mouseY.set(e.clientY / window.innerHeight);
@@ -114,6 +118,10 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
+  useEffect(() => {
+    if (isSignedUp) successRef.current?.focus();
+  }, [isSignedUp]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorText('');
@@ -121,6 +129,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
 
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       setErrorText('Enter a valid email.');
+      emailInputRef.current?.focus();
       return;
     }
 
@@ -130,7 +139,8 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
       const data = await joinWaitlist(email);
       setEmail('');
       setHelperText(data.alreadyJoined ? "You're already in. Showing your position." : 'Position secured.');
-      onSuccess(data.position || 800, data.shareUrl);
+      onSuccess(data.position, data.shareUrl);
+      trackEvent('Waitlist Signup Success', { source: 'hero', returning: Boolean(data.alreadyJoined) });
       fireConfetti();
     } catch (err: unknown) {
       console.error('Network Error:', err);
@@ -142,10 +152,15 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
 
   const shareUrl = waitlistShareUrl || 'https://t1ger.app/';
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopyStatus('copied');
+      trackEvent('Referral Link Copied', { source: 'hero' });
+    } catch {
+      setCopyStatus('error');
+    }
+    window.setTimeout(() => setCopyStatus('idle'), 2000);
   };
 
 
@@ -370,28 +385,12 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 className="mb-6 max-w-4xl md:mb-8"
               >
                 <h1 className="font-outfit font-black text-white uppercase leading-[0.98] tracking-tight text-[clamp(1.85rem,6.3vw,4.05rem)]">
-                  Building the Duolingo for Learning <br />
-                  <span className="text-[#CCFF00]">
-                    <Typewriter
-                      text={[
-                        "INVESTING",
-                        "AI",
-                        "MARKETING",
-                        "BUSINESS",
-                        "FINANCE",
-                        "STRATEGY",
-                        "TECH",
-                        "PSYCHOLOGY",
-                        "SCIENCE"
-                      ]}
-                      loop={true}
-                      speed={100}
-                      deleteSpeed={50}
-                      delay={2000}
-                      cursor="_"
-                    />
-                  </span>
+                  Learn investing by doing. <br />
+                  <span className="text-[#CCFF00]">Not by scrolling.</span>
                 </h1>
+                <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/65 sm:text-base">
+                  Daily lessons become real-world missions, proof of work, and a streak you will want to protect. Investing is the first track; more are coming.
+                </p>
               </motion.div>
 
               <motion.div
@@ -446,19 +445,19 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   <button
                     type="button"
                     onClick={onOpenEarlyAdopter}
-                    className="group relative flex min-h-[112px] overflow-hidden rounded-[8px] border border-[#FF6B00] bg-[#FF6B00] p-3 text-black shadow-[0_18px_60px_rgba(255,107,0,0.18)] transition-transform hover:-translate-y-1 sm:min-h-[148px] sm:p-4"
+                    className="group relative order-2 flex min-h-[112px] overflow-hidden rounded-[8px] border border-[#FF6B00]/45 bg-[#FF6B00]/10 p-3 text-white transition-transform hover:-translate-y-1 hover:border-[#FF6B00] sm:min-h-[148px] sm:p-4"
                   >
                     <BorderBeam size={160} duration={8} colorFrom="#000000" colorTo="#CCFF00" />
-                    <span className="absolute -right-3 -top-7 hidden font-outfit text-[7rem] font-black leading-none text-black/[0.07] sm:block">$5+</span>
+                    <span className="absolute -right-3 -top-7 hidden font-outfit text-[7rem] font-black leading-none text-white/[0.04] sm:block">$5+</span>
                     <span className="relative flex w-full flex-col z-10">
                       <span className="flex items-center gap-1.5 font-mono text-[8px] font-black uppercase tracking-[0.16em] sm:text-[9px]">
-                        <Heart className="h-3 w-3 fill-black sm:h-3.5 sm:w-3.5" aria-hidden="true" />
+                        <Heart className="h-3 w-3 fill-[#FF6B00] text-[#FF6B00] sm:h-3.5 sm:w-3.5" aria-hidden="true" />
                         Access + tiger impact
                       </span>
                       <span className="mt-1 block font-outfit text-[1.25rem] font-black uppercase leading-none sm:text-[1.55rem]">Early Adopter</span>
-                      <span className="mt-1.5 hidden max-w-[18rem] text-[11px] font-semibold leading-relaxed text-black/65 sm:block">Start at $5. Add more at checkout to support wild tiger conservation.</span>
+                      <span className="mt-1.5 hidden max-w-[18rem] text-[11px] font-semibold leading-relaxed text-white/65 sm:block">Priority consideration, six months of Premium, and Founder status. Extra support goes toward tiger conservation.</span>
                       <span className="mt-2 flex min-h-9 items-center justify-between gap-3 rounded-[6px] bg-black px-3 py-1.5 font-mono text-[8px] font-black uppercase tracking-[0.07em] text-white sm:mt-auto sm:min-h-11 sm:px-4 sm:py-2 sm:text-[10px]">
-                        Claim access · Give $5+
+                        Reserve benefits · $5+
                         <ArrowUpRight className="h-4 w-4 shrink-0 text-[#CCFF00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                       </span>
                     </span>
@@ -467,7 +466,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   <form
                     onSubmit={handleSubmit}
                     noValidate
-                    className="relative flex min-h-[116px] flex-col overflow-hidden rounded-[8px] border border-white/20 bg-black/55 p-3 backdrop-blur-md sm:min-h-[148px] sm:p-4"
+                    className="relative order-1 flex min-h-[116px] flex-col overflow-hidden rounded-[8px] border border-[#CCFF00]/40 bg-black/70 p-3 backdrop-blur-md sm:min-h-[148px] sm:p-4"
                   >
                     <BorderBeam size={160} duration={10} colorFrom="#CCFF00" colorTo="#FF6B00" />
                     <span className="font-mono text-[8px] font-black uppercase tracking-[0.18em] text-[#CCFF00] sm:text-[9px]">Free · No card required</span>
@@ -475,15 +474,18 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                       <Mail className="h-4 w-4 text-[#CCFF00] sm:h-5 sm:w-5" aria-hidden="true" />
                       Join Waitlist
                     </span>
-                    <p className="mt-1.5 hidden text-[11px] leading-relaxed text-white/50 sm:block">Get your rank instantly and move up by sharing your referral link.</p>
+                    <p className="mt-1.5 hidden text-[11px] leading-relaxed text-white/65 sm:block">Secure a stable waitlist position and invite ambitious friends to join you.</p>
 
                     <div className="relative mt-auto pt-1.5 sm:pt-3">
                       <ShieldCheck className="absolute bottom-2.5 left-3 h-3.5 w-3.5 text-white/25 sm:bottom-4 sm:left-4 sm:h-4 sm:w-4" aria-hidden="true" />
                       <input
+                        ref={emailInputRef}
                         id="hero-email"
                         name="email"
                         type="email"
                         aria-label="Email address"
+                        aria-invalid={Boolean(errorText)}
+                        aria-describedby={(errorText || helperText) ? 'hero-email-status' : undefined}
                         autoComplete="email"
                         placeholder="YOUR EMAIL"
                         value={email}
@@ -508,6 +510,9 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                     <AnimatePresence mode="wait">
                       {(errorText || helperText) && (
                         <motion.p
+                          id="hero-email-status"
+                          role={errorText ? 'alert' : 'status'}
+                          aria-live="polite"
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
@@ -526,6 +531,10 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
             </motion.div>
           ) : (
             <motion.div
+              ref={successRef}
+              tabIndex={-1}
+              role="status"
+              aria-live="polite"
               key="post-signup"
               initial={{ opacity: 0, scale: 0.9, filter: 'blur(15px)' }}
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
@@ -578,22 +587,25 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
               >
                 <div className="w-full space-y-4">
                   <p className="text-white/40 font-mono text-[9px] tracking-[0.3em] uppercase text-center">
-                    Share your rank to climb higher
+                    Invite someone ambitious to join you
                   </p>
                   
                   <div className="flex items-center gap-2 bg-white/[0.02] border border-white/10 rounded-full pl-6 pr-1.5 py-1.5 group">
                     <span className="flex-1 font-mono text-[10px] text-white/30 truncate select-all">{shareUrl}</span>
                     <button 
+                      type="button"
                       onClick={handleCopy}
+                      aria-label="Copy your T1GER referral link"
                       className="bg-[#FF6B00] text-black px-6 py-2.5 rounded-full font-mono text-[10px] font-bold hover:bg-white transition-all uppercase tracking-widest"
                     >
-                      {copied ? 'COPIED' : 'COPY'}
+                      {copyStatus === 'copied' ? 'COPIED' : copyStatus === 'error' ? 'FAILED' : 'COPY'}
                     </button>
                   </div>
 
                   <div className="flex gap-3">
                     <a 
                       href={`https://wa.me/?text=${encodeURIComponent(`I just joined the T1GER waitlist! 🐅 I'm Rank #${waitlistPosition}. Join the hunt: ${shareUrl}`)}`}
+                      onClick={() => trackEvent('Referral Shared', { channel: 'whatsapp', source: 'hero' })}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 bg-white/[0.03] border border-white/10 hover:border-[#25D366]/40 hover:text-[#25D366] transition-all rounded-2xl py-5 text-center font-mono text-[9px] font-bold tracking-[0.2em] uppercase"
@@ -602,6 +614,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                     </a>
                     <a 
                       href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just secured my rank on the T1GER waitlist. 🐅\n\nRank: #${waitlistPosition}\nJoin the elite 1%: ${shareUrl}`)}`}
+                      onClick={() => trackEvent('Referral Shared', { channel: 'x', source: 'hero' })}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 bg-white/[0.03] border border-white/10 hover:border-white hover:text-white transition-all rounded-2xl py-5 text-center font-mono text-[9px] font-bold tracking-[0.2em] uppercase"
@@ -615,17 +628,17 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   <span className="flex items-center justify-between gap-4">
                     <span>
                       <span className="block font-mono text-[9px] font-black uppercase tracking-[0.2em] text-[#FF6B00]">Optional upgrade</span>
-                      <span className="mt-1 block font-outfit text-base font-black uppercase text-white">Get immediate beta access for $5</span>
+                      <span className="mt-1 block font-outfit text-base font-black uppercase text-white">Get priority beta consideration for $5</span>
                     </span>
                     <Zap className="h-5 w-5 shrink-0 text-[#CCFF00]" aria-hidden="true" />
                   </span>
                 </button>
 
                 <button
-                  onClick={() => document.getElementById('life')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full relative bg-white text-black py-6 rounded-full font-outfit font-black text-[11px] uppercase tracking-[0.25em] hover:bg-[#FF6B00] hover:text-white transition-all shadow-2xl overflow-hidden group"
                 >
-                  <span className="relative z-10">REVEAL BIOLOGICAL CLOCK</span>
+                  <span className="relative z-10">EXPLORE HOW IT WORKS</span>
                   <ChevronRight className="absolute right-8 top-1/2 -translate-y-1/2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </button>
               </motion.div>

@@ -1,6 +1,7 @@
 export interface WaitlistSignupResult {
   success: boolean;
   alreadyJoined?: boolean;
+  emailSent?: boolean;
   position: number;
   refCode?: string;
   shareUrl?: string;
@@ -8,17 +9,18 @@ export interface WaitlistSignupResult {
 
 function getReferralCode() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('ref') || '';
+  const referral = params.get('ref')?.trim() || '';
+  return /^[A-Za-z0-9_-]{1,80}$/.test(referral) ? referral : '';
 }
 
-export async function joinWaitlist(email: string, name?: string): Promise<WaitlistSignupResult> {
+export async function joinWaitlist(email: string): Promise<WaitlistSignupResult> {
   const response = await fetch('/api/join', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       email,
-      name,
       referredBy: getReferralCode(),
+      website: '',
     }),
   });
 

@@ -37,7 +37,6 @@
 
 /* ─── Hardware Acceleration ─── */
 .hw-accel {
-  will-change: transform, opacity, filter;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   transform: translateZ(0);
@@ -68,6 +67,29 @@ body {
 
 section {
   position: relative;
+}
+
+main > section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 200;
+  transform: translateY(-160%);
+  border-radius: 0.375rem;
+  background: #CCFF00;
+  color: #050505;
+  padding: 0.75rem 1rem;
+  font: 800 0.75rem/1 "JetBrains Mono", monospace;
+  text-transform: uppercase;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 :focus-visible {
@@ -541,10 +563,18 @@ html.lenis, html.lenis body {
    ═══════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .hw-accel {
+    transform: none;
   }
 }
 

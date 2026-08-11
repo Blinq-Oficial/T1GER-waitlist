@@ -4,7 +4,7 @@ type LegalPageProps = {
   type: 'terms' | 'privacy';
 };
 
-const updatedAt = 'July 12, 2026';
+const updatedAt = 'August 11, 2026';
 
 function TermsContent() {
   return (
@@ -15,7 +15,7 @@ function TermsContent() {
       </section>
       <section>
         <h2>2. Waitlist and beta access</h2>
-        <p>Waitlist positions, referral rankings, launch timing, features, and availability may change. A waitlist position does not guarantee admission on a specific date. Beta software may be incomplete, interrupted, or changed before release.</p>
+        <p>Your waitlist position is assigned when you join. Referral links currently provide attribution and do not change that position. Launch timing, invitation capacity, features, and availability may change, and a waitlist position does not guarantee admission on a specific date. Beta software may be incomplete, interrupted, or changed before release.</p>
       </section>
       <section>
         <h2>3. Early Adopter Access</h2>
@@ -52,7 +52,7 @@ function PrivacyContent() {
     <>
       <section>
         <h2>1. Information we collect</h2>
-        <p>We collect information you provide, including your email address, referral activity, waitlist position, survey or rating responses, and communications with us. For paid access, Stripe provides transaction details such as payment status, amount, currency, and the email used at checkout. T1GER does not receive your complete card number.</p>
+        <p>We collect information you provide, including your email address, referral activity, waitlist position, and communications with us. We also collect limited website usage and performance data. For paid access, Stripe provides transaction details such as payment status, amount, currency, and the email used at checkout. T1GER does not receive your complete card number.</p>
       </section>
       <section>
         <h2>2. How we use information</h2>
@@ -60,7 +60,7 @@ function PrivacyContent() {
       </section>
       <section>
         <h2>3. Service providers and disclosures</h2>
-        <p>We share data only as needed with providers that support the service, including Vercel for hosting, Supabase for database services, Resend for email delivery, and Stripe for payment processing. We may also disclose information when required by law, to protect rights and security, or in connection with a business transfer.</p>
+        <p>We share data only as needed with providers that support the service, including Vercel for hosting, privacy-conscious website analytics and performance measurement, Supabase for database services, Resend for email delivery, and Stripe for payment processing. We may also disclose information when required by law, to protect rights and security, or in connection with a business transfer.</p>
       </section>
       <section>
         <h2>4. Retention and security</h2>

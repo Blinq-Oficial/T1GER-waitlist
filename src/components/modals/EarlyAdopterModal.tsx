@@ -3,11 +3,12 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Flame, Heart, ShieldCheck, Trophy, X, Zap } from 'lucide-react';
 import { BorderBeam } from '../ui/border-beam';
+import { trackEvent } from '../../lib/analytics';
 
 const PAYMENT_LINK = 'https://buy.stripe.com/fZueVeaebe5T5pvdpQaZi01';
 
 const benefits = [
-  { icon: Flame, title: 'Priority Early Access', description: 'Enter the Closed Beta before the general waitlist.' },
+  { icon: Flame, title: 'Priority Consideration', description: 'Be considered before the general waitlist; timing is not guaranteed.' },
   { icon: Zap, title: '6-Month Premium Pass', description: 'Get the full action roadmap experience ($60 value).' },
   { icon: Trophy, title: 'Founder Status', description: 'Keep an exclusive Founder badge on your profile.' },
   { icon: ShieldCheck, title: 'Risk-Free Before Launch', description: 'Request a full refund any time before global launch.' },
@@ -31,6 +32,7 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleDemoPayment = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    trackEvent('Early Adopter Checkout Started', { amount: '5+', source: 'modal' });
     if (window.location.hostname === 'localhost') {
       e.preventDefault();
       const testEmail = prompt("Simulador de Stripe (Local):\nIntroduce tu correo para enviarte el email real de Early Adopter:");
@@ -57,14 +59,17 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
         } else {
           alert(`Error: ${data.error || 'No se pudo procesar'}`);
         }
-      } catch (err: any) {
-        alert(`Error al conectar con la API local: ${err.message}`);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Error desconocido';
+        alert(`Error al conectar con la API local: ${message}`);
       }
     }
   };
 
   useEffect(() => {
     if (!isOpen) return;
+
+    trackEvent('Early Adopter Modal Opened');
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
@@ -167,7 +172,7 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
               <div className="px-5 pb-6 pt-7 sm:px-8 sm:pb-8 sm:pt-9 md:px-10">
                 <p className="mb-3 font-mono text-[9px] font-black uppercase tracking-[0.24em] text-[#CCFF00]">Limited Early Adopter Offer</p>
                 <h2 id={titleId} className="max-w-lg pr-10 font-outfit text-[1.75rem] font-black uppercase leading-[0.98] text-white sm:text-4xl">Unlock T1GER. Help Protect Tigers.</h2>
-                <p id={descriptionId} className="mt-3 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">Pay $5 for founding access. Choose a higher amount at checkout to support wild tiger conservation.</p>
+                <p id={descriptionId} className="mt-3 max-w-md text-sm leading-relaxed text-white/70 sm:text-base">Pay $5 to reserve Founder benefits and receive priority beta consideration. Choose a higher amount at checkout to support wild tiger conservation.</p>
 
                 <div className="my-6 grid grid-cols-3 gap-2.5" aria-label="Example contribution amounts">
                   {contributionExamples.map(({ amount, tiger, label }) => (
@@ -187,7 +192,7 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
                       </span>
                       <div>
                         <h3 className="font-outfit text-[13px] font-extrabold leading-tight text-white">{title}</h3>
-                        <p className="mt-1 text-[10px] leading-relaxed text-white/45">{description}</p>
+                        <p className="mt-1 text-[11px] leading-relaxed text-white/65">{description}</p>
                       </div>
                     </li>
                   ))}
@@ -205,7 +210,7 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
                   onClick={handleDemoPayment}
                   className="mt-4 flex min-h-14 w-full items-center justify-center gap-2 rounded-[6px] bg-[#FF6B00] px-5 py-4 text-center font-mono text-[11px] font-black uppercase tracking-[0.08em] text-black transition-colors hover:bg-[#CCFF00] sm:text-xs"
                 >
-                  Choose $5+ &amp; Claim Founder Access
+                  Choose $5+ &amp; Reserve Founder Benefits
                   <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
                 </a>
                 <a href="/early-access/success?demo=1" className="mt-3 block text-center font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-white/45 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white">
