@@ -260,6 +260,20 @@ textarea::placeholder, input::placeholder { color: #72727b; }
 .stage-labels span.active { color: var(--accent-light); }
 .lesson-keyboard { width: min(100% - 96px, 1370px); margin: 0 auto -22px; text-align: right; color: #77757b; font: 500 9px 'JetBrains Mono', monospace; letter-spacing: .09em; }
 .lesson-main { width: min(100% - 96px, 1370px); margin-top: 7vh; gap: clamp(40px, 6vw, 120px); }
+.evidence-notes { grid-column: 1 / -1; align-self: start; border-top: 1px solid var(--line); margin-top: -14px; color: var(--soft); }
+.evidence-notes summary { cursor: pointer; padding: 20px 0; color: var(--ink); font-size: 13px; font-weight: 600; }
+.evidence-notes summary span { float: right; color: var(--accent-light); font: 500 10px 'JetBrains Mono'; text-transform: uppercase; letter-spacing: .08em; }
+.evidence-notes-body { display: grid; gap: 10px; padding: 0 0 30px; max-width: 980px; }
+.evidence-notes-body p { margin: 0; font-size: 13px; line-height: 1.6; }
+.evidence-notes-body p strong { color: var(--ink); }
+.evidence-notes-body > small { color: var(--quiet); font-size: 11px; margin-top: 5px; }
+.evidence-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
+.evidence-links a { display: grid; gap: 5px; padding: 16px; background: var(--raised); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.evidence-links a:hover, .evidence-links a:focus-visible { border-color: var(--accent); }
+.evidence-links span, .evidence-links small { color: var(--quiet); font-size: 11px; }
+.evidence-links strong { font-size: 14px; }
+.prediction-label { display: block; margin-top: 25px; color: var(--soft); font-size: 12px; }
+.prediction-input { display: block; width: min(100%, 380px); margin-top: 9px; margin-bottom: 18px; }
 .lesson-copy h1, .lesson-focus h1, .apply-stage-head h1 { letter-spacing: -.065em; font-size: clamp(43px, 4.7vw, 73px); line-height: 1.02; }
 .lesson-copy > p:not(.eyebrow), .lesson-focus > p:not(.eyebrow), .apply-stage-head > p:not(.eyebrow) { color: #b8b5b7; font-size: 17px; }
 .answer-options button { border-radius: 7px; background: #19191d; border-color: #ffffff34; transition: transform .14s ease, background .14s ease, border-color .14s ease; }
@@ -378,6 +392,8 @@ textarea::placeholder, input::placeholder { color: #72727b; }
 }
 
 @media (max-width: 620px) {
+  .evidence-links { grid-template-columns: 1fr; }
+  .evidence-notes summary span { float: none; display: block; margin-top: 5px; }
   .app-shell:has(.review-session) .page { padding-inline: 19px; }
   .topbar { height: 60px; padding: 0 18px; }
   .page { padding: 34px 20px 80px; }
