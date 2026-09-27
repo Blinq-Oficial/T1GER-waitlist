@@ -14,7 +14,7 @@ npm test
 npm run build
 ```
 
-The dev-only `?preview=1` query renders a labeled, read-only design preview without signing in. It does not exercise persistence. Deep links are handled by the Firebase Hosting rewrite in `firebase.json`; deployment has not been run.
+The dev-only `?preview=1` query renders a labeled design preview without signing in. Open `http://127.0.0.1:5173/lesson/learn-money-02?preview=1` to explore all six stages of **Time is the Multiplier**. The preview lets you complete the lesson locally without writing to Firebase; it does not exercise persistence. The other preview destinations show fixture data. Deep links are handled by the Firebase Hosting rewrite in `firebase.json`; deployment has not been run.
 
 ## Mobile architecture map
 

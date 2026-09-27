@@ -1,6 +1,6 @@
 CURRENT_PHASE: Web Alpha verification
 
-COMPLETED: New React/TypeScript web client; canonical mobile curriculum/progression snapshot; existing Firebase Auth/Firestore/Functions integration; responsive Learn, Discover, Apply, Master, Profile; Investing lessons 01 and 02 with six stages; FSRS parity tests; build and visual checks at 320px and desktop.
+COMPLETED: New React/TypeScript web client; canonical mobile curriculum/progression snapshot; existing Firebase Auth/Firestore/Functions integration; responsive Learn, Discover, Apply, Master, Profile; Investing lessons 01 and 02 with six stages; full no-write flagship lesson preview; FSRS parity tests; build and visual checks at 320px and desktop.
 
 BLOCKED: Signed-in end-to-end and cross-device verification need a safe T1GER test account or running Firebase emulators. No production user data was modified. Preview deployment target has not been selected.
 
