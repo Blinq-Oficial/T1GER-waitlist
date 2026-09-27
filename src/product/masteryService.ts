@@ -17,6 +17,7 @@ export interface MasterySnapshot {
   weak: MasteryItem[];
   learnedCount: number;
   isCaughtUp: boolean;
+  nextDueAt: Date | null;
   strength: {
     learning: number;
     reviewing: number;
@@ -74,6 +75,7 @@ export function buildMasterySnapshot(brain: BrainState, now: Date = new Date()):
     weak,
     learnedCount: items.length,
     isCaughtUp: due.length === 0,
+    nextDueAt: items.filter(item => item.dueAt.getTime() > now.getTime()).sort((a, b) => a.dueAt.getTime() - b.dueAt.getTime())[0]?.dueAt || null,
     strength: {
       learning: items.filter((item) => item.card.state === 1).length,
       reviewing: items.filter((item) => item.card.state === 2).length,

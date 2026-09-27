@@ -59,7 +59,7 @@ function previewState(): { profile: Profile; missions: Mission[] } {
     brainState = { ...applied, fsrsCards: { ...applied.fsrsCards, 'learn-money-01': { ...applied.fsrsCards['learn-money-01'], due: new Date(Date.now() - 1000) } } };
   }
   return {
-    profile: { uid: 'preview', email: 'preview@t1ger.app', displayName: 'Preview learner', onboardingComplete: true, brainState },
+    profile: { uid: 'preview', email: 'preview@t1ger.app', displayName: 'Preview learner', onboardingComplete: fixture !== 'onboarding', brainState },
     missions: fixture === 'apply' ? [{ id: 'field-learn-money-02', lessonId: 'learn-money-02', status: 'ready', title: 'Execute: Time is the multiplier', supportPayload: 'My rule: contribute $250 monthly for 10 years and review once a year.' }] : [],
   };
 }
@@ -70,7 +70,7 @@ export function useLearner(preview = false) {
   const [profile, setProfile] = useState<Profile | null>(fixture?.profile || null);
   const [missions, setMissions] = useState<Mission[]>(fixture?.missions || []);
   const [loading, setLoading] = useState(!preview && Boolean(auth));
-  const [error, setError] = useState('');
+  const [error, setError] = useState(preview && new URLSearchParams(window.location.search).get('fixture') === 'error' ? 'Your learning state is temporarily unavailable.' : '');
 
   useEffect(() => {
     if (preview || !auth || !db) return;

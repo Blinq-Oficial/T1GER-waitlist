@@ -6,6 +6,7 @@ import '@fontsource/outfit/latin-600.css';
 import '@fontsource/outfit/latin-700.css';
 import '@fontsource/jetbrains-mono/latin-500.css';
 import './style.css';
+import './polish.css';
 import App from './App';
 
 createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);

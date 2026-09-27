@@ -14,7 +14,7 @@ npm test
 npm run build
 ```
 
-The dev-only `?preview=1` query renders a labeled design preview without signing in. Open `http://127.0.0.1:5173/lesson/learn-money-02?preview=1` to explore all six stages of **Time is the Multiplier**. The preview lets you complete the lesson locally without writing to Firebase; it does not exercise persistence. The other preview destinations show fixture data. Deep links are handled by the Firebase Hosting rewrite in `firebase.json`; deployment has not been run.
+The dev-only `?preview=1` query renders a labeled design preview without signing in. Open `http://127.0.0.1:5173/lesson/learn-money-02?preview=1` to explore all six stages of **Time is the Multiplier**. The preview lets you complete the lesson locally without writing to Firebase; it does not exercise persistence. Preview fixtures also cover a pending Apply mission (`/apply?preview=1&fixture=apply`), due reviews (`/master?preview=1&fixture=review`), onboarding (`/learn?preview=1&fixture=onboarding`), and a load error (`/learn?preview=1&fixture=error`). Deep links are handled by the Firebase Hosting rewrite in `firebase.json`; deployment has not been run.
 
 ## Mobile architecture map
 
@@ -39,8 +39,10 @@ Learn, Discover, Apply, Master, and Profile use real account and learning state.
 
 The first two web lessons save progress to the same `users/{uid}.brainState`, `missions`, and server reward records as mobile. Master reads and writes the same FSRS card IDs. A saved tool's browser-local details do not yet travel between devices after its mission is completed; meaningful lesson, Apply, reward, and review progress does.
 
+The desktop shell and the five destinations have distinct layouts: Learn presents the next lesson and the path, Apply centers the active decision and its saved rule, and Master presents due retrieval rather than a synthetic score. The lesson player supports keyboard selection (number keys for choices), Enter to advance where offered, and 1–4 to rate a revealed memory card. The compounding chart has a keyboard-accessible year scrubber. Reduced-motion preferences are respected by the visual layer.
+
 ## Verification and deployment
 
-`npm test` checks the compounding model and mobile progression/FSRS parity. `npm run build` performs TypeScript checking and creates the production bundle. A signed-in end-to-end run against a safe test account remains necessary before calling Web Alpha complete. The local machine has no JDK/Firebase Emulator CLI, and no authorized test account was provided. Use the existing Firebase test project/emulators or a disposable test account to verify the full sign-in → two lessons → Apply → Master → refresh path. Set `VITE_USE_FIREBASE_EMULATOR=true` only when Auth, Firestore, and Functions emulators are running locally.
+`npm test` checks the compounding model and mobile progression/FSRS parity, including the next due review date. `npm run lint` checks TypeScript and ESLint; `npm run build` creates the production bundle. The design preview was visually checked at 360, 390, 430, 768, 1024, 1280, 1440, and 1920 pixels, and the full six-stage flagship lesson was completed in preview. A signed-in end-to-end run against a safe test account remains necessary before calling Web Alpha complete. The local machine has no JDK/Firebase Emulator CLI, and no authorized test account was provided. Use the existing Firebase test project/emulators or a disposable test account to verify the full sign-in → two lessons → Apply → Master → refresh path. Set `VITE_USE_FIREBASE_EMULATOR=true` only when Auth, Firestore, and Functions emulators are running locally.
 
 For a deployment, provide the same Firebase browser configuration as environment variables and authorize the chosen web domain in Firebase Auth. Deploy only Hosting from this repo; never deploy rules or functions from the web project. Preview and production deploys require an explicit target decision because the mobile repository already has Hosting configuration for the same Firebase project.
