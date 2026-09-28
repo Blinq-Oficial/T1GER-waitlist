@@ -48,3 +48,5 @@ The waitlist test suite covers signup normalization, stable position fallbacks, 
 ## Deployment
 
 Vercel deploys the tracked application from `main`. Configure the server-only variables in `.env.example` and the browser Firebase variables in `apps/web/.env.example` on the existing Vercel project. Register `/api/stripe-webhook` as the Stripe webhook target, and keep the Payment Link return URL pointed at `/early-access/success`. The app requires the existing Firebase project's authorized `t1ger.app` domain for sign-in. Do not merge the `/app` route into production until Firebase sign-in, Apply persistence, legal text, and waitlist-to-account handoff have been verified on a safe test environment.
+
+The Vercel project's **Build Command** must be `npm run build`, with **Output Directory** set to `dist`. Its previous `vite build` override built only the landing page, leaving `/app` unavailable. The existing project's Build Command was updated for preview deployments; the production deployment remains on `main` until this branch is merged.
