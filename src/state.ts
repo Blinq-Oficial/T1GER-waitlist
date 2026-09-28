@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, type User } from 'firebase/auth';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, type User } from 'firebase/auth';
 import { collection, doc, getDoc, onSnapshot, query, runTransaction, setDoc, where } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { useEffect, useState } from 'react';
@@ -41,6 +41,8 @@ export function explainError(cause: unknown, fallback: string): string {
   const code = typeof cause === 'object' && cause && 'code' in cause ? String(cause.code) : '';
   if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found'].includes(code)) return 'Email or password not recognized.';
   if (code === 'auth/email-already-in-use') return 'This email already has an account. Sign in instead.';
+  if (code === 'auth/invalid-email') return 'Enter a valid email address.';
+  if (code === 'auth/weak-password') return 'Use a password with at least 6 characters.';
   if (code === 'auth/popup-closed-by-user') return 'The sign-in window was closed.';
   if (code === 'auth/unauthorized-domain') return 'This web domain is not enabled for T1GER sign-in.';
   if (code === 'auth/too-many-requests') return 'Too many attempts. Try again later.';
@@ -105,6 +107,10 @@ export async function signUp(email: string, password: string) {
 export async function signInGoogle() {
   if (!auth) throw new Error('Firebase is not configured.');
   await signInWithPopup(auth, new GoogleAuthProvider());
+}
+export async function resetPassword(email: string) {
+  if (!auth) throw new Error('Firebase is not configured.');
+  await sendPasswordResetEmail(auth, email.trim());
 }
 export async function leave() { if (auth) await signOut(auth); }
 

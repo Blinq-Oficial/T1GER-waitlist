@@ -14,7 +14,13 @@ npm test
 npm run build
 ```
 
-The dev-only `?preview=1` query renders a labeled design preview without signing in. Open `http://127.0.0.1:5173/lesson/learn-money-02?preview=1` to explore all six stages of **Time is the Multiplier**. The preview lets you complete the lesson locally without writing to Firebase; it does not exercise persistence. Preview fixtures also cover a pending Apply mission (`/apply?preview=1&fixture=apply`), due reviews (`/master?preview=1&fixture=review`), onboarding (`/learn?preview=1&fixture=onboarding`), and a load error (`/learn?preview=1&fixture=error`). Deep links are handled by the Firebase Hosting rewrite in `firebase.json`; deployment has not been run.
+The dev-only `?preview=1` query renders a labeled design preview without signing in. Open `http://127.0.0.1:5173/lesson/learn-money-02?preview=1` to explore all six stages of **Time is the Multiplier**. The preview lets you complete the lesson locally without writing to Firebase; it does not exercise persistence. Preview fixtures also cover a pending Apply mission (`/apply?preview=1&fixture=apply`), due reviews (`/master?preview=1&fixture=review`), onboarding (`/?preview=1&fixture=onboarding`), and a load error (`/learn?preview=1&fixture=error`). Deep links are handled by the Firebase Hosting rewrite in `firebase.json`; deployment has not been run.
+
+## Account entry and legal release
+
+The entry screen defaults to account creation, has a visible sign-in switch, Google sign-in, email/password with a six-character minimum, password visibility, and password recovery. The onboarding screen has one available path and starts the first lesson directly. The light/dark preference is saved in browser local storage.
+
+`/privacy` and `/terms` are available before sign-in and linked from the account screen, onboarding, and Profile. They are **drafts**, visibly labeled as such. Before publishing them as final notices, confirm the real legal operator and address, privacy/support contact, effective date, audience and age rules, applicable jurisdictions, Firebase processing regions, mobile app data inventory, retention periods, account export/deletion process, and terms for any paid offering. Populate the `VITE_LEGAL_*` values only with verified facts and set `VITE_LEGAL_PUBLISHED=true` only after reviewing the actual text and operations. The flag does not itself make the notices compliant. The web app currently has no account deletion or data export UI, so those processes need an operational owner and testing before launch.
 
 ## Mobile architecture map
 
