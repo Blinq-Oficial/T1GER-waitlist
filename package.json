@@ -5,9 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "prebuild": "npm ci --prefix apps/web",
+    "build": "npm run build:waitlist && npm run build:web",
+    "build:waitlist": "tsc -b && vite build",
+    "build:web": "npm --prefix apps/web run build:subpath",
+    "lint": "eslint src api",
+    "lint:web": "npm --prefix apps/web run lint",
     "test": "node --test tests/*.test.js",
+    "test:web": "npm --prefix apps/web test",
     "preview": "vite preview"
   },
   "dependencies": {

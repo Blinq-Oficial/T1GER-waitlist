@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { appHref } from './basePath';
 
 const operator = import.meta.env.VITE_LEGAL_OPERATOR?.trim();
 const contact = import.meta.env.VITE_LEGAL_CONTACT_EMAIL?.trim();
@@ -14,7 +15,7 @@ function Contact() {
 
 export default function LegalPage({ kind, themeAction }: { kind: 'privacy' | 'terms'; themeAction?: ReactNode }) {
   const privacy = kind === 'privacy';
-  return <main className="legal-page"><header className="legal-head"><a className="brand" href="/"><span className="brand-mark">1</span><span>T1GER</span></a><div className="legal-actions"><nav aria-label="Legal pages"><a href="/privacy" aria-current={privacy ? 'page' : undefined}>Privacy</a><a href="/terms" aria-current={!privacy ? 'page' : undefined}>Terms</a></nav>{themeAction}</div></header>
+  return <main className="legal-page"><header className="legal-head"><a className="brand" href={appHref('/')}><span className="brand-mark">1</span><span>T1GER</span></a><div className="legal-actions"><nav aria-label="Legal pages"><a href={appHref('/privacy')} aria-current={privacy ? 'page' : undefined}>Privacy</a><a href={appHref('/terms')} aria-current={!privacy ? 'page' : undefined}>Terms</a></nav>{themeAction}</div></header>
     <article className="legal-content"><p className="eyebrow">T1GER / {privacy ? 'PRIVACY' : 'TERMS'}</p><h1>{privacy ? 'Privacy notice' : 'Terms of use'}</h1>
       {legalDraft && <div className="legal-draft" role="status"><strong>Draft for product review.</strong> The operator, contact, retention schedule, audience and applicable jurisdictions must be confirmed before public release. This page is not a final legal notice.</div>}
       <p className="legal-updated">{effectiveDate ? `Effective ${effectiveDate}` : 'Effective date to be confirmed'} · Operator: <Contact/></p>
@@ -30,7 +31,7 @@ export default function LegalPage({ kind, themeAction }: { kind: 'privacy' | 'te
         <section><h2>Your work and T1GER content</h2><p>You keep responsibility for the reflections and rules you enter. Do not submit sensitive financial information or content you do not have the right to use. T1GER’s original lesson design, text and visual presentation remain its content unless otherwise stated. External source links lead to their respective publishers.</p></section>
         <section><h2>Payments, changes and contact</h2><p>This web build does not take payments. Subscription status may be displayed from your existing T1GER account. Terms for paid products, account termination, governing law and dispute resolution require review before a public release. For questions, contact <Contact/>.</p></section>
       </>}
-      <footer className="legal-foot"><a href="/">Return to T1GER</a><a href={privacy ? '/terms' : '/privacy'}>{privacy ? 'Read terms' : 'Read privacy notice'}</a></footer>
+      <footer className="legal-foot"><a href={appHref('/')}>Return to T1GER</a><a href={appHref(privacy ? '/terms' : '/privacy')}>{privacy ? 'Read terms' : 'Read privacy notice'}</a></footer>
     </article>
   </main>;
 }

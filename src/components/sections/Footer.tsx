@@ -15,6 +15,7 @@ export default function Footer() {
     { label: 'Protocol', href: '#protocol' },
     { label: 'Join', href: '#join' },
     { label: 'FAQ', href: '#faq' },
+    { label: 'Open app', href: '/app/' },
   ];
 
   const socialLinks = [
