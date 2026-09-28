@@ -123,7 +123,7 @@ textarea::placeholder, input::placeholder { color: #72727b; }
 .memory-row > span:last-child { color: #b6b2b0; font: 500 11px 'JetBrains Mono', monospace; }
 .memory-empty { border-top: 1px solid var(--line); padding-top: 25px; color: #929097; font-size: 14px; }
 .review-session { max-width: 940px; margin: 0 auto; }
-.app-shell:has(.review-session) { grid-template-columns: 0 minmax(0, 1fr); }
+.app-shell:has(.review-session) { display: block; }
 .app-shell:has(.review-session) .sidebar, .app-shell:has(.review-session) .topbar { display: none; }
 .app-shell:has(.review-session) .page { max-width: 1100px; }
 .review-session-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -601,6 +601,7 @@ textarea::placeholder, input::placeholder { color: #72727b; }
 :root[data-theme='light'] .review-session-head > span,
 :root[data-theme='light'] .review-session-foot,
 :root[data-theme='light'] .review-instruction,
+:root[data-theme='light'] .rate-label,
 :root[data-theme='light'] .rating-row small { color: var(--soft); }
 :root[data-theme='light'] .review-session-body .rating-row button,
 :root[data-theme='light'] .rating-row button { background: #fffefa; border-color: #c8c1b6; color: var(--ink); }

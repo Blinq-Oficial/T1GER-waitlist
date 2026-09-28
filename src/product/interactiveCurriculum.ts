@@ -81,12 +81,12 @@ const smartMoneyLessons: AtomicLesson[] = [
   makeLesson({
     id: 'learn-money-01', trackId: 'smart-money', order: 1, slug: 'cash-has-a-cost', competency: 'investing', difficulty: 'easy', prerequisiteIds: [], source: sources.housel,
     title: l('El efectivo también pierde', 'Cash loses too'),
-    objective: l('Cuantificar el precio de dejar capital inmóvil.', 'Quantify the price of leaving capital idle.'),
-    keyConcept: l('La seguridad aparente del efectivo tiene un coste: inflación y crecimiento compuesto no capturado.', 'The apparent safety of cash has a cost: inflation and missed compounding.'),
+    objective: l('Comparar el poder adquisitivo del efectivo y reconocer cuándo importa la liquidez.', 'Compare cash purchasing power over time and identify when liquidity matters.'),
+    keyConcept: l('La inflación puede reducir el poder adquisitivo del efectivo; el colchón de emergencia cumple una función distinta de las inversiones a largo plazo.', 'Inflation can reduce cash purchasing power; an accessible emergency reserve serves a different purpose from long-term investments.'),
     impact: {
-      eyebrow: l('SMART MONEY 01', 'SMART MONEY 01'), title: l('No invertir también es una decisión', 'Not investing is still a decision'),
-      body: l('Cada dólar inmóvil compra menos con el tiempo. Antes de buscar la inversión perfecta, separa tu fondo de emergencia del dinero que puede trabajar.', 'Every idle dollar buys less over time. Before chasing the perfect investment, separate emergency cash from money that can work.'),
-      tacticalRule: l('Protege tu colchón; asigna el excedente con una regla automática.', 'Protect your buffer; deploy the surplus with an automatic rule.'),
+      eyebrow: l('SMART MONEY 01', 'SMART MONEY 01'), title: l('El efectivo y el dinero a largo plazo cumplen funciones distintas', 'Cash and long-term money have different jobs'),
+      body: l('Un saldo puede mantenerse igual mientras cambia lo que permite comprar. Decide primero qué dinero debe estar disponible para necesidades próximas.', 'A balance can stay the same while its buying power changes. First decide what must stay available for near-term needs.'),
+      tacticalRule: l('Define reglas separadas para tu reserva y tus metas a largo plazo.', 'Set separate rules for your reserve and long-term goals.'),
       metric: { value: '2', label: l('funciones distintas: liquidez y objetivos a largo plazo', 'different roles: liquidity and long-term goals') },
     },
     challenge: { title: l('Decisión de liquidez', 'Liquidity decision'), challenge: {

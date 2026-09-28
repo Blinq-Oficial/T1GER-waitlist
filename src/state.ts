@@ -165,9 +165,13 @@ export async function recordReview(uid: string, lessonId: string, score: number)
 }
 
 export async function completeApply(uid: string, lessonId: string, reflection: string, score: number) {
-  if (!functions || auth?.currentUser?.uid !== uid) throw new Error('Sign in again to continue.');
-  const complete = httpsCallable(functions, 'completeApplyMission');
-  await complete({ missionId: `field-${lessonId}`, lessonId, reflection: reflection.trim(), language: 'en', timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
+  if (!functions || !db || auth?.currentUser?.uid !== uid) throw new Error('Sign in again to continue.');
+  const missionId = `field-${lessonId}`;
+  const existing = await getDoc(doc(db, 'missions', `${uid}_${missionId}`));
+  if (!existing.exists() || !isComplete(existing.data() as Mission)) {
+    const complete = httpsCallable(functions, 'completeApplyMission');
+    await complete({ missionId, lessonId, reflection: reflection.trim(), language: 'en', timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
+  }
   await recordCompletion(uid, lessonId, score);
 }
 
@@ -182,18 +186,19 @@ export async function prepareApply(uid: string, lesson: AtomicLesson, artifact: 
   if (!db || auth?.currentUser?.uid !== uid) throw new Error('Sign in again to continue.');
   const key = `t1ger_learning_artifacts_v1_${uid}`;
   const items = (() => { try { return JSON.parse(localStorage.getItem(key) || '[]') as SavedLearningArtifact[]; } catch { return []; } })();
-  localStorage.setItem(key, JSON.stringify([artifact, ...items.filter(item => item.lessonId !== lesson.id)].slice(0, 100)));
   const blueprint = FIELD_MISSION_CATALOG[lesson.id];
   const missionId = `field-${lesson.id}`;
   const ref = doc(db, 'missions', `${uid}_${missionId}`);
   const existing = await getDoc(ref);
-  if (existing.exists() && isComplete(existing.data() as Mission)) return;
-  await setDoc(ref, {
-    id: missionId, missionId, userId: uid, lessonId: lesson.id, trackId: lesson.trackId,
-    title: `Execute: ${lesson.title.en}`, description: blueprint?.description[1] || lesson.objective.en,
-    instructions: blueprint?.steps.map(step => step[1]) || [], supportTitle: artifact.title,
-    supportPayload: artifact.summary, proofPrompt: blueprint?.prompt[1] || lesson.objective.en,
-    proofKinds: blueprint?.kinds || ['text'], status: 'ready', lessonXp: lesson.phases[3].xp,
-    executionXp: 50, learningScore, createdAt: Date.now(), updatedAt: Date.now(), autoOpen: false,
-  }, { merge: true });
+  if (!existing.exists() || !isComplete(existing.data() as Mission)) {
+    await setDoc(ref, {
+      id: missionId, missionId, userId: uid, lessonId: lesson.id, trackId: lesson.trackId,
+      title: `Execute: ${lesson.title.en}`, description: blueprint?.description[1] || lesson.objective.en,
+      instructions: blueprint?.steps.map(step => step[1]) || [], supportTitle: artifact.title,
+      supportPayload: artifact.summary, proofPrompt: blueprint?.prompt[1] || lesson.objective.en,
+      proofKinds: blueprint?.kinds || ['text'], status: 'ready', lessonXp: lesson.phases[3].xp,
+      executionXp: 50, learningScore, createdAt: Date.now(), updatedAt: Date.now(), autoOpen: false,
+    }, { merge: true });
+  }
+  localStorage.setItem(key, JSON.stringify([artifact, ...items.filter(item => item.lessonId !== lesson.id)].slice(0, 100)));
 }
