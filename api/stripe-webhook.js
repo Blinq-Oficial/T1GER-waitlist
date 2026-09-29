@@ -75,7 +75,7 @@ async function sendEarlyAdopterEmail({ email, position, refCode, sessionId, amou
   const resend = new Resend(process.env.RESEND_API_KEY);
   const shareUrl = `https://t1ger.app/?ref=${encodeURIComponent(refCode)}`;
   
-  const totalPaid = typeof amountTotal === 'number' ? (amountTotal / 100).toFixed(0) : '5';
+  const totalPaid = typeof amountTotal === 'number' ? (amountTotal / 100).toFixed(2) : '5.00';
 
   const { error } = await resend.emails.send(
     {
@@ -86,7 +86,7 @@ async function sendEarlyAdopterEmail({ email, position, refCode, sessionId, amou
         <div style="font-family: Inter, Arial, sans-serif; max-width: 620px; margin: 0 auto; background: #050505; color: #fff; padding: 40px; border-top: 6px solid #FF6B00;">
           <p style="margin: 0 0 12px; color: #CCFF00; font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;">Payment confirmed</p>
           <h1 style="margin: 0; color: #fff; font-size: 34px; line-height: 1.05; text-transform: uppercase;">Early Adopter status unlocked.</h1>
-          <p style="margin: 20px 0; color: #c9c9c9; font-size: 16px; line-height: 1.6;">Gracias, pagaste $${totalPaid}. De esos $${totalPaid}, $${totalPaid} serán donados a una fundación de tigres.</p>
+          <p style="margin: 20px 0; color: #c9c9c9; font-size: 16px; line-height: 1.6;">Gracias, pagaste $${totalPaid}. Los primeros $5 corresponden al acceso Early Adopter. T1GER prevé donar el excedente neto a organizaciones de conservación de tigres.</p>
           <div style="margin: 28px 0; padding: 24px; background: #111; border: 1px solid rgba(255,107,0,.5);">
             <p style="margin: 0 0 14px; color: #FF6B00; font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">Your founder benefits</p>
             <p style="margin: 8px 0; color: #fff;">Priority Closed Beta consideration</p>
@@ -122,65 +122,24 @@ export default async function handler(req, res) {
   let isPaid = false;
   let email;
   let amountTotal;
-  let isDemoMode = false;
 
   try {
     const rawBody = await readRawBody(req);
-    const rawBodyText = rawBody.toString('utf8');
-
-    // Check if it's a demo request (only allowed in non-production environments)
-    if (process.env.VERCEL_ENV !== 'production') {
-      try {
-        const parsed = JSON.parse(rawBodyText);
-        if (parsed && parsed.is_demo === true) {
-          isDemoMode = true;
-          const mockEmail = cleanEmail(parsed.email);
-          if (!mockEmail) {
-            return jsonResponse(res, 400, { error: 'Invalid or missing email for demo payment.' });
-          }
-          event = {
-            id: 'evt_demo_' + Math.random().toString(36).substring(2, 9),
-            type: 'checkout.session.completed',
-          };
-          const mockAmount = typeof parsed.amountTotal === 'number' && parsed.amountTotal >= 500 ? parsed.amountTotal : 500;
-          session = {
-            id: 'cs_demo_' + Math.random().toString(36).substring(2, 9),
-            amount_total: mockAmount,
-            currency: 'usd',
-            payment_status: 'paid',
-            payment_link: EARLY_ACCESS_PAYMENT_LINK_ID,
-            customer_details: { email: mockEmail },
-          };
-          email = mockEmail;
-          amountTotal = mockAmount;
-          isPaid = true;
-        }
-      } catch {
-        // Not a JSON body, continue to Stripe signature verification
-      }
+    const signature = req.headers['stripe-signature'];
+    if (!signature || !process.env.STRIPE_WEBHOOK_SECRET) {
+      return jsonResponse(res, 400, { error: 'Invalid webhook configuration' });
     }
-
-    if (!isDemoMode) {
-      const signature = req.headers['stripe-signature'];
-      if (!signature || !process.env.STRIPE_WEBHOOK_SECRET) {
-        return jsonResponse(res, 400, { error: 'Invalid webhook configuration' });
-      }
-      event = stripe.webhooks.constructEvent(
-        rawBody,
-        signature,
-        process.env.STRIPE_WEBHOOK_SECRET,
-      );
-      session = event.data.object;
-      isPaid = session.payment_status === 'paid' || event.type === 'checkout.session.async_payment_succeeded';
-      email = cleanEmail(session.customer_details?.email || session.customer_email);
-      amountTotal = Number(session.amount_total || 0);
-    }
+    event = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
+    session = event.data.object;
+    isPaid = session.payment_status === 'paid' || event.type === 'checkout.session.async_payment_succeeded';
+    email = cleanEmail(session.customer_details?.email || session.customer_email);
+    amountTotal = Number(session.amount_total || 0);
   } catch (error) {
     console.warn('Webhook processing failed:', error?.message || 'unknown error');
     return jsonResponse(res, 400, { error: 'Invalid signature or body' });
   }
 
-  if (!isDemoMode && !['checkout.session.completed', 'checkout.session.async_payment_succeeded'].includes(event.type)) {
+  if (!['checkout.session.completed', 'checkout.session.async_payment_succeeded'].includes(event.type)) {
     return jsonResponse(res, 200, { received: true });
   }
 

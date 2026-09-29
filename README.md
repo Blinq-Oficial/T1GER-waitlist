@@ -10,6 +10,8 @@ Production landing page and waitlist flow for [t1ger.app](https://t1ger.app/), p
 
 The two frontends share a repository and domain, **not an account database**. The waitlist uses Supabase and Stripe; the learning app uses Firebase Auth, Firestore, and the existing T1GER mobile backend. An email on the waitlist is not automatically a Firebase account or a Premium entitlement. A verified invitation and entitlement sync must be designed before claiming one unified member journey. The two legal notices also cover different data flows and need joint review before public launch.
 
+See [the integration audit](docs/INTEGRATION_AUDIT.md) for verified flows and release checks.
+
 ## Local development
 
 ```bash
