@@ -36,3 +36,10 @@ Reviewed 2026-09-28 on `codex/web-waitlist-monorepo`. This review covers reposit
 - The signup rate limiter uses an in-memory map inside a serverless function; it is not a shared limit across instances.
 - An email lookup returns the existing member's position and referral link. Review whether that disclosure is acceptable before expanding the waitlist.
 - The app's Firebase bundle is about 701 kB before gzip. Measure actual mobile load time before broad release.
+
+## Database handoff follow-up (2026-09-29)
+
+- Production waitlist grants and policies need tightening before this branch can be released. The repository includes a staged migration; no customer rows were queried during this follow-up.
+- The table has only `id`, `created_at`, and `email`; it has unique indexes on `id` and `email`. Referral attribution and stored position are not present.
+- Purchase fulfillment depends on database RPCs that were not present in the inspected project. Confirm the Stripe endpoint and fulfillment path before promising automatic Founder delivery.
+- The PR now prepares server-only Supabase access for `/api/join` and a versioned migration to remove anonymous table access. Configure a project-specific `SUPABASE_SECRET_KEY` in Vercel, deploy the matching API, and only then apply the migration. Never set a production secret in Preview; isolate Preview first. Verify signup and anonymous denial immediately after migration.
