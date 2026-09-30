@@ -10,7 +10,7 @@ Landing page and mobile waitlist for [t1ger.app](https://t1ger.app/), plus the l
 
 The two frontends share a repository and domain, **not an account database**. The mobile waitlist uses Supabase; learning accounts use Firebase. Joining the waitlist is optional and does not create a learning account or Premium entitlement. Success links to Web and prefills the email through same-origin session storage, not a URL. Founder checkout remains paused. Both legal notices remain drafts pending review.
 
-See [the integration audit](docs/INTEGRATION_AUDIT.md) and [the product sprint report](docs/PRODUCT_SPRINT_REPORT.md) for verified flows and release checks.
+See [the current design and release review](docs/DESIGN_REVIEW.md), [the integration audit](docs/INTEGRATION_AUDIT.md) and [the earlier product sprint report](docs/PRODUCT_SPRINT_REPORT.md) for evidence and limits.
 
 ## Local development
 
@@ -49,8 +49,8 @@ The waitlist test suite covers signup normalization, stable position fallbacks, 
 
 ## Deployment
 
-Vercel deploys the tracked application from `main`. Configure the server-only variables in `.env.example` and the browser Firebase variables in `apps/web/.env.example` on the existing Vercel project. Register `/api/stripe-webhook` as the Stripe webhook target, and keep the Payment Link return URL pointed at `/early-access/success`. The app requires the existing Firebase project's authorized `t1ger.app` domain for sign-in. Do not merge the `/app` route into production until Firebase sign-in, Apply persistence, legal text, and waitlist-to-account handoff have been verified on a safe test environment.
+Vercel deploys from `main` with `npm run build` and output `dist`. Keep existing server-only waitlist variables in place. The public Firebase browser SDK config falls back to the pinned T1GER project only on `t1ger.app`; explicit `VITE_FIREBASE_*` values override it. Preview hosts require their own isolated configuration and do not default to production. Firebase Auth authorizes `t1ger.app`. The independent Web completion function and scoped rules are described in [services/learning](services/learning/README.md). Founder payments remain paused; do not reopen them until fulfillment and the existing Payment Link/webhook have been verified.
 
 For the waitlist security migration, configure `SUPABASE_SECRET_KEY` for Production only, deploy the matching server API, verify that `/api/join` works, then apply `supabase/migrations/20260929_secure_waitlist.sql` and verify anonymous reads are denied. Configure a separate Supabase project and secret for Preview before testing signups there. Never publish the secret key or put it in a `VITE_` variable.
 
-The Vercel project's **Build Command** must be `npm run build`, with **Output Directory** set to `dist`. Its previous `vite build` override built only the landing page, leaving `/app` unavailable. The existing project's Build Command was updated for preview deployments; the production deployment remains on `main` until this branch is merged.
+The Vercel project's **Build Command** must be `npm run build`, with **Output Directory** set to `dist`. Its previous `vite build` override built only the landing page, leaving `/app` unavailable. The existing project uses the combined Build Command. The release must be verified at both `/` and a directly opened `/app/*` route.

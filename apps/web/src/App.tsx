@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from 'react';
-import { ArrowRight, BookOpen, Brain, Compass, LogOut, Menu, Moon, Clock, Sparkles, Sun, Target, UserRound, X } from 'lucide-react';
+import { lazy, Suspense, useEffect, useState, type FormEvent } from 'react';
+import { ArrowRight, BookOpen, Brain, Compass, LogOut, Moon, Sparkles, Sun, Target, UserRound, Flame, Zap } from 'lucide-react';
 import { configured } from './firebase';
 import { brainOf, changeTrack, explainError, isComplete, leave, resetPassword, signIn, signInGoogle, signUp, useLearner, type Mission } from './state';
 import LegalPage, { legalDraft, legalContactEmail } from './Legal';
@@ -8,10 +8,12 @@ import { getInteractiveTrack } from './product/interactiveCurriculum';
 import type { InteractiveTrack } from './product/interactiveCurriculumTypes';
 import { buildMasterySnapshot } from './product/masteryService';
 import Onboarding from './Onboarding';
-import { getJourneyNodes, getSectionsForTrack } from './product/learningJourney';
+import { getJourneyNodes } from './product/learningJourney';
 import type { SavedLearningArtifact } from './product/interactiveCurriculumTypes';
 import { getApplyDesign } from './product/applyMissionDesign';
 import { appHref, appRoute } from './basePath';
+import Learn from './LearningHome';
+import { Tiger, DomainIcon } from './Visual';
 const Lesson = lazy(() => import('./Lesson'));
 const Review = lazy(() => import('./Review'));
 
@@ -24,7 +26,6 @@ const links: { id: Destination; label: string; icon: typeof BookOpen; purpose: s
   { id: 'profile', label: 'Profile', icon: UserRound, purpose: 'Your account' },
 ];
 const paths = [getInteractiveTrack('smart-money'), getInteractiveTrack('ai-automation'), getInteractiveTrack('mindset-stoic')];
-const webLessonIds = new Set(paths.flatMap(path => path.lessons.map(lesson => lesson.id)));
 const trackFor = (id?: string) => id === 'ai' ? paths[1] : id === 'mindset' ? paths[2] : paths[0];
 const route = appRoute;
 
@@ -55,7 +56,7 @@ function AuthScreen({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () 
   }
   function switchMode(next: 'signin' | 'signup' | 'reset') { setMode(next); setPassword(''); setError(''); setResetSent(false); setShowPassword(false); }
   return <div className="auth-layout">
-    <div className="auth-story"><div className="auth-story-head"><div className="brand"><span className="brand-mark">1</span><span>T1GER</span></div><ThemeToggle theme={theme} onToggle={onToggleTheme}/></div><div className="auth-story-body"><p className="eyebrow">CURIOSITY, WITH DIRECTION</p><h1>Learn it.<br/><em>Apply it.</em><br/>Master it.</h1><p>One useful idea, a real decision, and a reason to remember it.</p><div className="story-line"><span>01 — LEARN</span><span>02 — APPLY</span><span>03 — MASTER</span></div></div></div>
+    <div className="auth-story"><div className="auth-story-head"><div className="brand"><span className="brand-mark">1</span><span>T1GER</span></div><ThemeToggle theme={theme} onToggle={onToggleTheme}/></div><div className="auth-story-body"><Tiger/><p className="eyebrow">CURIOSITY, WITH DIRECTION</p><h1>Learn it.<br/><em>Apply it.</em><br/>Master it.</h1><p>One useful idea, a real decision, and a reason to remember it.</p><div className="story-line"><span>01 — LEARN</span><span>02 — APPLY</span><span>03 — MASTER</span></div></div></div>
     <div className="auth-panel"><div className="auth-form"><div className="auth-mode-switch" aria-label="Account access"><button type="button" aria-pressed={mode === 'signup'} onClick={() => switchMode('signup')}>Create account</button><button type="button" aria-pressed={mode === 'signin'} onClick={() => switchMode('signin')}>Sign in</button></div><p className="eyebrow">{mode === 'reset' ? 'ACCOUNT RECOVERY' : 'YOUR LEARNING PATH STARTS HERE'}</p><h2>{mode === 'signin' ? 'Welcome back.' : mode === 'reset' ? 'Reset your password.' : 'Start with a useful idea.'}</h2><p className="muted auth-description">{mode === 'reset' ? 'Enter your account email and we’ll send reset instructions.' : mode === 'signin' ? 'Your learning is waiting where you left it.' : 'Choose Investing, AI, or Psychology. Start your first lesson free and keep your progress across devices.'}</p>
       <p className="auth-legal auth-legal-intro">Before continuing, read our <a href={appHref('/privacy')}>Privacy notice</a> and <a href={appHref('/terms')}>Terms of use</a>.{legalDraft && <> These notices are drafts for product review.</>}</p>
       {!configured ? <div className="notice">{import.meta.env.DEV ? <>Firebase is not configured. Add the values in <code>.env.local</code> from the existing T1GER project.</> : <>Account access is temporarily unavailable. Please try again later. <a href="/">Return to T1GER</a>.</>}</div> : <>
@@ -71,24 +72,9 @@ function AuthScreen({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () 
   </div>;
 }
 
-function Learn({ track, brain, missions, dueCount, openLesson, go, dailyTime }: { track: InteractiveTrack; brain: ReturnType<typeof brainOf>; missions: Mission[]; dueCount: number; openLesson: (id: string) => void; go: (path: string) => void; dailyTime: number }) {
-  const completedApplyIds = missions.filter(isComplete).map(m => m.id);
-  const nodes = getJourneyNodes(track, brain, completedApplyIds);
-  const next = nodes.find(node => node.state !== 'completed');
-  const completed = nodes.filter(node => node.state === 'completed').length;
-  const nextLesson = next?.lesson || null;
-  const nextOnWeb = nextLesson ? webLessonIds.has(nextLesson.id) : false;
-  return <div className="page learn-page"><div className="page-top"><p className="eyebrow">YOUR LEARNING PATH</p><h1>Keep your momentum.</h1><p className="muted">One useful idea at a time.</p><p className="daily-intention"><Clock size={16}/> Your intention: {dailyTime} minutes a day. Go at your own pace.</p></div>
-    <div className="learn-grid"><aside className="path-context"><div className="context-label">CURRENT PATH <span>0{paths.indexOf(track) + 1} / 03</span></div><h2>{track.title.en}</h2><p>{track.promise.en}</p><div className="path-progress"><div><strong>{completed} of {track.lessons.length}</strong><span>lessons applied</span></div><progress value={completed} max={track.lessons.length} /></div><button className="text-link" onClick={() => go('/discover')}>Explore paths <ArrowRight size={16}/></button></aside>
-      <section className="next-lesson"><div className="lesson-meta"><span>{nextLesson ? `LESSON ${String(nextLesson.order).padStart(2, '0')}` : 'PATH COMPLETE'}</span><span>{!nextOnWeb && nextLesson ? 'ON MOBILE' : nextLesson ? '≈ 4 MIN' : 'KEEP IT FRESH'}</span></div><div className="next-lesson-body"><p className="eyebrow">{!nextOnWeb && nextLesson ? 'CONTINUE ON MOBILE' : nextLesson ? 'UP NEXT' : 'YOU MADE IT THROUGH'}</p><h2>{nextLesson?.title.en || 'A path worth keeping.'}</h2><p>{!nextOnWeb && nextLesson ? 'This lesson is available in the T1GER mobile app. Review your web lessons here while more web lessons are prepared.' : nextLesson?.objective.en || 'Master will bring ideas back when they are due.'}</p></div>{nextLesson && nextOnWeb ? <button className="button primary large" onClick={() => next?.state === 'review' ? go('/master') : openLesson(nextLesson.id)}>{next?.state === 'review' ? 'Review then continue' : 'Start lesson'} <ArrowRight size={20}/></button> : <button className="button primary large" onClick={() => go('/master')}>{nextLesson ? 'Review on web' : 'Go to Master'} <ArrowRight size={20}/></button>}</section>
-      <aside className="today-context"><div className="context-label">TODAY</div><h3>Keep what you learn.</h3>{dueCount ? <><p><strong>{dueCount}</strong> concept{dueCount === 1 ? '' : 's'} ready for review.</p><button className="button subtle" onClick={() => go('/master')}>Review now <ArrowRight size={17}/></button></> : <><p>Your memory queue is clear. New reviews appear when they are due.</p><div className="caught-mark">✓ <span>All caught up</span></div></>}</aside></div>
-    <section className="path-trail"><div className="section-heading"><div><p className="eyebrow">THE PATH AHEAD</p><h2>Build the full picture.</h2></div><span>{completed}/{track.lessons.length} complete</span></div><div className="journey-sections">{getSectionsForTrack(track.id).map(section => <div className="journey-section" key={section.id}><h3>{section.title.en}</h3><p>{section.description.en}</p><ol>{nodes.filter(node => section.lessonIds.includes(node.lesson.id)).map((node) => <li key={node.lesson.id} className={node.state}><span className="trail-index">{node.state === 'completed' ? '✓' : String(node.lesson.order).padStart(2, '0')}</span><div><strong>{node.lesson.title.en}</strong><p>{node.lesson.objective.en}</p></div><span className="trail-state">{!webLessonIds.has(node.lesson.id) ? 'Mobile' : node.state === 'completed' ? 'Applied' : node.state === 'locked' ? 'Up next' : node.state === 'review' ? 'Review due' : 'Ready'}</span>{node.state !== 'locked' && webLessonIds.has(node.lesson.id) && <button aria-label={`Open ${node.lesson.title.en}`} onClick={() => node.state === 'review' ? go('/master') : openLesson(node.lesson.id)}><ArrowRight size={18}/></button>}</li>)}</ol></div>)}</div></section>
-  </div>;
-}
-
 function Discover({ active, select }: { active: InteractiveTrack; select: (track: InteractiveTrack) => Promise<void> }) {
   const [busy, setBusy] = useState(''); const [error, setError] = useState('');
-  return <div className="page"><div className="page-top"><p className="eyebrow">DISCOVER</p><h1>Follow a better question.</h1><p className="muted">Three ways to see the world differently. Choose a path; keep the progress you already made.</p></div><div className="discover-list">{paths.map((track, i) => <article key={track.id} className="discover-item"><div className="discover-num">0{i+1}</div><div><p className="eyebrow">{`${track.lessons.length} LESSONS · INTERACTIVE PATH`}</p><h2>{track.title.en}</h2><p>{track.promise.en}</p><span>{track.outcome.en}</span></div>{<button className={active.id === track.id ? 'button subtle' : 'button primary'} disabled={!!busy || active.id === track.id} onClick={async () => { setBusy(track.id); setError(''); try { await select(track); } catch (cause) { setError(explainError(cause, 'Could not switch paths.')); } finally { setBusy(''); } }}>{active.id === track.id ? 'Current path' : busy === track.id ? 'Switching…' : 'Choose path'}{active.id !== track.id && <ArrowRight size={17}/>}</button>}</article>)}</div>{error && <p role="alert" className="error">{error}</p>}</div>;
+  return <div className="page"><div className="page-top"><p className="eyebrow">DISCOVER</p><h1>Follow a better question.</h1><p className="muted">Three ways to see the world differently. Choose a path; keep the progress you already made.</p></div><div className="discover-list">{paths.map(track => <article key={track.id} className="discover-item"><DomainIcon domain={track.id}/><div><p className="eyebrow">{`${track.lessons.length} LESSONS · INTERACTIVE PATH`}</p><h2>{track.title.en}</h2><p>{track.promise.en}</p><span>{track.outcome.en}</span></div>{<button className={active.id === track.id ? 'button subtle' : 'button primary'} disabled={!!busy || active.id === track.id} onClick={async () => { setBusy(track.id); setError(''); try { await select(track); } catch (cause) { setError(explainError(cause, 'Could not switch paths.')); } finally { setBusy(''); } }}>{active.id === track.id ? 'Current path' : busy === track.id ? 'Switching…' : 'Choose path'}{active.id !== track.id && <ArrowRight size={17}/>}</button>}</article>)}</div>{error && <p role="alert" className="error">{error}</p>}</div>;
 }
 
 function Apply({ missions, artifacts = [], openLesson, go }: { missions: Mission[]; artifacts?: SavedLearningArtifact[]; openLesson: (id: string) => void; go: (path: string) => void }) {
@@ -104,7 +90,7 @@ function Apply({ missions, artifacts = [], openLesson, go }: { missions: Mission
         {(design?.steps || active.instructions)?.length ? <ol className="apply-feature-steps">{(design?.steps || active.instructions || []).slice(0, 3).map((step, index) => <li key={index}><span>{String(index + 1).padStart(2, '0')}</span>{step}</li>)}</ol> : null}
         <button className="button primary large" onClick={() => openLesson(active.lessonId)}>Continue Apply <ArrowRight size={18}/></button>
       </div><aside className="apply-rule"><span>YOUR SAVED RULE</span><blockquote>{active.supportPayload || 'Save your lesson tool to bring your rule here.'}</blockquote><small>{sourceTitle || active.lessonId}</small></aside>
-    </section> : <section className="apply-empty"><div className="apply-empty-mark"><Target size={32}/></div><p className="eyebrow">NOTHING PENDING</p><h2>Your next idea is waiting.</h2><p>Finish a lesson to make a rule, test it, and put it to use.</p><button className="button primary" onClick={() => go('/learn')}>Find your next lesson <ArrowRight size={17}/></button></section>}
+    </section> : <section className="apply-empty"><Tiger/><p className="eyebrow">NOTHING PENDING</p><h2>Your next idea is waiting.</h2><p>Finish a lesson to make a rule, test it, and put it to use.</p><button className="button primary" onClick={() => go('/learn')}>Find your next lesson <ArrowRight size={17}/></button></section>}
     {pending.length > 1 && <section className="apply-more"><div className="section-heading"><div><p className="eyebrow">ALSO READY</p><h2>Other applications.</h2></div></div>{pending.slice(1).map(m => <div className="apply-more-row" key={m.id}><strong>{getApplyDesign(m.lessonId, 'en')?.title || m.title}</strong><button className="text-link" onClick={() => openLesson(m.lessonId)}>Continue <ArrowRight size={16}/></button></div>)}</section>}
     <section className="apply-completed"><div className="section-heading"><div><p className="eyebrow">ALREADY APPLIED</p><h2>Decisions made.</h2></div><span>{completed.length} completed</span></div>{completed.length ? <div className="apply-completed-list">{completed.slice(0, 6).map(m => <div key={m.id}><span>✓</span><strong>{paths.flatMap(path => path.lessons).find(lesson => lesson.id === m.lessonId)?.title.en || m.title || m.lessonId}</strong><small>Applied</small>{(artifacts.find(item => item.lessonId === m.lessonId)?.summary || m.supportPayload) && <p className="completed-rule">{artifacts.find(item => item.lessonId === m.lessonId)?.summary || m.supportPayload}</p>}</div>)}</div> : <p className="apply-completed-empty">Completed applications will appear here.</p>}</section>
   </div>;
@@ -123,38 +109,13 @@ function ProfilePage({ profile, missions, logout, preview = false }: { missions:
 
 export default function App() {
   const [theme, setTheme] = useState<Theme>(initializeTheme);
-  const menuRef = useRef<HTMLElement>(null);
-  const menuTriggerRef = useRef<HTMLButtonElement>(null);
   function toggleTheme() { const next = theme === 'dark' ? 'light' : 'dark'; applyTheme(next); setTheme(next); }
   const preview = import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === '1';
-  const learner = useLearner(preview); const [parts, setParts] = useState(route); const [menu, setMenu] = useState(false); const [demoOnboarded, setDemoOnboarded] = useState(false);
+  const learner = useLearner(preview); const [parts, setParts] = useState(route); const [demoOnboarded, setDemoOnboarded] = useState(false);
   const [online, setOnline] = useState(navigator.onLine);
-  const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 900px)').matches);
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 900px)');
-    const update = () => { setCompact(media.matches); if (!media.matches) setMenu(false); };
-    media.addEventListener('change', update); return () => media.removeEventListener('change', update);
-  }, []);
   useEffect(() => { const update = () => setParts(route()); window.addEventListener('popstate', update); return () => window.removeEventListener('popstate', update); }, []);
   useEffect(() => { const yes = () => setOnline(true), no = () => setOnline(false); window.addEventListener('online', yes); window.addEventListener('offline', no); return () => { window.removeEventListener('online', yes); window.removeEventListener('offline', no); }; }, []);
-  useEffect(() => {
-    if (!menu) return;
-    const trigger = menuTriggerRef.current;
-    const previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden';
-    menuRef.current?.querySelector<HTMLButtonElement>('.mobile-close')?.focus();
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { event.preventDefault(); setMenu(false); return; }
-      if (event.key !== 'Tab') return;
-      const items = Array.from(menuRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), a[href]') || []);
-      if (!items.length) return;
-      const first = items[0], last = items[items.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = previousOverflow; trigger?.focus(); };
-  }, [menu]);
-  function go(path: string) { const href = appHref(path); window.history.pushState({}, '', preview ? `${href}?preview=1` : href); setParts(route()); setMenu(false); window.scrollTo(0, 0); }
+  function go(path: string) { const href = appHref(path); window.history.pushState({}, '', preview ? `${href}?preview=1` : href); setParts(route()); window.scrollTo(0, 0); }
   const destination: Destination = links.some(link => link.id === parts[0]) ? parts[0] as Destination : 'learn';
   if (parts[0] === 'privacy' || parts[0] === 'terms') return <LegalPage kind={parts[0]} themeAction={<ThemeToggle theme={theme} onToggle={toggleTheme}/>}/>;
   if (!configured && !preview) return <AuthScreen theme={theme} onToggleTheme={toggleTheme}/>;
@@ -174,12 +135,11 @@ export default function App() {
     if (node?.state === 'locked' || node?.state === 'review') return <div className="loading-screen"><p className="eyebrow">YOUR PATH, IN ORDER</p><h1>{node.state === 'review' ? 'Refresh the idea first.' : 'Build on the previous idea.'}</h1><p>{node.state === 'review' ? 'A review is due before this next lesson.' : 'Complete the earlier lessons and their Apply steps before opening this one.'}</p><button className="button primary" onClick={() => go(node.state === 'review' ? '/master' : '/learn')}>{node.state === 'review' ? 'Go to Master' : 'Return to Learn'}</button></div>;
   }
   if (lesson) return <Suspense fallback={<LoadingCanvas label="Opening lesson" mode="lesson"/>}><Lesson key={lesson.id} lesson={lesson} uid={learner.user.uid} brain={brain} missions={learner.missions} artifacts={learner.profile.learningArtifacts} close={() => go('/learn')} preview={preview}/></Suspense>;
-  return <div className="app-shell"><aside id="main-navigation" inert={compact && !menu} ref={menuRef} className={`sidebar ${menu ? 'open' : ''}`}><div className="brand"><span className="brand-mark">1</span><span>T1GER</span></div><button className="mobile-close" aria-label="Close menu" onClick={() => setMenu(false)}><X size={22}/></button><div className="sidebar-middle"><p className="rail-caption">YOUR SPACE</p><nav aria-label="Main navigation">{links.map(link => { const Icon = link.icon; return <a href={appHref(`/${link.id}`)} key={link.id} className={destination === link.id ? 'active' : ''} onClick={e => { e.preventDefault(); go(`/${link.id}`); }} aria-current={destination === link.id ? 'page' : undefined}><Icon size={19}/><span>{link.label}</span></a>; })}</nav></div><div className="sidebar-bottom"><Sparkles size={17}/><span>Learn it. Apply it. Master it.</span></div></aside>
-    <div className="workspace" inert={menu}><header className="topbar"><button ref={menuTriggerRef} className="mobile-menu" aria-label="Open menu" aria-controls="main-navigation" aria-expanded={menu} onClick={() => setMenu(true)}><Menu size={22}/></button><span className="topbar-location">{links.find(link => link.id === destination)?.purpose}</span><span className="topbar-spacer"/>{preview && <span className="preview-label">DESIGN PREVIEW</span>}<span className="topbar-path">{track.shortTitle.en}</span><ThemeToggle theme={theme} onToggle={toggleTheme}/><button className="topbar-avatar" onClick={() => go('/profile')} aria-label="Open profile">{(learner.profile.displayName || 'T').charAt(0).toUpperCase()}</button></header>
+  return <div className="app-shell"><aside id="main-navigation" className="sidebar"><div className="brand"><span className="brand-mark">1</span><span>T1GER</span></div><div className="sidebar-middle"><p className="rail-caption">YOUR SPACE</p><nav aria-label="Main navigation">{links.map(link => { const Icon = link.icon; return <a href={appHref(`/${link.id}`)} key={link.id} className={destination === link.id ? 'active' : ''} onClick={e => { e.preventDefault(); go(`/${link.id}`); }} aria-current={destination === link.id ? 'page' : undefined}><Icon size={19}/><span>{link.label}</span></a>; })}</nav></div><div className="sidebar-bottom"><Sparkles size={17}/><span>Learn it. Apply it. Master it.</span></div></aside>
+    <div className="workspace"><header className="topbar"><span className="topbar-location">{links.find(link => link.id === destination)?.purpose}</span><span className="topbar-spacer"/>{preview && <span className="preview-label">DESIGN PREVIEW</span>}<div className="account-stats"><span title="Day streak"><Flame size={20} aria-hidden="true"/>{learner.profile.streak || 0}<span className="sr-only"> day streak</span></span><span title="Experience points"><Zap size={20} aria-hidden="true"/>{learner.profile.xp || 0} XP</span></div><ThemeToggle theme={theme} onToggle={toggleTheme}/><button className="topbar-avatar" onClick={() => go('/profile')} aria-label="Open profile">{(learner.profile.displayName || 'T').charAt(0).toUpperCase()}</button></header>
       {!online && <div className="offline-banner" role="status">You are offline. Reconnect before saving learning progress.</div>}
       <main>{destination === 'learn' ? <Learn track={track} brain={brain} missions={learner.missions} dailyTime={learner.profile.dailyTime || 10} dueCount={snapshot.due.length} openLesson={id => go(`/lesson/${id}`)} go={go}/> : destination === 'discover' ? <Discover active={track} select={async t => { if (preview) learner.setProfile({ ...learner.profile!, primaryTrack: t.legacyTrackId, brainState: { ...brain, currentTrackId: t.legacyTrackId } }); else await changeTrack(learner.user!.uid, t.legacyTrackId); go('/learn'); }}/> : destination === 'apply' ? <Apply artifacts={learner.profile.learningArtifacts} missions={learner.missions} openLesson={id => go(`/lesson/${id}`)} go={go}/> : destination === 'master' ? <Suspense fallback={<LoadingCanvas label="Loading reviews"/>}><Review uid={learner.user.uid} snapshot={snapshot} onLearn={() => go('/learn')} preview={preview}/></Suspense> : <ProfilePage missions={learner.missions} profile={learner.profile} logout={() => void leave()} preview={preview}/>}</main>
-    </div>{menu && <button type="button" tabIndex={-1} className="menu-scrim" aria-label="Close menu" onClick={() => setMenu(false)} />}</div>;
+    </div></div>;
 }
-
 
 

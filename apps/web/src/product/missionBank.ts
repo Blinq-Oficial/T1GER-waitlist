@@ -799,8 +799,8 @@ export const CURRICULUM_TRACKS: Record<TrackType, CurriculumTrack> = {
         levelNumber: 1,
         title: 'Meditaciones',
         subtitle: 'Marco Aurelio · Dicotomía del Control y Fortaleza Emocional',
-        applyNodeId: 'field-learn-mindset-01',
-        days: [{ dayId: 'mind-1-d1', dayNumber: 1, missionIds: ['learn-mindset-01'] }]
+        applyNodeId: 'field-learn-psychology-v1-01',
+        days: [{ dayId: 'mind-1-d1', dayNumber: 1, missionIds: ['learn-psychology-v1-01'] }]
       }
     ]
   },

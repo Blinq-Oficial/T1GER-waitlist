@@ -188,7 +188,7 @@ const designs: Record<string, ApplyDesign> = {
     done: ['Tengo un árbol de decisión cuantificado para mi dilema actual.', 'I have a quantified decision tree for my current business dilemma.']
   },
   // MINDSET & STOICISM (Marcus Aurelius & Daniel Kahneman)
-  'learn-mindset-01': {
+  'learn-psychology-v1-01': {
     title: ['Escribe tu filtro estoico de dos columnas', 'Write your two-column stoic filter'], minutes: 4,
     why: ['El 90% de la ansiedad ejecutiva proviene de intentar controlar el comportamiento de otros o el mercado.', '90% of executive anxiety stems from attempting to control others or market noise.'],
     steps: [
@@ -198,7 +198,7 @@ const designs: Record<string, ApplyDesign> = {
     ],
     done: ['He separado lo que controlo de lo que no y definí una acción inmediata.', 'I separated what I control from what I do not and set one immediate action.']
   },
-  'learn-mindset-02': {
+  'learn-psychology-v1-02': {
     title: ['Haz un pre-mortem de tu proyecto actual', 'Conduct a pre-mortem on your active project'], minutes: 6,
     why: ['Imaginarse que todo saldrá perfecto es ingenuidad. Imaginar el peor escenario plausible permite preparar defensas antes de que ocurra.', 'Assuming everything will go right is naive. Imagining plausible failure lets you build defenses before disaster strikes.'],
     steps: [
@@ -208,7 +208,7 @@ const designs: Record<string, ApplyDesign> = {
     ],
     done: ['He identificado los 2 mayores riesgos de fracaso y dejé armada su prevención.', 'I identified the 2 biggest failure points and designed prevention measures.']
   },
-  'learn-mindset-03': {
+  'learn-psychology-v1-03': {
     title: ['Convierte un revés reciente en combustible', 'Turn a recent setback into tactical fuel'], minutes: 5,
     why: ['Lamentarse por lo ocurrido es quemar energía dos veces. El obstáculo es el camino cuando extraes la lección operativa.', 'Lamenting past events burns energy twice. The obstacle is the way when you extract operational lessons.']
     ,
@@ -219,7 +219,7 @@ const designs: Record<string, ApplyDesign> = {
     ],
     done: ['He transformado un revés en una mejora permanente de mi sistema de trabajo.', 'I converted a setback into a permanent upgrade to my operating system.']
   },
-  'learn-mindset-04': {
+  'learn-psychology-v1-04': {
     title: ['Reescribe una amenaza como oportunidad asimétrica', 'Reframe a threat as an asymmetric opportunity'], minutes: 5,
     why: ['El significado de un evento no está en el evento, sino en el marco con el que lo interpretas.', 'The meaning of an event does not reside in the event, but in your framing lens.'],
     steps: [
@@ -229,7 +229,7 @@ const designs: Record<string, ApplyDesign> = {
     ],
     done: ['He cambiado el encuadre de una situación tensa y encontré su ventaja estratégica.', 'I reframed a tense situation and extracted its strategic advantage.']
   },
-  'learn-mindset-05': {
+  'learn-psychology-v1-05': {
     title: ['Haz una lista de cómo garantizar el fracaso y evítalo', 'List how to guarantee failure and invert it'], minutes: 5,
     why: ['Es mucho más fácil evitar la estupidez sistemática que intentar ser un genio brillante todos los días.', 'It is far easier to avoid systematic stupidity than to attempt brilliant genius daily.'],
     steps: [
@@ -344,7 +344,7 @@ const designs: Record<string, ApplyDesign> = {
 };
 
 export function getApplyDesign(lessonId: string, locale: LearningLocale) {
-  if (lessonId.startsWith('learn-mindset-')) {
+  if (lessonId.startsWith('learn-psychology-v1-')) {
     const lesson = getInteractiveTrack('mindset-stoic').lessons.find(item => item.id === lessonId);
     if (!lesson) return null;
     const widget = lesson.phases[2].widget;

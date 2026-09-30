@@ -1,5 +1,5 @@
-// Web teaching briefs. Keep IDs aligned with the mobile curriculum; review these
-// before copying the web wording back to mobile or publishing another path.
+// Original Web teaching briefs. Investing and AI retain shared mobile identities;
+// new Psychology lessons use versioned IDs separate from legacy Stoicism.
 export interface EducationBrief {
   capability: string;
   prerequisites: string[];

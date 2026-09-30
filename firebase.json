@@ -1,0 +1,29 @@
+{
+  "firestore": {
+    "rules": "services/learning/security/production.firestore.rules"
+  },
+  "functions": [
+    {
+      "source": "services/learning",
+      "codebase": "web-learning",
+      "predeploy": [
+        "npm --prefix services/learning run build"
+      ]
+    }
+  ],
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "functions": {
+      "port": 5001
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
+}

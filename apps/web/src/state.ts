@@ -176,7 +176,7 @@ export async function completeApply(uid: string, lessonId: string, reflection: s
   const missionId = `field-${lessonId}`;
   const existing = await getDoc(doc(db, 'missions', `${uid}_${missionId}`));
   if (!existing.exists() || !isComplete(existing.data() as Mission)) {
-    const complete = httpsCallable(functions, 'completeApplyMission');
+    const complete = httpsCallable(functions, 'completeWebApplyMission');
     await complete({ missionId, lessonId, reflection: reflection.trim(), language: 'en', timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
   }
   await recordCompletion(uid, lessonId, score);

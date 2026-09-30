@@ -25,7 +25,7 @@ try {
   await assert.rejects(updateDoc(profile, { xp: 99999 }), /permission-denied|PERMISSION_DENIED/);
   await assert.rejects(getDoc(doc(db, 'users', 'another-owner')), /permission-denied|PERMISSION_DENIED/);
   await assert.rejects(updateDoc(mission, { status: 'completed' }), /permission-denied|PERMISSION_DENIED/);
-  const complete = httpsCallable(functions, 'completeApplyMission');
+  const complete = httpsCallable(functions, 'completeWebApplyMission');
   await assert.rejects(complete({ missionId: 'field-learn-money-05', lessonId: 'learn-money-05', language: 'en', reflection: 'Fictional risk plan without completing prerequisites.', timeZone: 'America/New_York' }), { code: 'functions/failed-precondition' });
   const payload = { missionId: id, lessonId: 'learn-money-01', language: 'en', reflection: 'I separated fictional emergency cash and long-term goals.', timeZone: 'America/New_York' };
   await complete(payload);
@@ -38,5 +38,14 @@ try {
   const second = (await getDoc(profile)).data();
   assert.equal(second.xp, first.xp, 'Duplicate completion cannot grant extra XP');
   assert.equal(second.streak, first.streak);
+  await assert.rejects(complete({ ...payload, reflection: 'short' }), { code: 'functions/invalid-argument' });
+  await assert.rejects(complete({ ...payload, lessonId: 'learn-mindset-01', missionId: 'field-learn-mindset-01' }), { code: 'functions/invalid-argument' });
+  await assert.rejects(complete({ ...payload, lessonId: 'learn-psychology-v1-02', missionId: 'field-learn-psychology-v1-02' }), { code: 'functions/failed-precondition' });
+  const psychology = { ...payload, lessonId: 'learn-psychology-v1-01', missionId: 'field-learn-psychology-v1-01' };
+  await complete(psychology);
+  const psychReward = (await getDoc(profile)).data().xp;
+  assert.ok(psychReward > second.xp);
+  await complete(psychology);
+  assert.equal((await getDoc(profile)).data().xp, psychReward);
   console.log('PASS: empty owner lookup, cloud artifacts, owner isolation, server-only rewards, prerequisite gate, idempotent completion. Local emulators only.');
 } finally { await deleteApp(app); }

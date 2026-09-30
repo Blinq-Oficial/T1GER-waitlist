@@ -4,6 +4,8 @@ import type { MasterySnapshot } from './product/masteryService';
 import { explainError, recordReview } from './state';
 import { educationBriefs } from './education';
 
+import { Tiger } from './Visual';
+
 const ratings = [
   { label: 'Again', score: 40, key: '1', hint: 'I forgot it' },
   { label: 'Hard', score: 60, key: '2', hint: 'I struggled' },
@@ -62,7 +64,7 @@ export default function Review({ uid, snapshot, onLearn, preview = false }: { ui
       {item ? <section className="master-hero due" aria-label={`${remaining.length} reviews due`}>
         <div className="master-hero-copy"><p className="eyebrow">TODAY'S RECALL</p><h2>{remaining.length} concept{remaining.length === 1 ? '' : 's'} ready.</h2><p>Retrieve the idea before you see the answer. About {Math.max(1, remaining.length)} minute{remaining.length === 1 ? '' : 's'} (estimate).</p><button className="button primary large" onClick={() => setSessionStarted(true)}>Start review <ArrowRight size={19}/></button></div>
         <div className="master-hero-visual" aria-hidden="true"><span>MEMORY / ACTIVE</span><strong>{String(remaining.length).padStart(2, '0')}</strong><div className="memory-lines">{remaining.slice(0, 6).map(entry => <i key={entry.lesson.id}/>)}</div><small>Due now</small></div>
-      </section> : <section className="master-hero caught-up"><div className="master-hero-copy"><p className="eyebrow">TODAY'S RECALL</p><h2>You're caught up.</h2><p>{snapshot.learnedCount ? nextReview ? `Next review scheduled for ${nextReview}.` : 'Your next review will appear when it is due.' : 'Apply your first lesson to start a memory queue.'}</p><button className="button subtle" onClick={onLearn}>Continue learning <ArrowRight size={18}/></button></div><div className="master-hero-visual" aria-hidden="true"><span>MEMORY / CLEAR</span><strong>00</strong><Check size={36}/><small>Nothing due</small></div></section>}
+      </section> : <section className="master-hero caught-up"><div className="master-hero-copy"><p className="eyebrow">TODAY'S RECALL</p><h2>You're caught up.</h2><p>{snapshot.learnedCount ? nextReview ? `Next review scheduled for ${nextReview}.` : 'Your next review will appear when it is due.' : 'Apply your first lesson to start a memory queue.'}</p><button className="button subtle" onClick={onLearn}>Continue learning <ArrowRight size={18}/></button></div><div className="master-hero-visual" aria-hidden="true"><Tiger mood="happy"/><small>Nothing due</small></div></section>}
       <section className="memory-section"><div className="section-heading"><div><p className="eyebrow">YOUR MEMORY</p><h2>Ideas worth keeping.</h2></div><span>{snapshot.learnedCount} learned</span></div>
         {snapshot.recent.length ? <div className="memory-list">{snapshot.recent.map(entry => <div key={entry.lesson.id} className="memory-row"><span className="memory-index">{String(entry.lesson.order).padStart(2, '0')}</span><div><strong>{entry.lesson.title.en}</strong><p>{educationBriefs[entry.lesson.id]?.model || entry.lesson.keyConcept.en}</p></div><span>{entry.dueAt.getTime() <= Date.now() ? 'Due now' : `Next ${entry.dueAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}</span></div>)}</div> : <p className="memory-empty">Your learned concepts will appear here after your first Apply step.</p>}
       </section>

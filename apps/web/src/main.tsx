@@ -9,6 +9,7 @@ import './style.css';
 import './polish.css';
 import './access.css';
 import './experience.css';
+import './design-system.css';
 import App from './App';
 
 createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);

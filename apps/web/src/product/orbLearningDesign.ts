@@ -203,7 +203,7 @@ export const ORB_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
     l('¿Cuál es la principal causa histórica de declive sistémico?', 'What is the primary historical cause of systemic decline?'),
     l('La pérdida de disciplina institucional interna y la degradación de la cohesión cívica.', 'The loss of internal institutional discipline and the decay of civic cohesion.'),
   ),
-  'learn-mindset-01': design(
+  'learn-psychology-v1-01': design(
     l('¿Qué porcentaje de tu estrés proviene de cosas que no puedes alterar?', 'What percentage of your daily stress stems from things you cannot alter?'),
     l('Separa mentalmente las variables de hoy en dos columnas: bajo tu control y fuera de tu control.', 'Mentally split today’s variables into two columns: within your control and outside your control.'),
     [beat('La división fundamental', 'The core divide', 'Tus pensamientos, decisiones y esfuerzo están bajo tu gobierno. La economía, las opiniones ajenas y el clima no lo están.', 'Your thoughts, decisions, and effort are under your rule. The economy, other opinions, and the weather are not.'), beat('El drenaje de energía', 'Energy drain', 'Cada minuto gastado en quejarse de lo incontrolable es energía que le robas a tu ejecución deliberada.', 'Every minute spent lamenting the uncontrollable is energy stolen from deliberate execution.'), beat('La fortaleza interior', 'The inner fortress', 'Cuando anclas tu serenidad únicamente en la calidad de tus acciones, nada externo puede desestabilizarte.', 'When your calm is anchored only in the quality of your own actions, nothing external can shake you.')],
@@ -212,7 +212,7 @@ export const ORB_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
     l('¿Dónde reside el único poder del estoico según Epicteto?', 'Where does the Stoic’s only true power reside according to Epictetus?'),
     l('En el juicio que emite y en las acciones que decide tomar ante los hechos.', 'In their own judgments and the deliberate actions they choose in response to events.'),
   ),
-  'learn-mindset-02': design(
+  'learn-psychology-v1-02': design(
     l('¿Por qué perder $100 duele el doble de lo que alegra ganar $100?', 'Why does losing $100 hurt twice as much as gaining $100 feels good?'),
     l('Evalúa cómo la aversión a la pérdida te paraliza antes de lanzar un proyecto o cerrar una mala posición.', 'Evaluate how loss aversion paralyzes you before launching an idea or cutting a bad position.'),
     [beat('El sesgo evolutivo', 'The evolutionary bias', 'Para nuestros antepasados, evitar la muerte era vital; perder una oportunidad era secundario. El cerebro sobrevalora la pérdida.', 'For early humans, avoiding death was vital; missing a reward was secondary. The brain overweighs loss.'), beat('La trampa del coste hundido', 'The sunk cost trap', 'Mantener una inversión fallida solo para no admitir la pérdida inicial multiplica el daño a largo plazo.', 'Clinging to a failing bet just to avoid acknowledging the loss multiplies long-term damage.'), beat('La regla de decisión asimétrica', 'Asymmetric decision rule', 'Decidir mirando el valor esperado futuro y no el dinero gastado en el pasado libera la mente de ataduras emocionales.', 'Deciding based on expected future value rather than past sunk costs frees the mind from emotional drag.')],
@@ -221,7 +221,7 @@ export const ORB_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
     l('¿Qué sesgo documentado por Kahneman explica la reticencia a vender en pérdida?', 'Which bias documented by Kahneman explains the reluctance to sell at a loss?'),
     l('La aversión a la pérdida combinada con la falacia del coste hundido.', 'Loss aversion combined with the sunk cost fallacy.'),
   ),
-  'learn-mindset-03': design(
+  'learn-psychology-v1-03': design(
     l('¿Cómo convertir cada obstáculo que encuentras en combustible puro?', 'How do you turn every obstacle you face into raw fuel?'),
     l('Recuerda el último contratiempo grave y busca la oportunidad oculta que forzó en ti.', 'Recall the last severe setback and find the hidden opportunity it forced into you.'),
     [beat('La resistencia natural', 'The natural friction', 'Cuando el camino se bloquea, la reacción inmediata es frustración y resentimiento.', 'When the path is blocked, the immediate human reaction is frustration and resentment.'), beat('El giro mental', 'The mental pivot', 'Marco Aurelio observó: el impedimento a la acción hace avanzar la acción. Lo que se interpone en el camino se convierte en el camino.', 'Marcus Aurelius noted: the impediment to action advances action. What stands in the way becomes the way.'), beat('Amor Fati en la práctica', 'Amor Fati in practice', 'No solo tolerar lo que ocurre, sino amarlo como una oportunidad de forjar paciencia, coraje o astucia.', 'Not merely tolerating what occurs, but loving it as a crucible to forge patience, courage, or resourcefulness.')],
@@ -230,7 +230,7 @@ export const ORB_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
     l('¿Qué enseña el principio del obstáculo es el camino?', 'What does the obstacle is the way principle teach?'),
     l('Que los reveses no detienen el progreso, sino que se convierten en la materia prima para crecer.', 'That setbacks do not halt progress; they become the raw material for growth.'),
   ),
-  'learn-mindset-04': design(
+  'learn-psychology-v1-04': design(
     l('¿Qué te dices a ti mismo en el primer segundo tras cometer un error?', 'What do you say to yourself in the first second after making a mistake?'),
     l('Identifica la voz interna de autocrítica destructiva y sustitúyela por una evaluación neutral.', 'Identify the voice of destructive self-criticism and replace it with neutral diagnostics.'),
     [beat('El eco catastrófico', 'The catastrophic echo', 'Un error menor genera frases absolutas: “siempre arruino todo” o “no sirvo para esto”.', 'A minor slip triggers absolute statements: “I always mess up” or “I am not cut out for this”.'), beat('La separación del observador', 'Observer separation', 'Tú no eres tus pensamientos automáticos; eres la consciencia que decide si creerles o descartarlos.', 'You are not your automatic thoughts; you are the awareness choosing whether to believe or discard them.'), beat('El diagnóstico objetivo', 'Objective diagnosis', 'Sustituye juicios morales por preguntas operativas: ¿qué dato falló y cómo corrijo el sistema?', 'Replace moral self-judgments with operational questions: what data was flawed, and how do I fix the system?')],
@@ -239,7 +239,7 @@ export const ORB_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
     l('¿Cómo se desarma un bucle de rumiación negativa?', 'How do you dismantle a negative rumination loop?'),
     l('Describiendo los hechos de forma fría y haciendo una pregunta orientada a la acción inmediata.', 'Describing facts objectively and asking an action-oriented diagnostic question.'),
   ),
-  'learn-mindset-05': design(
+  'learn-psychology-v1-05': design(
     l('¿Cómo construir una mente que no dependa del aplauso ni tema la crítica?', 'How do you build a mind that craves no applause and fears no criticism?'),
     l('Reflexiona: ¿cuántas decisiones tomaste este año solo para complacer a personas que no respetas?', 'Reflect: how many choices did you make this year just to please people you do not respect?'),
     [beat('La aprobación prestada', 'Borrowed approval', 'Buscar validación ajena pone la llave de tu autoestima en el bolsillo de extraños.', 'Seeking external validation puts the key to your self-worth in strangers’ pockets.'), beat('La brújula interna', 'The internal compass', 'El guerrero y el pensador definen su estándar antes de salir al mundo. Si la acción fue recta, el ruido exterior carece de peso.', 'The warrior and thinker set their standard before entering the arena. If the act was just, noise holds no weight.'), beat('La ecuanimidad', 'Equanimity', 'Tratar al éxito y al fracaso como dos impostores idénticos preserva la claridad mental a largo plazo.', 'Treating triumph and disaster as identical impostors preserves long-term lucidity.')],
@@ -381,7 +381,7 @@ export const ORB_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
 };
 
 const PSYCHOLOGY_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
-  'learn-mindset-01': design(
+  'learn-psychology-v1-01': design(
     l('¿Qué evidencia podría hacerte cambiar de opinión?', 'What evidence could make you change your mind?'),
     l('Piensa en una creencia reciente y predice qué dato contrario tenderías a ignorar.', 'Think of a recent belief and predict which contrary fact you might ignore.'),
     [beat('La preferencia', 'The preference', 'Una creencia previa orienta qué información buscamos.', 'A prior belief steers which information we seek.'), beat('La interpretación', 'The interpretation', 'La misma evidencia puede parecer fuerte o débil según lo que esperamos.', 'The same evidence can look strong or weak depending on what we expect.'), beat('La salida', 'The exit', 'Definir por adelantado qué cambiaría tu opinión convierte la curiosidad en una prueba.', 'Defining what would change your mind turns curiosity into a test.')],
@@ -390,7 +390,7 @@ const PSYCHOLOGY_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
     l('¿Cuál es el antídoto práctico contra el sesgo de confirmación?', 'What is a practical antidote to confirmation bias?'),
     l('Buscar una prueba que pueda refutar tu creencia y decidir de antemano qué resultado la cambiaría.', 'Seek a test that could disprove your belief and decide in advance which result would change it.'),
   ),
-  'learn-mindset-02': design(
+  'learn-psychology-v1-02': design(
     l('¿Cuándo el miedo a perder cambia una decisión razonable?', 'When does fear of loss distort a reasonable decision?'),
     l('Compara una decisión incierta usando criterios escritos antes de imaginar el peor resultado.', 'Compare an uncertain decision using criteria written before imagining the worst outcome.'),
     [beat('La asimetría', 'The asymmetry', 'Las pérdidas pueden pesar más que ganancias comparables.', 'Losses can weigh more than comparable gains.'), beat('La distorsión', 'The distortion', 'Ese peso puede llevarnos a evitar riesgos razonables o mantener una opción por miedo.', 'That weight can make us avoid reasonable risks or cling to an option from fear.'), beat('La regla previa', 'The prior rule', 'Límites definidos con calma protegen la decisión cuando llega la presión.', 'Limits set calmly protect the decision when pressure arrives.')],
@@ -399,7 +399,7 @@ const PSYCHOLOGY_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
     l('¿Por qué conviene definir un límite antes de conocer el resultado?', 'Why define a limit before knowing the outcome?'),
     l('Porque reduce la posibilidad de que el miedo inmediato cambie el criterio.', 'Because it reduces the chance that immediate fear changes the criterion.'),
   ),
-  'learn-mindset-03': design(
+  'learn-psychology-v1-03': design(
     l('Si aún no hubieras invertido nada, ¿elegirías lo mismo hoy?', 'If you had invested nothing yet, would you make the same choice today?'),
     l('Separa lo ya perdido de los costes y beneficios que todavía pueden cambiar.', 'Separate what is already gone from costs and benefits that can still change.'),
     [beat('El compromiso', 'The commitment', 'Lo invertido crea una presión por justificar el pasado.', 'Past investment creates pressure to justify the past.'), beat('La trampa', 'The trap', 'Continuar puede sentirse coherente aunque empeore el futuro.', 'Continuing can feel consistent even when it worsens the future.'), beat('El reinicio', 'The reset', 'Evaluar desde hoy devuelve el foco a las alternativas reales.', 'Evaluating from today restores focus to real alternatives.')],
@@ -408,7 +408,7 @@ const PSYCHOLOGY_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
     l('¿Qué pregunta neutraliza un coste hundido?', 'Which question neutralizes a sunk cost?'),
     l('Si empezara hoy sin inversión previa, ¿qué opción elegiría?', 'If I started today with no prior investment, which option would I choose?'),
   ),
-  'learn-mindset-04': design(
+  'learn-psychology-v1-04': design(
     l('¿Lo recuerdas porque es frecuente o porque fue impactante?', 'Do you remember it because it is frequent or because it was striking?'),
     l('Antes de estimar un riesgo, predice qué tasa base necesitarías conocer.', 'Before estimating a risk, predict which base rate you would need.'),
     [beat('La facilidad', 'Ease', 'Los ejemplos recientes o vívidos aparecen primero en la mente.', 'Recent or vivid examples appear first in mind.'), beat('La inferencia', 'The inference', 'Esa facilidad puede confundirse con frecuencia o probabilidad.', 'That ease can be mistaken for frequency or probability.'), beat('La corrección', 'The correction', 'Una tasa base o muestra amplia vuelve a anclar la estimación.', 'A base rate or broader sample reanchors the estimate.')],
@@ -417,7 +417,7 @@ const PSYCHOLOGY_LEARNING_DESIGNS: Record<string, OrbLearningDesign> = {
     l('¿Qué dato corrige mejor la heurística de disponibilidad?', 'Which data best corrects the availability heuristic?'),
     l('Una tasa base relevante o una muestra más amplia que el ejemplo recordado.', 'A relevant base rate or a broader sample than the remembered example.'),
   ),
-  'learn-mindset-05': design(
+  'learn-psychology-v1-05': design(
     l('¿Podrías explicar la idea sin volver a verla?', 'Could you explain the idea without looking at it again?'),
     l('Cierra el material y reconstruye de memoria sus tres puntos esenciales.', 'Close the material and reconstruct its three essential points from memory.'),
     [beat('La fluidez', 'Fluency', 'Releer se siente fácil y puede crear una ilusión de dominio.', 'Rereading feels easy and can create an illusion of mastery.'), beat('La recuperación', 'Retrieval', 'Recordar sin mirar revela huecos y ejercita la ruta de acceso.', 'Recalling without looking reveals gaps and exercises the access path.'), beat('La corrección', 'Correction', 'Comprobar después evita consolidar errores.', 'Checking afterward prevents errors from becoming fixed.')],

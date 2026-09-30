@@ -4,9 +4,11 @@ const storageKey = 't1ger-theme';
 
 export function getPreferredTheme(): Theme {
   try {
-    return localStorage.getItem(storageKey) === 'light' ? 'light' : 'dark';
+    const saved = localStorage.getItem(storageKey);
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   } catch {
-    return 'dark';
+    return 'light';
   }
 }
 

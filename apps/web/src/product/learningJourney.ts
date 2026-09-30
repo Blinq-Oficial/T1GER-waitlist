@@ -34,9 +34,9 @@ export const HISTORY_SECTIONS: JourneySection[] = [
 ];
 
 export const MINDSET_SECTIONS: JourneySection[] = [
-  { id: 'mind-control', title: { es: 'Detecta tus sesgos', en: 'Notice your biases' }, description: { es: 'Cuestiona creencias y separa el miedo del criterio.', en: 'Question beliefs and separate fear from judgment.' }, lessonIds: ['learn-mindset-01', 'learn-mindset-02'], landmark: 'seed' },
-  { id: 'mind-reframing', title: { es: 'Decide con evidencia', en: 'Decide with evidence' }, description: { es: 'Mira al futuro y busca tasas base.', en: 'Look forward and seek base rates.' }, lessonIds: ['learn-mindset-03', 'learn-mindset-04'], landmark: 'compass' },
-  { id: 'mind-citadel', title: { es: 'Entrena tu memoria', en: 'Train your memory' }, description: { es: 'Recupera, comprueba y corrige lo aprendido.', en: 'Retrieve, check, and correct what you learned.' }, lessonIds: ['learn-mindset-05'], landmark: 'summit' },
+  { id: 'mind-control', title: { es: 'Detecta tus sesgos', en: 'Notice your biases' }, description: { es: 'Cuestiona creencias y separa el miedo del criterio.', en: 'Question beliefs and separate fear from judgment.' }, lessonIds: ['learn-psychology-v1-01', 'learn-psychology-v1-02'], landmark: 'seed' },
+  { id: 'mind-reframing', title: { es: 'Decide con evidencia', en: 'Decide with evidence' }, description: { es: 'Mira al futuro y busca tasas base.', en: 'Look forward and seek base rates.' }, lessonIds: ['learn-psychology-v1-03', 'learn-psychology-v1-04'], landmark: 'compass' },
+  { id: 'mind-citadel', title: { es: 'Entrena tu memoria', en: 'Train your memory' }, description: { es: 'Recupera, comprueba y corrige lo aprendido.', en: 'Retrieve, check, and correct what you learned.' }, lessonIds: ['learn-psychology-v1-05'], landmark: 'summit' },
 ];
 
 export const PERFORMANCE_SECTIONS: JourneySection[] = [
@@ -75,7 +75,7 @@ export function getJourneyNodes(track: InteractiveTrack, brain: BrainState, comp
     const reviewIds = preceding.filter(item => {
       const card = brain.fsrsCards?.[item.id];
       if (!card) return false; // Legacy completion remains valid; review cards are created on the next recall.
-      return new Date(card.due).getTime() <= now || card.state === 1 || card.state === 3;
+      return new Date(card.due).getTime() <= now;
     }).map(item => item.id);
     return { lesson, state: reviewIds.length ? 'review' : 'current', reviewIds };
   });

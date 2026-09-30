@@ -1,0 +1,295 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: userId
+    // Fields:
+    //   - uid: string (required) - User ID
+    //   - email: string (required) - User email
+    //   - streak: number (required) - Current streak
+    //   - streakShields: number (optional) - Streak shields
+    //   - xp: number (required) - Total XP
+    //   - lastMissionDate: string (optional) - Last mission date
+    //   - isWeekendPlanActive: boolean (optional) - Weekend plan active
+    //   - goal: string (optional) - 90-day goal
+    //   - niche: string (required) - User niche
+    //   - level: number (required) - User level
+    //   - displayName: string (optional)
+    //   - photoURL: string (optional)
+    //
+    // Collection: circles
+    // Document ID: circleId
+    // Fields:
+    //   - name: string (required)
+    //   - members: array (required)
+    //   - weeklyScore: number (required)
+    //   - inviteCode: string (required)
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+       return request.auth != null;
+    }
+
+    function isOwner(userId) {
+       return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidString(val, maxLen) {
+      return val is string && val.size() <= maxLen;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function hasRequiredFields(fields) {
+       return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isCircleMember(circleId) {
+      return isAuthenticated()
+        && request.auth.uid in get(/databases/$(database)/documents/circles/$(circleId)).data.members;
+    }
+
+    function isFriendshipParticipant(data) {
+      return isAuthenticated()
+        && ((('userIds' in data) && data.userIds is list && request.auth.uid in data.userIds)
+          || request.auth.uid == data.userId1
+          || request.auth.uid == data.userId2);
+    }
+
+    function isChallengeParticipant(data) {
+      return isAuthenticated()
+        && data.participantIds is list
+        && request.auth.uid in data.participantIds;
+    }
+
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) 
+        && hasRequiredFields(['uid', 'email', 'streak', 'xp', 'niche', 'level']) 
+        && isValidEmail(request.resource.data.email)
+        && isValidString(request.resource.data.niche, 50)
+        && request.resource.data.uid == userId
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.xp == 0
+        && request.resource.data.level == 1
+        && request.resource.data.streak == 0
+        && request.resource.data.get('coins', 0) == 0
+        && request.resource.data.get('verifiedXP', 0) == 0
+        && request.resource.data.get('weeklyXP', 0) == 0
+        && request.resource.data.get('verifiedMissionCount', 0) == 0
+        && request.resource.data.get('streakShields', 0) == 0
+        && request.resource.data.get('role', 'member') == 'member'
+        && request.resource.data.get('isFounder', false) == false
+        && request.resource.data.get('isPro', false) == false
+        && request.resource.data.get('isSuperT1ger', false) == false
+        && !request.resource.data.keys().hasAny(['currentWeekId', 'leagueTier', 'leagueCohortId', 'lastVerifiedMissionDay', 'timeZone', 'lastMissionDate', 'missionCompletedToday', 'tigerStatus', 'unlockedAccessories', 'unlockedDenItems', 'lastSupplyDropClaimed']);
+      allow update: if isOwner(userId)
+        && (!('email' in request.resource.data) || request.resource.data.email == resource.data.email)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid', 'xp', 'level', 'verifiedXP', 'coins', 'isPro', 'isSuperT1ger', 'role', 'isFounder', 'streak', 'streakShields', 'weeklyXP', 'currentWeekId', 'leagueTier', 'leagueCohortId', 'lastVerifiedMissionDay', 'verifiedMissionCount', 'timeZone', 'lastMissionDate', 'missionCompletedToday', 'tigerStatus', 'unlockedAccessories', 'unlockedDenItems', 'lastSupplyDropClaimed'])
+        && (!('niche' in request.resource.data) || isValidString(request.resource.data.niche, 50))
+        && (!('goal' in request.resource.data) || isValidString(request.resource.data.goal, 500));
+      allow delete: if false; // Account removal is a server-side cascade.
+    }
+
+    match /users_public/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.get('role', 'member') == 'member'
+        && request.resource.data.get('isFounder', false) == false
+        && !request.resource.data.keys().hasAny(['leagueCohortId', 'missionCompletedToday', 'tigerStatus'])
+        && request.resource.data.keys().hasOnly(['uid', 'displayName', 'photoURL', 'niche', 'role', 'isFounder', 'deletedAt', 'isDeleted', 'leagueCohortId', 'username', 'usernameNormalized', 'inviteCode', 'lastActive', 'missionCompletedToday', 'tigerStatus'])
+        && isValidString(request.resource.data.displayName, 100)
+        && (!('username' in request.resource.data) || isValidString(request.resource.data.username, 24))
+        && (!('usernameNormalized' in request.resource.data) || isValidString(request.resource.data.usernameNormalized, 24))
+        && (!('inviteCode' in request.resource.data) || isValidString(request.resource.data.inviteCode, 16))
+        && (!('photoURL' in request.resource.data) || isValidString(request.resource.data.photoURL, 1000000));
+      allow update: if isOwner(userId)
+        && request.resource.data.keys().hasOnly(['uid', 'displayName', 'photoURL', 'niche', 'role', 'isFounder', 'deletedAt', 'isDeleted', 'verifiedXP', 'weeklyXP', 'streak', 'leagueTier', 'leagueCohortId', 'currentWeekId', 'username', 'usernameNormalized', 'inviteCode', 'lastActive', 'lastMissionDate', 'missionCompletedToday', 'tigerStatus'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'photoURL', 'niche', 'username', 'usernameNormalized', 'inviteCode', 'lastActive'])
+        && isValidString(request.resource.data.displayName, 100)
+        && (!('username' in request.resource.data) || isValidString(request.resource.data.username, 24))
+        && (!('usernameNormalized' in request.resource.data) || isValidString(request.resource.data.usernameNormalized, 24))
+        && (!('inviteCode' in request.resource.data) || isValidString(request.resource.data.inviteCode, 16))
+        && (!('photoURL' in request.resource.data) || isValidString(request.resource.data.photoURL, 1000000));
+      allow delete: if false;
+    }
+
+    match /missions/{missionId} {
+      function isWebLesson(data) {
+        return data.get('lessonId', '').matches('^learn-(money|ai|psychology-v1)-0[1-5]$');
+      }
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated()
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.get('status', 'ready') != 'verified'
+        && (!isWebLesson(request.resource.data) || request.resource.data.get('status', 'ready') != 'completed');
+      allow update: if isAuthenticated()
+        && request.auth.uid == resource.data.userId
+        && request.auth.uid == request.resource.data.userId
+        && resource.data.get('status', 'ready') != 'verified'
+        && (!isWebLesson(resource.data) || resource.data.get('status', 'ready') != 'completed')
+        && request.resource.data.get('status', 'ready') != 'verified'
+        && (!isWebLesson(request.resource.data) || request.resource.data.get('status', 'ready') != 'completed');
+      allow delete: if false;
+    }
+
+    match /submissions/{submissionId} {
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated()
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.verified == false
+        && request.resource.data.evidenceKind in ['camera', 'screenshot', 'text'];
+      allow update, delete: if false;
+    }
+
+    match /users/{userId}/weekendMissions/{missionId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && hasRequiredFields(['title', 'description', 'type', 'proofRequirement', 'status']);
+      allow update: if isOwner(userId) && hasOnlyAllowedFields(['title', 'description', 'type', 'proofRequirement', 'status']);
+    }
+
+    match /users/{userId}/daily_quests/{questId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && hasRequiredFields(['mission_title', 'mission_briefing', 'required_protocol', 'xp_reward']) && hasOnlyAllowedFields(['mission_title', 'mission_briefing', 'required_protocol', 'xp_reward']);
+      allow update: if isOwner(userId) && hasOnlyAllowedFields(['mission_title', 'mission_briefing', 'required_protocol', 'xp_reward']);
+    }
+
+    match /books/{bookId} {
+      allow read: if isAuthenticated();
+      match /insights/{insightId} {
+        allow read: if isAuthenticated();
+      }
+    }
+
+    match /users/{userId}/bookProgress/{bookId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /circles/{circleId} {
+      allow read: if isAuthenticated() && request.auth.uid in resource.data.members;
+      allow create: if isAuthenticated()
+        && request.resource.data.members is list
+        && request.auth.uid in request.resource.data.members
+        && request.resource.data.members.size() == 2
+        && request.resource.data.keys().hasOnly(['name', 'members', 'ownerId', 'friendshipId', 'weeklyScore', 'inviteCode', 'createdAt', 'updatedAt'])
+        && circleId == 'friendship_' + request.resource.data.friendshipId
+        && get(/databases/$(database)/documents/friendships/$(request.resource.data.friendshipId)).data.status == 'accepted'
+        && request.resource.data.members.toSet() == get(/databases/$(database)/documents/friendships/$(request.resource.data.friendshipId)).data.userIds.toSet()
+        && isValidString(request.resource.data.name, 80);
+      allow update: if isCircleMember(circleId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'updatedAt']);
+      allow delete: if isAuthenticated() && request.auth.uid == resource.data.ownerId;
+      
+      match /activities/{activityId} {
+        allow read: if isCircleMember(circleId);
+        allow create: if isCircleMember(circleId)
+          && request.auth.uid == request.resource.data.userId
+          && request.resource.data.keys().hasOnly(['userId', 'userName', 'userAvatar', 'missionId', 'missionTitle', 'missionType', 'durationMinutes', 'verified', 'proofLabel', 'proofURL', 'reactionCounts', 'reactedBy', 'commentCount', 'createdAt'])
+          && isValidString(request.resource.data.missionTitle, 160)
+          && request.resource.data.durationMinutes > 0
+          && request.resource.data.durationMinutes <= 1440
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.reactionCounts == {'fire': 0, 'tiger': 0, 'respect': 0}
+          && request.resource.data.reactedBy == {}
+          && request.resource.data.commentCount == 0
+          && (request.resource.data.verified == false || (
+            get(/databases/$(database)/documents/submissions/$(request.auth.uid + '_' + request.resource.data.missionId)).data.verified == true
+            && get(/databases/$(database)/documents/submissions/$(request.auth.uid + '_' + request.resource.data.missionId)).data.verificationTier == 'ai_reviewed_artifact'
+            && request.resource.data.proofURL == get(/databases/$(database)/documents/submissions/$(request.auth.uid + '_' + request.resource.data.missionId)).data.proofURL
+          ));
+        allow update: if false;
+        
+        match /reactions/{reactionId} {
+          allow read: if isCircleMember(circleId);
+          allow write: if false;
+        }
+        match /comments/{commentId} {
+          allow read: if isCircleMember(circleId);
+          allow write: if false;
+        }
+      }
+    }
+
+    match /friendships/{friendshipId} {
+      allow read: if isFriendshipParticipant(resource.data);
+      allow create: if isFriendshipParticipant(request.resource.data)
+        && request.auth.uid == request.resource.data.requesterId
+        && request.auth.uid == request.resource.data.userId1
+        && request.resource.data.addresseeId == request.resource.data.userId2
+        && request.resource.data.userId1 != request.resource.data.userId2
+        && request.resource.data.status == 'pending'
+        && request.resource.data.userIds.size() == 2
+        && request.resource.data.userIds.toSet() == [request.resource.data.userId1, request.resource.data.userId2].toSet()
+        && request.resource.data.keys().hasOnly(['userIds', 'userId1', 'userId2', 'requesterId', 'addresseeId', 'status', 'createdAt', 'updatedAt']);
+      allow update: if isFriendshipParticipant(resource.data)
+        && request.auth.uid == resource.data.get('addresseeId', resource.data.userId2)
+        && resource.data.status == 'pending'
+        && request.resource.data.status in ['accepted', 'declined']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'acceptedAt', 'updatedAt']);
+      allow delete: if isFriendshipParticipant(resource.data);
+    }
+
+    match /challenges/{challengeId} {
+      allow read: if isChallengeParticipant(resource.data);
+      allow create: if isChallengeParticipant(request.resource.data)
+        && request.auth.uid == request.resource.data.senderId
+        && request.resource.data.receiverId != request.resource.data.senderId
+        && request.resource.data.participantIds.size() == 2
+        && request.resource.data.participantIds.toSet() == [request.resource.data.senderId, request.resource.data.receiverId].toSet()
+        && request.resource.data.keys().hasOnly(['senderId', 'receiverId', 'participantIds', 'senderName', 'receiverName', 'durationDays', 'metric', 'stakeCoins', 'potCoins', 'status', 'startsAt', 'endsAt', 'senderScore', 'receiverScore', 'createdAt'])
+        && request.resource.data.senderScore == 0 && request.resource.data.receiverScore == 0
+        && request.resource.data.startsAt == null && request.resource.data.endsAt == null
+        && request.resource.data.status == 'pending'
+        && request.resource.data.durationDays in [3, 7, 14]
+        && request.resource.data.metric in ['missions', 'streak']
+        && request.resource.data.stakeCoins is int && request.resource.data.stakeCoins >= 0
+        && request.resource.data.stakeCoins <= 1000
+        && request.resource.data.potCoins == request.resource.data.stakeCoins * 2;
+      allow update: if isChallengeParticipant(resource.data)
+        && request.auth.uid == resource.data.receiverId
+        && resource.data.status == 'pending'
+        && request.resource.data.status == 'declined'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']);
+    }
+
+    match /nudges/{nudgeId} {
+      allow read: if isAuthenticated() && request.auth.uid in resource.data.participantIds;
+      allow write: if false;
+    }
+
+    match /users/{userId}/dailyQuestions/{questionId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /users/{userId}/healthRadar {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /users/{userId}/coachingSessions/{sessionId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && hasRequiredFields(['messages', 'summary', 'timestamp'])
+        && isValidString(request.resource.data.summary, 200)
+        && request.resource.data.messages is list;
+    }
+  }
+}
