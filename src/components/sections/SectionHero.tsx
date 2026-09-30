@@ -458,16 +458,16 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                     className="group relative order-2 flex min-h-[116px] overflow-hidden rounded-[8px] border border-[#FF6B00]/45 bg-[#FF6B00]/10 p-3 text-left text-white transition-transform hover:-translate-y-1 hover:border-[#FF6B00] sm:min-h-[154px] sm:p-4"
                   >
                     <BorderBeam size={160} duration={8} colorFrom="#000000" colorTo="#CCFF00" />
-                    <span className="absolute -right-3 -top-7 hidden font-outfit text-[7rem] font-black leading-none text-white/[0.04] sm:block">$5+</span>
+                    <span className="absolute -right-3 -top-7 hidden font-outfit text-[7rem] font-black leading-none text-white/[0.04] sm:block">SOON</span>
                     <span className="relative z-10 flex h-full w-full flex-col">
                       <span className="flex items-center gap-1.5 font-mono text-[8px] font-black uppercase tracking-[0.16em] sm:text-[9px]">
                         <Heart className="h-3 w-3 fill-[#FF6B00] text-[#FF6B00] sm:h-3.5 sm:w-3.5" aria-hidden="true" />
                         Access + tiger impact
                       </span>
                       <span className="mt-1 block font-outfit text-[1.25rem] font-black uppercase leading-none sm:text-[1.55rem]">Early Adopter</span>
-                      <span className="mt-1.5 hidden max-w-[18rem] text-[11px] font-semibold leading-relaxed text-white/65 sm:block">Priority consideration, six months of Premium, and Founder status. Extra support goes toward tiger conservation.</span>
+                      <span className="mt-1.5 hidden max-w-[18rem] text-[11px] font-semibold leading-relaxed text-white/65 sm:block">Founder reservations are temporarily paused. Join the free waitlist for updates.</span>
                       <span className="mt-2 flex min-h-9 items-center justify-between gap-3 rounded-[6px] bg-black px-3 py-1.5 font-mono text-[8px] font-black uppercase tracking-[0.07em] text-white sm:mt-auto sm:min-h-11 sm:px-4 sm:py-2 sm:text-[10px]">
-                        Reserve benefits · $5+
+                        Learn about Founder access
                         <ArrowUpRight className="h-4 w-4 shrink-0 text-[#CCFF00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                       </span>
                     </span>
@@ -535,7 +535,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   </form>
                 </motion.div>
                 <p className="mt-3 text-center font-mono text-[9px] uppercase tracking-[0.12em] text-white/35">
-                  Secure checkout by Stripe · Free waitlist emails by Resend
+                  Free waitlist · Access updates by email
                 </p>
               </div>
             </motion.div>
@@ -637,8 +637,8 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 <button type="button" onClick={onOpenEarlyAdopter} className="w-full rounded-[8px] border border-[#FF6B00]/35 bg-[#FF6B00]/10 px-5 py-5 text-left transition-all hover:border-[#FF6B00] hover:bg-[#FF6B00]/15">
                   <span className="flex items-center justify-between gap-4">
                     <span>
-                      <span className="block font-mono text-[9px] font-black uppercase tracking-[0.2em] text-[#FF6B00]">Optional upgrade</span>
-                      <span className="mt-1 block font-outfit text-base font-black uppercase text-white">Get priority beta consideration for $5</span>
+                      <span className="block font-mono text-[9px] font-black uppercase tracking-[0.2em] text-[#FF6B00]">Founder update</span>
+                      <span className="mt-1 block font-outfit text-base font-black uppercase text-white">Founder reservations are temporarily paused</span>
                     </span>
                     <Zap className="h-5 w-5 shrink-0 text-[#CCFF00]" aria-hidden="true" />
                   </span>

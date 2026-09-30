@@ -1,23 +1,15 @@
 import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpRight, Flame, Heart, ShieldCheck, Trophy, X, Zap } from 'lucide-react';
+import { ArrowUpRight, Flame, ShieldCheck, Trophy, X, Zap } from 'lucide-react';
 import { BorderBeam } from '../ui/border-beam';
 import { trackEvent } from '../../lib/analytics';
-
-const PAYMENT_LINK = 'https://buy.stripe.com/fZueVeaebe5T5pvdpQaZi01';
 
 const benefits = [
   { icon: Flame, title: 'Priority Consideration', description: 'Be considered before the general waitlist; timing is not guaranteed.' },
   { icon: Zap, title: '6-Month Premium Pass', description: 'Get the full action roadmap experience ($60 value).' },
   { icon: Trophy, title: 'Founder Status', description: 'Keep an exclusive Founder badge on your profile.' },
   { icon: ShieldCheck, title: 'Risk-Free Before Launch', description: 'Request a full refund any time before global launch.' },
-];
-
-const contributionExamples = [
-  { amount: '$10', tiger: '🐯', label: 'A good start' },
-  { amount: '$25', tiger: '🐯✨', label: 'More habitat' },
-  { amount: '$50+', tiger: '🐯🧡', label: 'Big impact' },
 ];
 
 interface EarlyAdopterModalProps {
@@ -30,10 +22,6 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
   const descriptionId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-
-  const handleCheckout = () => {
-    trackEvent('Early Adopter Checkout Started', { amount: '5+', source: 'modal' });
-  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -131,29 +119,19 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
                   <div className="flex items-end gap-3 md:w-full md:justify-between">
                     <span className="text-5xl leading-none md:text-7xl" role="img" aria-label="Happy tiger">🐯</span>
                     <div className="text-right">
-                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.15em] opacity-60">Starts at</p>
-                      <p className="font-outfit text-5xl font-black leading-none md:text-6xl">$5+</p>
+                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.15em] opacity-60">Checkout</p>
+                      <p className="font-outfit text-3xl font-black uppercase leading-none md:text-4xl">Paused</p>
                     </div>
                   </div>
                 </div>
               </aside>
 
               <div className="px-5 pb-6 pt-7 sm:px-8 sm:pb-8 sm:pt-9 md:px-10">
-                <p className="mb-3 font-mono text-[9px] font-black uppercase tracking-[0.24em] text-[#CCFF00]">Limited Early Adopter Offer</p>
-                <h2 id={titleId} className="max-w-lg pr-10 font-outfit text-[1.75rem] font-black uppercase leading-[0.98] text-white sm:text-4xl">Unlock T1GER. Help Protect Tigers.</h2>
-                <p id={descriptionId} className="mt-3 max-w-md text-sm leading-relaxed text-white/70 sm:text-base">Pay $5 to reserve Founder benefits and receive priority beta consideration. Choose a higher amount at checkout to support wild tiger conservation.</p>
+                <p className="mb-3 font-mono text-[9px] font-black uppercase tracking-[0.24em] text-[#CCFF00]">Founder access update</p>
+                <h2 id={titleId} className="max-w-lg pr-10 font-outfit text-[1.75rem] font-black uppercase leading-[0.98] text-white sm:text-4xl">Founder reservations are paused.</h2>
+                <p id={descriptionId} className="mt-3 max-w-md text-sm leading-relaxed text-white/70 sm:text-base">The paid checkout is temporarily unavailable while we complete purchase fulfillment. Join the free waitlist for access updates.</p>
 
-                <div className="my-6 grid grid-cols-3 gap-2.5" aria-label="Example contribution amounts">
-                  {contributionExamples.map(({ amount, tiger, label }) => (
-                    <div key={amount} className="flex min-h-[72px] flex-col items-center justify-center rounded-[6px] border border-[#FF6B00]/30 bg-[#FF6B00]/10 px-2 py-2 text-center">
-                      <span className="text-xl leading-none" aria-hidden="true">{tiger}</span>
-                      <span className="mt-1 font-outfit text-base font-black text-[#FF6B00]">{amount}</span>
-                      <span className="font-mono text-[7px] font-bold uppercase tracking-[0.08em] text-white/35">{label}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <ul className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
+                <ul className="my-6 grid gap-x-5 gap-y-4 sm:grid-cols-2" aria-label="Planned Founder benefits">
                   {benefits.map(({ icon: Icon, title, description }) => (
                     <li key={title} className="grid grid-cols-[28px_1fr] gap-2.5">
                       <span className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[#FF6B00]/25 bg-[#FF6B00]/10 text-[#FF6B00]">
@@ -169,26 +147,23 @@ export default function EarlyAdopterModal({ isOpen, onClose }: EarlyAdopterModal
 
                 <div className="mt-6 rounded-[6px] border border-[#CCFF00]/20 bg-[#CCFF00]/[0.06] p-3">
                   <p className="flex items-center gap-2 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#CCFF00]">
-                    <Heart className="h-4 w-4 fill-[#CCFF00]" aria-hidden="true" />
-                    $5 reserves Founder benefits. Extra supports tigers.
+                    <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                    No payment is required to join the waitlist.
                   </p>
                 </div>
 
                 <a
-                  href={PAYMENT_LINK}
-                  onClick={handleCheckout}
+                  href="/#join"
+                  onClick={onClose}
                   className="mt-4 flex min-h-14 w-full items-center justify-center gap-2 rounded-[6px] bg-[#FF6B00] px-5 py-4 text-center font-mono text-[11px] font-black uppercase tracking-[0.08em] text-black transition-colors hover:bg-[#CCFF00] sm:text-xs"
                 >
-                  Choose $5+ &amp; Reserve Founder Benefits
+                  Join the free waitlist
                   <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
                 </a>
-                <a href="/early-access/success?demo=1" className="mt-3 block text-center font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-white/45 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white">
-                  Preview what happens after payment
-                </a>
-                <p className="mt-3 text-center text-[10px] leading-relaxed text-white/35">Amounts above the $5 access price are intended for tiger conservation, net of applicable costs. Not tax-deductible. See <a href="/terms#payments-taxes-and-refunds" className="underline underline-offset-2 hover:text-white">Terms</a>.</p>
+                <p className="mt-3 text-center text-[10px] leading-relaxed text-white/35">We will publish updated Founder offer details before payments reopen.</p>
                 <div className="mt-3 flex items-center justify-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">
                   <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-                  Secure checkout powered by Stripe
+                  Free waitlist
                   <span aria-hidden="true">·</span>
                   <a href="/privacy" className="hover:text-white">Privacy</a>
                 </div>
