@@ -1,11 +1,6 @@
 // T1GER Waitlist Core Utilities - Restored and verified working state.
 import { Resend } from 'resend';
 
-const DEFAULT_SUPABASE_URL = 'https://pzxjwqnxnkxtmwovzsuv.supabase.co';
-const DEFAULT_SUPABASE_PROJECT_REF = new URL(DEFAULT_SUPABASE_URL).hostname.split('.')[0];
-const DEFAULT_SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB6eGp3cW54bmt4dG13b3Z6c3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjQyNDAsImV4cCI6MjA5MzQwMDI0MH0.3aS948dQbncMdO5ihsJPWuxs9Mxq2HZPCZEZIHGlwVc';
-
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const referralPattern = /^[A-Za-z0-9_-]{1,80}$/;
 const rateLimitWindowMs = 10 * 60 * 1000;
@@ -23,7 +18,7 @@ function cleanString(value) {
 }
 
 function getExpectedSupabaseProjectRef() {
-  return cleanString(process.env.SUPABASE_PROJECT_REF) || DEFAULT_SUPABASE_PROJECT_REF;
+  return cleanString(process.env.SUPABASE_PROJECT_REF);
 }
 
 function getProjectRefFromKey(key) {
@@ -37,36 +32,34 @@ function getProjectRefFromKey(key) {
 }
 
 export function getSupabaseUrl() {
-  const rawUrl = cleanString(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
-  if (rawUrl) {
-    const candidate = rawUrl.replace(/^https?:\/\/https?:\/\//i, 'https://');
-    const withProtocol = /^https?:\/\//i.test(candidate) ? candidate : `https://${candidate}`;
-    try {
-      const parsedUrl = new URL(withProtocol);
-      const projectRef = parsedUrl.hostname.split('.')[0];
+  const rawUrl = cleanString(process.env.SUPABASE_URL);
+  if (!rawUrl) return '';
 
-      if (projectRef === getExpectedSupabaseProjectRef()) {
-        return parsedUrl.origin;
-      }
-
-      console.warn('Supabase URL points to a different project; using the T1GER project.');
-    } catch {
-      console.error('Invalid custom Supabase URL, falling back to default.');
+  try {
+    const parsedUrl = new URL(rawUrl);
+    const projectRef = parsedUrl.hostname.split('.')[0];
+    if (parsedUrl.protocol !== 'https:' || !parsedUrl.hostname.endsWith('.supabase.co') ||
+        parsedUrl.port || parsedUrl.username || parsedUrl.password ||
+        (getExpectedSupabaseProjectRef() && projectRef !== getExpectedSupabaseProjectRef())) {
+      return '';
     }
+    return parsedUrl.origin;
+  } catch {
+    return '';
   }
-  return DEFAULT_SUPABASE_URL;
 }
 
 export function getSupabaseAnonKey() {
-  const rawKey = cleanString(process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY);
-  if (rawKey) {
-    const projectRef = getProjectRefFromKey(rawKey);
-    if (!projectRef || projectRef === getExpectedSupabaseProjectRef()) return rawKey;
+  const rawKey = cleanString(process.env.SUPABASE_ANON_KEY);
+  const url = getSupabaseUrl();
+  if (!rawKey || !url) return '';
+  const keyRef = getProjectRefFromKey(rawKey);
+  return !keyRef || keyRef === new URL(url).hostname.split('.')[0] ? rawKey : '';
+}
 
-    console.warn('Supabase key belongs to a different project; using the T1GER project key.');
-  }
-
-  return DEFAULT_SUPABASE_ANON_KEY;
+export function getSupabaseSecretKey() {
+  const key = cleanString(process.env.SUPABASE_SECRET_KEY);
+  return key.startsWith('sb_secret_') ? key : '';
 }
 
 function normalizeBody(body = {}) {
@@ -112,15 +105,14 @@ export function isRateLimited(key, now = Date.now()) {
 
 async function supabaseRequest(path, options = {}) {
   const supabaseUrl = getSupabaseUrl();
-  const supabaseAnonKey = getSupabaseAnonKey();
+  const supabaseSecretKey = getSupabaseSecretKey();
   let response;
 
   try {
     response = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
       ...options,
       headers: {
-        apikey: supabaseAnonKey,
-        Authorization: `Bearer ${supabaseAnonKey}`,
+        apikey: supabaseSecretKey,
         ...options.headers,
       },
     });
@@ -235,11 +227,6 @@ export async function handleWaitlistSignup(req, res) {
     return jsonResponse(res, 405, { error: 'Method not allowed' });
   }
 
-  if (!getSupabaseUrl() || !getSupabaseAnonKey()) {
-    console.error('Missing Supabase configuration.');
-    return jsonResponse(res, 500, { error: 'Server configuration error.' });
-  }
-
   const { email, referredBy, website } = normalizeSignup(req.body);
 
   if (!emailPattern.test(email)) {
@@ -248,6 +235,11 @@ export async function handleWaitlistSignup(req, res) {
 
   if (website) {
     return jsonResponse(res, 400, { error: 'Unable to process this signup.' });
+  }
+
+  if (!getSupabaseUrl() || !getSupabaseSecretKey()) {
+    console.error('Missing Supabase configuration.');
+    return jsonResponse(res, 500, { error: 'Server configuration error.' });
   }
 
   const rateLimitKey = getClientIp(req) || email;
