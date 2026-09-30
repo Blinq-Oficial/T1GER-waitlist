@@ -4,7 +4,7 @@ type LegalPageProps = {
   type: 'terms' | 'privacy';
 };
 
-const updatedAt = 'August 11, 2026';
+const updatedAt = 'September 29, 2026';
 
 function TermsContent() {
   return (
@@ -15,7 +15,7 @@ function TermsContent() {
       </section>
       <section>
         <h2>2. Waitlist and beta access</h2>
-        <p>Your waitlist position is assigned when you join. Referral links currently provide attribution and do not change that position. Launch timing, invitation capacity, features, and availability may change, and a waitlist position does not guarantee admission on a specific date. Beta software may be incomplete, interrupted, or changed before release.</p>
+        <p>Your waitlist position is assigned when you join. Referral links can be shared, but they do not currently record attribution or change that position. Launch timing, invitation capacity, features, and availability may change, and a waitlist position does not guarantee admission on a specific date. Beta software may be incomplete, interrupted, or changed before release.</p>
       </section>
       <section>
         <h2>3. Early Adopter Access</h2>
@@ -52,11 +52,11 @@ function PrivacyContent() {
     <>
       <section>
         <h2>1. Information we collect</h2>
-        <p>We collect information you provide, including your email address, referral activity, waitlist position, and communications with us. We also collect limited website usage and performance data. For paid access, Stripe provides transaction details such as payment status, amount, currency, and the email used at checkout. T1GER does not receive your complete card number.</p>
+        <p>We collect information you provide, including your email address, waitlist position, and communications with us. We also collect limited website usage and performance data. For paid access, Stripe provides transaction details such as payment status, amount, currency, and the email used at checkout. T1GER does not receive your complete card number.</p>
       </section>
       <section>
         <h2>2. How we use information</h2>
-        <p>We use this information to operate the waitlist, deliver access and transaction emails, prevent fraud, provide support, measure interest, improve T1GER, administer referrals and Early Adopter benefits, comply with law, and send product updates. You can unsubscribe from marketing email using the link in an email or by contacting us.</p>
+        <p>We use this information to operate the waitlist, deliver access and transaction emails, prevent fraud, provide support, measure interest, improve T1GER, administer Early Adopter benefits, comply with law, and send product updates. You can unsubscribe from marketing email using the link in an email or by contacting us.</p>
       </section>
       <section>
         <h2>3. Service providers and disclosures</h2>
