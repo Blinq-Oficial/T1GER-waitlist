@@ -8,7 +8,7 @@ const navLinks = [
   { label: 'ABOUT', href: '#about', id: 'about' },
   { label: 'VISION', href: '#vision', id: 'vision' },
   { label: 'PROTOCOL', href: '#protocol', id: 'protocol' },
-  { label: 'JOIN', href: '#join', id: 'join' },
+  { label: 'MOBILE', href: '#join', id: 'join' },
   { label: 'FAQ', href: '#faq', id: 'faq' },
 ];
 
@@ -49,6 +49,7 @@ export default function Sidebar({ isPreloaded }: Props) {
 
   return (
     <>
+      <a href="/app/" className="landing-app-link">Open Web ↗</a>
       {/* ─── DESKTOP SIDEBAR (Liquid Glass Capsule) ─── */}
       <motion.aside
         initial={{ opacity: 0, x: -30, y: '-50%' }}
@@ -113,11 +114,11 @@ export default function Sidebar({ isPreloaded }: Props) {
 
         <div className="flex items-center gap-3">
           <button
-            onClick={() => scrollTo('#join')}
-            aria-label="Join the waitlist"
+            onClick={() => { window.location.href = '/app/'; }}
+            aria-label="Start learning on Web"
             className="rounded-full bg-[#FF6B00] px-4 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-black shadow-[0_0_12px_rgba(255,107,0,0.3)] hover:scale-105 transition-transform"
           >
-            Get Rank
+            Start Web
           </button>
 
           <button

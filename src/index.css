@@ -1,5 +1,37 @@
 @import "tailwindcss";
 
+.web-start-card { display: flex; flex-direction: column; gap: 16px; padding: 24px; border: 1px solid #ff8a2a; border-radius: 12px; color: white; background: linear-gradient(130deg,#301c0e,#101012 75%); text-align: left; order: 1; }
+.landing-app-link { position: fixed; top: 24px; right: 28px; z-index: 65; border: 1px solid #ff7300; border-radius: 8px; padding: 12px 20px; color: #fff; background: #151518e6; backdrop-filter: blur(12px); font-size: 13px; font-weight: 700; }
+@media(max-width:767px) { .landing-app-link { display: none; } }
+.web-start-card > span:first-child { font: 700 10px 'JetBrains Mono',monospace; letter-spacing: .1em; color: #ffad69; }
+.web-start-card > strong { font-size: clamp(25px,3vw,36px); line-height: 1.05; letter-spacing: -.035em; }
+.web-start-card p { font-size: 13px; color: #c3b9b0; margin: 0; line-height: 1.5; }
+.web-start-card small { font-size: 11px; color: #b5aca5; line-height: 1.5; }
+.web-start-action, .mobile-to-web { display: flex; align-items: center; justify-content: center; gap: 15px; padding: 16px 20px; min-height: 52px; background: #ff7300; color: #09090b; border-radius: 8px; font: 700 15px 'Outfit',sans-serif; text-decoration: none; }
+.web-start-action { margin-top: auto; }
+.web-start-card:hover { border-color: #ffc28c; }
+.web-start-card:hover .web-start-action, .mobile-to-web:hover { background: #ff923d; }
+.web-start-card:focus-visible,.mobile-to-web:focus-visible { outline: 3px solid #ffb36e; outline-offset: 4px; }
+.web-product-preview { margin: 0 auto; max-width: 1100px; padding: 80px 24px; }
+.web-product-preview header { max-width: 640px; margin-bottom: 40px; }
+.web-product-preview header span { color: #ff9a43; font: 700 11px 'JetBrains Mono'; letter-spacing: .13em; }
+.web-product-preview h2 { font-size: clamp(34px,4vw,56px); line-height: 1.05; margin: 16px 0; letter-spacing: -.04em; }
+.web-product-preview p { color: #a1a1aa; line-height: 1.6; }
+.web-preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 35px; align-items: center; }
+.web-preview-lesson { border: 1px solid #414147; border-radius: 16px; padding: 30px; background: #18181d; }
+.web-preview-lesson > span { font: 500 10px 'JetBrains Mono'; color: #ff9a43; letter-spacing: .1em; }
+.web-preview-lesson h3 { margin: 25px 0 12px; font-size: 30px; }
+.web-preview-lesson label { display: grid; gap: 12px; font-size: 14px; margin: 20px 0; }
+.web-preview-lesson input { width: 100%; accent-color: #ff7300; }
+.web-preview-result { font: 600 36px 'Outfit'; display: block; }
+.web-preview-lesson small { color: #a1a1aa; font-size: 11px; }
+.web-preview-story { list-style: none; margin: 0; padding: 0; }
+.web-preview-story li { border-top: 1px solid #333338; padding: 25px 0; }
+.web-preview-story strong { font-size: 21px; }
+.web-preview-story p { margin: 8px 0 0; font-size: 14px; }
+@media(min-width:768px) { .web-product-preview { padding-left: 160px; } }
+@media(max-width:767px) { .web-preview-grid { grid-template-columns: 1fr; gap: 20px; } .web-start-card { padding: 20px; } }
+
 /* ═══════════════════════════════════════════
    T1GER DESIGN SYSTEM — Chainzoku-Inspired
    ═══════════════════════════════════════════ */

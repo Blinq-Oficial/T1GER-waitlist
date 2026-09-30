@@ -1,4 +1,5 @@
 import type { LearningLocale } from './interactiveCurriculumTypes';
+import { getInteractiveTrack } from './interactiveCurriculum';
 
 type Copy = [string, string];
 interface ApplyDesign { title: Copy; why: Copy; steps: Copy[]; done: Copy; minutes: number }
@@ -86,12 +87,12 @@ const designs: Record<string, ApplyDesign> = {
   },
   // AI & AUTOMATION (Andrej Karpathy & Anthropic)
   'learn-ai-01': {
-    title: ['Prueba tu prompt estructurado en producción', 'Test your structured prompt in production'], minutes: 5,
-    why: ['Un prompt sin restricciones ni formato genera respuestas impredecibles. Comparar la salida estructurada contra un prompt vago demuestra la diferencia.', 'A prompt lacking constraints and format produces chaotic outputs. Comparing structured output against a vague prompt proves the difference.'],
+    title: ['Prueba tu prompt estructurado en producción', 'Test your prompt with a safe example'], minutes: 5,
+    why: ['Un prompt sin restricciones ni formato genera respuestas impredecibles. Comparar la salida estructurada contra un prompt vago demuestra la diferencia.', 'An explicit goal, context and format make the output easier to evaluate. One test does not guarantee the model will follow every instruction.'],
     steps: [
       ['Copia el prompt de 4 bloques (Objetivo, Contexto, Restricciones, Formato) que guardaste.', 'Copy the 4-block prompt (Goal, Context, Constraints, Format) you saved.'],
-      ['Pégalo en tu cliente LLM con datos reales de tu trabajo diario.', 'Paste it into your LLM with real data from your actual work.'],
-      ['Verifica que el resultado cumpla el 100% del formato y las restricciones solicitadas.', 'Verify that the output strictly satisfies 100% of formatting and constraints.']
+      ['Pégalo en tu cliente LLM con datos reales de tu trabajo diario.', 'Use public or fictional data in a tool of your choice, or inspect the prompt here without sending it.'],
+      ['Verifica que el resultado cumpla el 100% del formato y las restricciones solicitadas.', 'Check the format and constraints. Note an error or an improvement for the next attempt.']
     ],
     done: ['Mi LLM produjo una respuesta estructurada que cumplió todas las restricciones.', 'My LLM produced a structured response adhering to every single constraint.'],
   },
@@ -117,13 +118,13 @@ const designs: Record<string, ApplyDesign> = {
   },
   'learn-ai-04': {
     title: ['Divide una tarea compleja en 3 micro-pasos', 'Split a complex task into 3 micro-steps'], minutes: 8,
-    why: ['Los LLMs fallan cuando intentan investigar, analizar, redactar y formatear en un solo prompt masivo. Encadenar pasos garantiza precisión.', 'LLMs fail when attempting to research, analyze, draft, and format in one massive prompt. Chaining steps guarantees precision.'],
+    why: ['Los LLMs fallan cuando intentan investigar, analizar, redactar y formatear en un solo prompt masivo. Encadenar pasos garantiza precisión.', 'Separating extraction, analysis and drafting makes errors easier to find. Check each output before passing it to the next step; a chain does not guarantee accuracy.'],
     steps: [
       ['Elige un proceso que hoy te tome más de 30 minutos.', 'Pick a workflow taking over 30 minutes.'],
       ['Escribe el diagrama de 3 pasos: Extracción de hechos -> Síntesis de insights -> Redacción final.', 'Write the 3-step diagram: Fact extraction -> Insight synthesis -> Final drafting.'],
       ['Ejecuta el paso 1 primero y pasa su resultado exacto al paso 2.', 'Execute step 1 first and pipe its exact output into step 2.']
     ],
-    done: ['He ejecutado un flujo de IA encadenado con un resultado mucho más preciso.', 'I executed a chained AI workflow with significantly higher precision.'],
+    done: ['He ejecutado un flujo de IA encadenado con un resultado mucho más preciso.', 'I mapped a chained workflow and identified where to check its outputs.'],
   },
   'learn-ai-05': {
     title: ['Añade guardrails a tu automatización', 'Add guardrails to your automation'], minutes: 6,
@@ -343,6 +344,14 @@ const designs: Record<string, ApplyDesign> = {
 };
 
 export function getApplyDesign(lessonId: string, locale: LearningLocale) {
+  if (lessonId.startsWith('learn-mindset-')) {
+    const lesson = getInteractiveTrack('mindset-stoic').lessons.find(item => item.id === lessonId);
+    if (!lesson) return null;
+    const widget = lesson.phases[2].widget;
+    return { title: lesson.phases[2].title[locale], why: lesson.objective[locale], minutes: 4,
+      steps: [widget.instruction[locale], locale === 'es' ? 'Completa los tres campos. Puedes usar una situación ficticia.' : 'Complete all three fields. You can use a fictional situation.', locale === 'es' ? 'Guarda la herramienta y anota una acción concreta para esta semana.' : 'Save the tool and note one concrete action for this week.'],
+      done: locale === 'es' ? 'Guardé mi herramienta y un siguiente paso concreto.' : 'I saved my tool and a concrete next step.' };
+  }
   const design = designs[lessonId];
   if (!design) return null;
   const i = locale === 'es' ? 0 : 1;

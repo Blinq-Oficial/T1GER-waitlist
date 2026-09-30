@@ -1,6 +1,6 @@
 # T1GER Web
 
-Production landing page and waitlist flow for [t1ger.app](https://t1ger.app/), plus the learning web app under `/app`. T1GER turns investing lessons into daily real-world missions, proof of work, and consistent action.
+Landing page and mobile waitlist for [t1ger.app](https://t1ger.app/), plus the learning web app under `/app`. T1GER offers Investing, AI and Psychology through lessons, saved tools and memory reviews.
 
 ## Repository layout
 
@@ -8,9 +8,9 @@ Production landing page and waitlist flow for [t1ger.app](https://t1ger.app/), p
 - `apps/web/` is the learning app, imported with its Git history. It retains its own lockfile and tests.
 - `npm run build` creates `dist/index.html` for the landing page and `dist/app/index.html` for the learning app. Vercel serves real `/app/assets/*` files and rewrites other `/app/*` routes to the learning app entry point.
 
-The two frontends share a repository and domain, **not an account database**. The waitlist uses Supabase and Stripe; the learning app uses Firebase Auth, Firestore, and the existing T1GER mobile backend. An email on the waitlist is not automatically a Firebase account or a Premium entitlement. A verified invitation and entitlement sync must be designed before claiming one unified member journey. The two legal notices also cover different data flows and need joint review before public launch.
+The two frontends share a repository and domain, **not an account database**. The mobile waitlist uses Supabase; learning accounts use Firebase. Joining the waitlist is optional and does not create a learning account or Premium entitlement. Success links to Web and prefills the email through same-origin session storage, not a URL. Founder checkout remains paused. Both legal notices remain drafts pending review.
 
-See [the integration audit](docs/INTEGRATION_AUDIT.md) for verified flows and release checks.
+See [the integration audit](docs/INTEGRATION_AUDIT.md) and [the product sprint report](docs/PRODUCT_SPRINT_REPORT.md) for verified flows and release checks.
 
 ## Local development
 
@@ -21,7 +21,7 @@ npm run dev
 npm --prefix apps/web run dev
 ```
 
-Copy `.env.example` to `.env.local` and provide the server-side values needed for waitlist email and Stripe fulfillment.
+Copy `.env.example` to `.env.local` for server values and `apps/web/.env.example` to `apps/web/.env.local` for Firebase browser configuration. Root development proxies `/app` to local Web; set `T1GER_WEB_DEV_TARGET` if its port differs from 5174. `/api` is not proxied to production by default: use `T1GER_API_DEV_TARGET` with an isolated API for signup tests.
 
 ## Verification
 

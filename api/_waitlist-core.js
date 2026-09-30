@@ -198,12 +198,13 @@ async function sendWelcomeEmail({ email, position, refCode }) {
       html: `
       <div style="font-family: Inter, Arial, sans-serif; max-width: 620px; margin: 0 auto; background-color: #050505; color: #fff; padding: 40px; border: 1px solid #222;">
         <h1 style="color: #FF6B00; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px;">Welcome to T1GER.</h1>
-        <p style="font-size: 16px; color: #d1d1d1; line-height: 1.6;">You have secured your position on the T1GER waitlist.</p>
+        <p style="font-size: 16px; color: #d1d1d1; line-height: 1.6;">You are on the T1GER iOS and Android waitlist. We will email mobile launch updates. Web is available now — you do not need to wait to start learning.</p>
         <div style="background-color: #111; border: 1px solid rgba(255,107,0,.5); padding: 24px; text-align: center; margin: 30px 0;">
           <p style="margin: 0; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 4px;">Your Position</p>
           <h2 style="margin: 10px 0 0; font-size: 56px; color: #fff; font-weight: 900;">#${position}</h2>
         </div>
-        <p style="font-size: 16px; color: #d1d1d1; line-height: 1.6;">Invite someone ambitious to join you:</p>
+        <p style="text-align: center; margin: 32px 0;"><a href="https://t1ger.app/app/" style="background-color: #FF6B00; color: #000; padding: 16px 28px; text-decoration: none; font-weight: 800; border-radius: 8px;">Start learning on Web</a></p>
+        <p style="font-size: 16px; color: #d1d1d1; line-height: 1.6;">Create your free Web account with this email. Your mobile waitlist position stays separate. Share T1GER with a friend:</p>
         <p style="text-align: center; margin: 32px 0;">
           <a href="${shareUrl}" style="background-color: #FF6B00; color: #000; padding: 16px 28px; text-decoration: none; font-weight: 800; border-radius: 999px; text-transform: uppercase; letter-spacing: 2px;">Share T1GER</a>
         </p>

@@ -3,31 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
 
 const faqs = [
-  {
-    question: 'What exactly is T1GER?',
-    answer:
-      "T1GER turns high-quality learning into short daily missions. We are starting with investing: learn one idea, apply it in the real world, submit proof, and build a consistency streak. More learning tracks will follow.",
-  },
-  {
-    question: 'What happens if my tiger dies?',
-    answer:
-      "If you miss your daily mission or fail to submit proof of execution, your tiger's health drops. If it hits zero, your streak and multipliers reset. The mechanic forces consistency in your learning habits.",
-  },
-  {
-    question: 'How does Squad Accountability work?',
-    answer:
-      "You can form learning squads with up to three friends. You share streaks, track each other's proof of work, and ensure no one falls behind on their daily lessons.",
-  },
-  {
-    question: 'When do I get access to the app?',
-    answer:
-      'Joining secures a stable waitlist position for the upcoming beta. Invitations will roll out in stages as capacity becomes available. Your referral link lets friends join you, but it does not currently change your position.',
-  },
-  {
-    question: 'What is included with Early Adopter Access?',
-    answer:
-      'For $5, you receive priority consideration for the Closed Beta, six months of T1GER Premium when available, and a permanent Founder badge. Beta timing is not guaranteed; see the Terms for full details.',
-  },
+ { question: 'Can I start learning now?', answer: 'Yes. T1GER Web is available at /app. Create a free account, choose Investing, AI, or Psychology, and start your first lesson. The waitlist is only for the upcoming iOS and Android apps.' },
+ { question: 'How does a lesson work?', answer: 'Make a prediction, explore one idea, test your judgment, build a useful tool, and apply it. Master brings learned ideas back for scheduled recall. Applications are self-reported, not independently verified.' },
+ { question: 'Do Web and mobile use the same account?', answer: 'They use the same Firebase account and learning state. Existing completed onboarding is respected. A mobile waitlist signup is not an account; you can use the same email when creating your Web account.' },
+ { question: 'What does the mobile waitlist include?', answer: 'Updates about the upcoming iOS and Android release. Your position is assigned by signup order; sharing a link does not currently move you up. There is no guaranteed release date.' },
+ { question: 'Is Founder checkout available?', answer: 'Founder reservations and payment buttons are temporarily paused while fulfillment is completed. No payment is required to join the mobile waitlist or start Web.' },
 ];
 
 /**

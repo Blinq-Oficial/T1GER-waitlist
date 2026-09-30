@@ -68,7 +68,7 @@ export default function SectionAbout() {
               transition={{ duration: 0.7, delay: 0.15 }}
               className="max-w-xl text-lg font-light leading-relaxed text-white/50 sm:text-xl md:text-2xl"
             >
-            We start with investing: curated ideas become focused Daily Lessons and Daily Missions, with a real-world framework that helps you apply each concept instead of merely consuming it.
+            Explore Investing, AI, and Psychology. Curated ideas become focused lessons, useful tools, and memory reviews that help you apply each concept instead of merely consuming it.
             </motion.p>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function SectionAbout() {
               title: 'DAILY LESSONS',
               col: 'lg:col-span-5',
               description: [
-                "The absolute best curated knowledge from every field, compressed."
+                "Original lessons informed by books, research, and primary sources."
               ],
               delay: 0,
             },
@@ -94,7 +94,7 @@ export default function SectionAbout() {
               title: 'DAILY MISSIONS',
               col: 'lg:col-span-6 lg:col-start-7',
               description: [
-                "Gamified daily tasks structured in a Duolingo-style loop."
+                "Make a prediction, test your judgment, and explore a useful tool."
               ],
               delay: 150,
             },
@@ -107,10 +107,10 @@ export default function SectionAbout() {
               delay: 300,
             },
             {
-              title: 'PROOF & ACCOUNTABILITY',
+              title: 'MEMORY & MOMENTUM',
               col: 'lg:col-span-6 lg:col-start-7',
               description: [
-                "Upload proof of work, build streaks, and level up alongside your squad."
+                "Save your applications and recall ideas when reviews are due."
               ],
               delay: 450,
             },

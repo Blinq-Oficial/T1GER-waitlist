@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build",
     "build:subpath": "tsc --noEmit && vite build --base=/app/ --outDir ../../dist/app --emptyOutDir",
     "lint": "tsc --noEmit && eslint src",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:emulator-contract": "node scripts/check-emulator-contract.mjs"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.2.8",

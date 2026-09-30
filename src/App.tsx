@@ -6,6 +6,7 @@ import SectionHero from './components/sections/SectionHero';
 import EarlyAdopterModal from './components/modals/EarlyAdopterModal';
 import LegalPage from './components/legal/LegalPage';
 import EarlyAccessSuccess from './components/early-access/EarlyAccessSuccess';
+import SectionWeb from './components/sections/SectionWeb';
 
 const SectionAbout = lazy(() => import('./components/sections/SectionAbout'));
 const SectionVision = lazy(() => import('./components/sections/SectionVision'));
@@ -30,7 +31,7 @@ export default function App() {
     const metadata: Record<string, { title: string; description: string }> = {
       '/': {
         title: 'T1GER | Learn. Apply. Advance.',
-        description: 'Turn investing lessons into real-world action. Join the T1GER waitlist for daily missions, proof of work, and staged beta access.',
+        description: 'Learn Investing, AI, and Psychology with interactive lessons, practical tools, and memory reviews. Start on Web now; join the iOS and Android waitlist.',
       },
       '/terms': { title: 'Terms & Conditions | T1GER', description: 'Terms and conditions for the T1GER waitlist and Early Adopter offer.' },
       '/privacy': { title: 'Privacy Policy | T1GER', description: 'How T1GER collects, uses, and protects waitlist and payment information.' },
@@ -68,6 +69,7 @@ export default function App() {
           />
 
           <Suspense fallback={null}>
+            <SectionWeb />
             <SectionAbout />
             <SectionVision />
             <SectionProtocol />

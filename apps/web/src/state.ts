@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, type User } from 'firebase/auth';
-import { collection, doc, getDoc, onSnapshot, query, runTransaction, setDoc, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, setDoc, where } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { useEffect, useState } from 'react';
 import { auth, db, functions } from './firebase';
@@ -14,6 +14,10 @@ export interface Profile {
   displayName?: string;
   primaryTrack?: TrackType;
   onboardingComplete?: boolean;
+  interests?: TrackType[];
+  dailyTime?: number;
+  initialPathwayId?: string;
+  learningArtifacts?: SavedLearningArtifact[];
   xp?: number;
   level?: number;
   streak?: number;
@@ -28,6 +32,7 @@ export interface Mission {
   description?: string;
   supportPayload?: string;
   instructions?: string[];
+  artifact?: SavedLearningArtifact;
   learningScore?: number;
   status: 'ready' | 'pending_review' | 'needs_revision' | 'verified' | 'completed';
   completionMode?: string;
@@ -93,7 +98,7 @@ export function useLearner(preview = false) {
     });
     return () => { stopAuth(); stopProfile?.(); stopMissions?.(); };
   }, [preview]);
-  return { user, profile, missions, loading, error, setError };
+  return { user, profile, missions, loading, error, setError, setProfile };
 }
 
 export async function signIn(email: string, password: string) {
@@ -114,19 +119,21 @@ export async function resetPassword(email: string) {
 }
 export async function leave() { if (auth) await signOut(auth); }
 
-export async function finishOnboarding(user: User, name: string, track: TrackType) {
+export async function finishOnboarding(user: User, name: string, track: TrackType, preferences: { interests: TrackType[]; dailyTime: number } = { interests: [track], dailyTime: 10 }) {
   if (!db) throw new Error('Firebase is not configured.');
   const ref = doc(db, 'users', user.uid);
   const existing = await getDoc(ref);
+  const setup = { displayName: name, niche: track, primaryTrack: track, interests: preferences.interests,
+    dailyTime: preferences.dailyTime, learningStyle: 'interactive', onboardingComplete: true,
+    initialPathwayId: track === 'ai' ? 'tech-ai' : track === 'mindset' ? 'psych-biases' : 'biz-capital' };
   if (existing.exists()) {
     await runTransaction(db, async transaction => {
       const current = await transaction.get(ref);
       const data = current.data() as Profile;
-      transaction.update(ref, { displayName: name, primaryTrack: track, onboardingComplete: true, brainState: { ...brainOf(data), currentTrackId: track } });
+      transaction.update(ref, { ...setup, brainState: JSON.parse(JSON.stringify({ ...brainOf(data), currentTrackId: track })) });
     });
   } else {
-    await setDoc(ref, { uid: user.uid, email: user.email, displayName: name, niche: track, primaryTrack: track,
-      onboardingComplete: true, level: 1, xp: 0, streak: 0, coins: 0,
+    await setDoc(ref, { uid: user.uid, email: user.email, ...setup, level: 1, xp: 0, streak: 0, coins: 0,
       brainState: JSON.parse(JSON.stringify({ ...DEFAULT_BRAIN_STATE, currentTrackId: track })) });
   }
 }
@@ -175,7 +182,9 @@ export async function completeApply(uid: string, lessonId: string, reflection: s
   await recordCompletion(uid, lessonId, score);
 }
 
-export function readArtifact(uid: string, lessonId: string): SavedLearningArtifact | null {
+export function readArtifact(uid: string, lessonId: string, cloudArtifacts: SavedLearningArtifact[] = []): SavedLearningArtifact | null {
+  const cloud = cloudArtifacts.find(item => item.lessonId === lessonId);
+  if (cloud) return cloud;
   try {
     const items = JSON.parse(localStorage.getItem(`t1ger_learning_artifacts_v1_${uid}`) || '[]') as SavedLearningArtifact[];
     return items.find(item => item.lessonId === lessonId) || null;
@@ -189,16 +198,25 @@ export async function prepareApply(uid: string, lesson: AtomicLesson, artifact: 
   const blueprint = FIELD_MISSION_CATALOG[lesson.id];
   const missionId = `field-${lesson.id}`;
   const ref = doc(db, 'missions', `${uid}_${missionId}`);
-  const existing = await getDoc(ref);
-  if (!existing.exists() || !isComplete(existing.data() as Mission)) {
+  // Owner queries are permitted even when no mission exists; direct reads of missing missions are not.
+  const owned = await getDocs(query(collection(db, 'missions'), where('userId', '==', uid)));
+  const existing = owned.docs.find(item => item.id === ref.id);
+  if (!existing || !isComplete(existing.data() as Mission)) {
     await setDoc(ref, {
       id: missionId, missionId, userId: uid, lessonId: lesson.id, trackId: lesson.trackId,
-      title: `Execute: ${lesson.title.en}`, description: blueprint?.description[1] || lesson.objective.en,
-      instructions: blueprint?.steps.map(step => step[1]) || [], supportTitle: artifact.title,
-      supportPayload: artifact.summary, proofPrompt: blueprint?.prompt[1] || lesson.objective.en,
+      title: lesson.phases[2].title.en, description: lesson.phases[2].widget.instruction.en,
+      instructions: [lesson.phases[2].widget.instruction.en], supportTitle: artifact.title,
+      supportPayload: artifact.summary, artifact, proofPrompt: blueprint?.prompt[1] || lesson.objective.en,
       proofKinds: blueprint?.kinds || ['text'], status: 'ready', lessonXp: lesson.phases[3].xp,
       executionXp: 50, learningScore, createdAt: Date.now(), updatedAt: Date.now(), autoOpen: false,
     }, { merge: true });
   }
-  localStorage.setItem(key, JSON.stringify([artifact, ...items.filter(item => item.lessonId !== lesson.id)].slice(0, 100)));
+  await runTransaction(db, async transaction => {
+    const userRef = doc(db!, 'users', uid);
+    const profile = await transaction.get(userRef);
+    if (!profile.exists()) throw new Error('Account unavailable.');
+    const saved = (profile.data().learningArtifacts || []) as SavedLearningArtifact[];
+    transaction.update(userRef, { learningArtifacts: [artifact, ...saved.filter(item => item.lessonId !== lesson.id)].slice(0, 100) });
+  });
+  try { localStorage.setItem(key, JSON.stringify([artifact, ...items.filter(item => item.lessonId !== lesson.id)].slice(0, 100))); } catch { /* The cloud copy remains authoritative if browser storage is full or unavailable. */ }
 }

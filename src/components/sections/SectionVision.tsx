@@ -6,23 +6,23 @@ import { BorderBeam } from '../ui/border-beam';
 const pillars = [
   {
     number: '01',
-    title: 'Missions',
-    description: 'Gamified daily tasks designed to turn learning into active execution. Complete tasks to level up.',
+    title: 'Learn',
+    description: 'Predict, explore, and test one useful idea in a short interactive lesson.',
   },
   {
     number: '02',
     title: 'Curated Knowledge',
-    description: 'We compress the best resources on the web into fast, bite-sized daily lessons.',
+    description: 'Original lessons informed by books, research, and primary sources. Follow source links as you learn.',
   },
   {
     number: '03',
-    title: 'Real-World Proof',
-    description: 'A practical framework that forces you to execute what you learn and upload proof.',
+    title: 'Apply',
+    description: 'Use a simulator or build a tool, then save the decision you want to put into practice.',
   },
   {
     number: '04',
-    title: 'Squad Accountability',
-    description: 'Learn and build streaks alongside up to three friends who keep you consistent.',
+    title: 'Master',
+    description: 'Recall ideas from memory. Reviews appear when the spaced repetition scheduler brings them back.',
   },
   {
     number: '05',
@@ -31,8 +31,8 @@ const pillars = [
   },
   {
     number: '06',
-    title: 'Global Board',
-    description: 'Climb the global ranks and prove your dedication against high-performers worldwide.',
+    title: 'Your own pace',
+    description: 'Choose your daily intention and switch paths without losing what you already learned.',
   },
 ];
 

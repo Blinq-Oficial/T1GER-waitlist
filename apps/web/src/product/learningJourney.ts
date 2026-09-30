@@ -34,9 +34,9 @@ export const HISTORY_SECTIONS: JourneySection[] = [
 ];
 
 export const MINDSET_SECTIONS: JourneySection[] = [
-  { id: 'mind-control', title: { es: 'Dicotomía del Control', en: 'Dichotomy of Control' }, description: { es: 'Gobierna tus juicios; suelta lo incontrolable.', en: 'Govern your judgments; release the uncontrollable.' }, lessonIds: ['learn-mindset-01', 'learn-mindset-02'], landmark: 'seed' },
-  { id: 'mind-reframing', title: { es: 'Amor Fati & Reencuadre', en: 'Amor Fati & Reframing' }, description: { es: 'El impedimento se convierte en el camino.', en: 'The impediment becomes the way.' }, lessonIds: ['learn-mindset-03', 'learn-mindset-04'], landmark: 'compass' },
-  { id: 'mind-citadel', title: { es: 'La Ciudadela Interior', en: 'The Inner Citadel' }, description: { es: 'Imperturbabilidad ante el aplauso y la censura.', en: 'Imperturbability in the face of praise and blame.' }, lessonIds: ['learn-mindset-05'], landmark: 'summit' },
+  { id: 'mind-control', title: { es: 'Detecta tus sesgos', en: 'Notice your biases' }, description: { es: 'Cuestiona creencias y separa el miedo del criterio.', en: 'Question beliefs and separate fear from judgment.' }, lessonIds: ['learn-mindset-01', 'learn-mindset-02'], landmark: 'seed' },
+  { id: 'mind-reframing', title: { es: 'Decide con evidencia', en: 'Decide with evidence' }, description: { es: 'Mira al futuro y busca tasas base.', en: 'Look forward and seek base rates.' }, lessonIds: ['learn-mindset-03', 'learn-mindset-04'], landmark: 'compass' },
+  { id: 'mind-citadel', title: { es: 'Entrena tu memoria', en: 'Train your memory' }, description: { es: 'Recupera, comprueba y corrige lo aprendido.', en: 'Retrieve, check, and correct what you learned.' }, lessonIds: ['learn-mindset-05'], landmark: 'summit' },
 ];
 
 export const PERFORMANCE_SECTIONS: JourneySection[] = [

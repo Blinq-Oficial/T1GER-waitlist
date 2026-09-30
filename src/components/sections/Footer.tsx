@@ -13,7 +13,7 @@ export default function Footer() {
     { label: 'About', href: '#about' },
     { label: 'Vision', href: '#vision' },
     { label: 'Protocol', href: '#protocol' },
-    { label: 'Join', href: '#join' },
+    { label: 'Mobile waitlist', href: '#join' },
     { label: 'FAQ', href: '#faq' },
     { label: 'Open app', href: '/app/' },
   ];
@@ -21,7 +21,7 @@ export default function Footer() {
   const socialLinks = [
     { label: 'Twitter', href: 'https://twitter.com/t1gerapp' },
     { label: 'Instagram', href: 'https://instagram.com/t1gerapp' },
-    { label: 'Contact', href: 'mailto:hello@t1ger.app' },
+    { label: 'Contact', href: 'mailto:este.t1ger.oficial.app@gmail.com' },
   ];
 
   const legalLinks = [
@@ -79,7 +79,7 @@ export default function Footer() {
             className="text-white/60 font-mono text-sm tracking-[0.3em] uppercase mb-10"
             delay={400}
           >
-            The hunt begins soon.
+            Web is here. Mobile is next.
           </TextReveal>
         </motion.div>
 

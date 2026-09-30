@@ -1,0 +1,54 @@
+import { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import type { AtomicLesson, SavedLearningArtifact } from './product/interactiveCurriculumTypes';
+import type { BrainState } from './product/brainService';
+import { completeApply, explainError, isComplete, prepareApply, readArtifact, recordReview, type Mission } from './state';
+import { buildTool } from './lessonTools';
+import { getApplyDesign } from './product/applyMissionDesign';
+import Challenge from './Challenge';
+const stages = ['hook', 'learn', 'interact', 'apply', 'master', 'reward'] as const;
+type Stage = typeof stages[number];
+export default function CurriculumLesson({ lesson, uid, brain, missions, artifacts = [], close, preview }: { lesson: AtomicLesson; uid: string; brain: BrainState; missions: Mission[]; artifacts?: SavedLearningArtifact[]; close: () => void; preview: boolean }) {
+  const mission = missions.find(item => item.lessonId === lesson.id);
+  const artifact = mission?.artifact || readArtifact(uid, lesson.id, artifacts);
+  const done = isComplete(mission) || brain.missionHistory.some(item => item.missionId === `field-${lesson.id}` && item.completed);
+  const [stage, setStage] = useState<Stage>(done ? 'master' : mission ? 'apply' : 'hook');
+  const [prediction, setPrediction] = useState(''); const [revealed, setRevealed] = useState(false);
+  const [beat, setBeat] = useState(0); const [score, setScore] = useState(mission?.learningScore || 100);
+  const [values, setValues] = useState<Record<string,string | number>>(() => ({ ...Object.fromEntries(lesson.phases[2].widget.fields.map(field => [field.id, field.defaultValue ?? ''])), ...artifact?.values }));
+  const [saved, setSaved] = useState(Boolean(artifact && mission));
+  const [reflection, setReflection] = useState(''); const [answer, setAnswer] = useState(''); const [answerShown, setAnswerShown] = useState(false);
+  const [busy, setBusy] = useState(false); const [error, setError] = useState('');
+  const mainRef = useRef<HTMLElement>(null);
+  const design = lesson.learningDesign; const widget = lesson.phases[2].widget;
+  const tool = buildTool(widget, values); const apply = getApplyDesign(lesson.id, 'en');
+  useEffect(() => { document.title = `${lesson.title.en} — T1GER`; return () => { document.title = 'T1GER — Learn it. Apply it. Master it.'; }; }, [lesson.title.en]);
+  useEffect(() => { mainRef.current?.focus({ preventScroll: true }); window.scrollTo(0,0); }, [stage]);
+  async function save() {
+    setBusy(true); setError('');
+    try { if (!preview) await prepareApply(uid, lesson, { lessonId: lesson.id, trackId: lesson.trackId, title: widget.artifactTitle.en, summary: tool.summary, values, createdAt: Date.now() }, score); setSaved(true); }
+    catch (cause) { setError(explainError(cause, 'Could not save your tool. Try again.')); } finally { setBusy(false); }
+  }
+  async function complete() {
+    setBusy(true); setError('');
+    try { if (!preview) await completeApply(uid, lesson.id, reflection, score); setStage('master'); }
+    catch (cause) { setError(explainError(cause, 'Could not save your Apply step. Your tool is safe; try again.')); } finally { setBusy(false); }
+  }
+  async function rate(rating: number) {
+    setBusy(true); setError('');
+    try { if (!preview) await recordReview(uid, lesson.id, rating); setStage('reward'); }
+    catch (cause) { setError(explainError(cause, 'Could not save your review. Try again.')); } finally { setBusy(false); }
+  }
+  return <div className="lesson-shell"><header className="lesson-header"><button className="back-button" onClick={close}><ArrowLeft size={18}/><span>Exit lesson</span></button><div className="lesson-header-title"><span>{lesson.trackId === 'ai-automation' ? 'AI' : lesson.trackId === 'mindset-stoic' ? 'PSYCHOLOGY' : 'INVESTING'}</span><strong>{lesson.title.en}</strong></div><span className="lesson-count">0{stages.indexOf(stage) + 1} / 06</span></header>
+    {preview && <div className="lesson-preview-notice"><span>DESIGN PREVIEW · PROGRESS IS NOT SAVED</span></div>}<div className="stage-progress" aria-label={`Lesson stage ${stages.indexOf(stage) + 1} of 6`}>{stages.map((item,index) => <span key={item} className={index <= stages.indexOf(stage) ? 'filled' : ''}/>)}</div><div className="stage-labels">{stages.map(item => <span className={item === stage ? 'active' : ''} key={item}>{item.toUpperCase()}</span>)}</div>
+    <main ref={mainRef} tabIndex={-1} className={stage === 'reward' ? 'reward-stage' : stage === 'apply' ? 'apply-stage' : 'lesson-focus'} style={{ outline: 'none' }}>
+      {stage === 'hook' && <><p className="eyebrow">01 / HOOK · MAKE A PREDICTION</p><h1>{design.curiosityQuestion.en}</h1><label className="prediction-text">Your first instinct<textarea value={prediction} onChange={event => setPrediction(event.target.value)} placeholder="Make a call before you see the idea." disabled={revealed}/></label>{revealed && <div className="lesson-feedback" role="status"><strong>{lesson.keyConcept.en}</strong><p>{design.misconception.en}</p></div>}<button className="button primary large" disabled={!prediction.trim()} onClick={() => revealed ? setStage('learn') : setRevealed(true)}>{revealed ? 'Explore the idea' : 'See the idea'}<ArrowRight size={19}/></button></>}
+      {stage === 'learn' && <><p className="eyebrow">02 / LEARN · SEE THE PATTERN</p><h1>{lesson.phases[0].title.en}</h1><p className="muted">{lesson.phases[0].body.en}</p><div className="beat-selector" aria-label="Concept steps">{design.storyBeats.map((item,index) => <button key={item.title.en} aria-pressed={beat === index} onClick={() => setBeat(index)}>0{index + 1}<span>{item.title.en}</span></button>)}</div><div className="beat-content"><h3>{design.storyBeats[beat].title.en}</h3><p>{design.storyBeats[beat].body.en}</p></div><aside className="concept-visual"><span>THE IDEA TO KEEP</span><strong>{lesson.keyConcept.en}</strong><p>{lesson.phases[0].tacticalRule.en}</p></aside><details className="evidence-notes"><summary>Sources &amp; context</summary><div className="evidence-notes-body">{lesson.sources.map(source => <p key={source.id}>{source.url ? <a href={source.url} target="_blank" rel="noopener noreferrer">{source.title} ↗</a> : <strong>{source.title}</strong>} · {source.author}<br/><small>Original T1GER lesson and exercises; not a reproduction of the source.</small></p>)}</div></details><button className="button primary large" onClick={() => setStage('interact')}>Test your judgment<ArrowRight size={19}/></button></>}
+      {stage === 'interact' && <><p className="eyebrow">03 / INTERACT · TEST YOUR JUDGMENT</p><Challenge challenge={lesson.phases[1].challenge} onDone={correct => { setScore(correct ? 100 : 75); setStage('apply'); }}/></>}
+      {stage === 'apply' && <><div className="apply-stage-head"><p className="eyebrow">04 / APPLY · MAKE IT USEFUL</p><h1>{lesson.phases[2].title.en}</h1><p>{widget.instruction.en}</p></div><div className="apply-stage-grid"><div className="tool-controls"><div className="tool-title"><span>YOUR WORKBENCH</span><strong>{widget.title.en}</strong></div>{widget.fields.map(field => <label className="tool-field" key={field.id}><span>{field.label.en}{field.kind === 'range' && <strong>{values[field.id]} {field.unit?.en}</strong>}</span>{field.kind === 'text' ? <textarea maxLength={500} minLength={field.minLength} placeholder={field.placeholder.en} value={values[field.id]} onChange={event => { setValues(current => ({ ...current, [field.id]: event.target.value })); setSaved(false); }}/> : field.kind === 'range' ? <input type="range" min={field.min} max={field.max} step={field.step} value={values[field.id]} onChange={event => { setValues(current => ({ ...current, [field.id]: Number(event.target.value) })); setSaved(false); }}/> : <select value={values[field.id]} onChange={event => { setValues(current => ({ ...current, [field.id]: event.target.value })); setSaved(false); }}>{field.options.map(option => <option key={option.value} value={option.value}>{option.label.en}</option>)}</select>}</label>)}<button className="button subtle" disabled={busy || saved || !tool.ready} onClick={() => void save()}>{saved ? <><Check size={17}/> Tool saved</> : 'Save this tool'}</button></div><div className="tool-output"><div className="tool-total"><span>{widget.resultLabel.en}</span><strong>{tool.headline}</strong><small>{tool.detail}</small></div><p className="tool-artifact">{tool.summary}</p></div></div><div className="real-action"><div><p className="eyebrow">NOW USE IT</p><h2>{apply?.title || lesson.phases[2].title.en}</h2><p>{apply?.why || lesson.objective.en}</p><ol>{apply?.steps.map(step => <li key={step}>{step}</li>)}</ol></div><div><label htmlFor="application-note">What did you do, or what will you try next?</label><textarea id="application-note" maxLength={500} value={reflection} onChange={event => setReflection(event.target.value)} placeholder="Write a concrete next action (at least 20 characters)."/><small>Self-reported application. No private financial details needed.</small><button className="button primary large" disabled={busy || !saved || reflection.trim().length < 20} onClick={() => void complete()}>{busy ? 'Saving…' : 'Complete Apply'}<ArrowRight size={19}/></button></div></div></>}
+      {stage === 'master' && <><p className="eyebrow">05 / MASTER · FROM MEMORY</p><h1>{design.retrievalPrompt.en}</h1><label className="sr-only" htmlFor="lesson-recall">Your answer</label><textarea id="lesson-recall" value={answer} onChange={event => setAnswer(event.target.value)} disabled={answerShown} placeholder="Explain it in your own words."/>{!answerShown ? <button className="button primary large" disabled={!answer.trim()} onClick={() => setAnswerShown(true)}>Reveal answer</button> : <><div className="answer-reveal" role="status"><span>THE CORE IDEA</span><p>{design.retrievalAnswer.en}</p></div><p className="rate-label">How well did you remember?</p><div className="rating-row">{[['Again',40],['Hard',60],['Good',80],['Easy',100]].map(([label,value]) => <button key={label} disabled={busy} onClick={() => void rate(Number(value))}>{label}</button>)}</div></>}</>}
+      {stage === 'reward' && <><div className="reward-symbol"><Check size={40}/></div><p className="eyebrow">06 / REWARD · IDEA IN MOTION</p><h1>{lesson.phases[3].title.en}</h1><p>You tested the idea and saved a tool you can use again. Your next review follows your recall.</p><div className="reward-summary"><div><span>WHAT YOU LEARNED</span><strong>{lesson.keyConcept.en}</strong></div><div><span>WHAT YOU MADE</span><strong>{widget.artifactTitle.en}</strong></div></div><button className="button primary large" onClick={close}>Return to Learn<ArrowRight size={19}/></button></>}
+      {error && <p className="error" role="alert">{error}</p>}
+    </main>
+  </div>;
+}

@@ -20,14 +20,14 @@ Reviewed 2026-09-29 on `codex/web-waitlist-monorepo`. This review covers reposit
 
 - Removed an unsigned demo-payment path from the Stripe webhook. Previously, a public preview request could reach the purchase RPC and email flow without a Stripe signature. The static confirmation preview remains available.
 - Corrected the purchase email so it distinguishes the first $5 of access from the intended net conservation contribution, and displays cents accurately.
-- When Firebase is unavailable in a deployed app, the account screen points visitors back to the waitlist instead of exposing local developer setup instructions.
+- When Firebase is unavailable, account access fails gracefully. The mobile waitlist is optional, not a Web invitation gate. Local developer setup instructions are not exposed in deployed builds.
 - Paused the public Founder checkout CTA because the required purchase RPCs are absent in the inspected production Supabase project. The modal now sends visitors to the free waitlist. A previously shared direct Stripe Payment Link may remain usable.
 
 ## Release checks still needed
 
 1. **Isolated test data.** Vercel currently scopes `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `RESEND_API_KEY` to all environments. Use a separate Supabase project and email sandbox for Preview before testing real signup or webhook fulfillment there. The preview has its own `EARLY_ACCESS_DB_TOKEN`, but that alone does not establish data isolation.
 2. **Checkout language.** The Stripe Payment Link description promises direct donation of all extra money, guaranteed priority beta entry, and an unconditional refund. The site terms describe net proceeds above $5, priority consideration, and refunds before global launch. Align the Stripe description and reviewed legal terms before launch.
-3. **Invite and entitlement handoff.** Verify a waitlist address before granting Firebase signup access. Map Stripe purchases to the verified Firebase user and grant Premium/Founder benefits idempotently. Keep the waitlist path available until this is tested.
+3. **Separate accounts and paid entitlements.** Web signup must not require waitlist membership. Waitlist success links to Web with same-origin email prefill. Before reopening paid checkout, map verified Stripe purchases to Firebase users and grant Premium/Founder benefits idempotently.
 4. **Firebase and legal publication.** Configure the browser Firebase values and authorized domain; test sign-in, onboarding, saved progress, and account recovery. Finalize the web privacy/terms drafts and the joint waitlist-to-app data notice.
 5. **Safe end-to-end checks.** In isolated Preview, test a new and returning signup, referral attribution, Stripe test-mode payment, signed webhook retry, Resend delivery, and the return page. The Supabase schema and RPC definitions are not in this repository, so idempotency and entitlements cannot be confirmed from code alone.
 
@@ -44,3 +44,9 @@ Reviewed 2026-09-29 on `codex/web-waitlist-monorepo`. This review covers reposit
 - The table has only `id`, `created_at`, and `email`; it has unique indexes on `id` and `email`. Referral attribution and stored position are not present.
 - Purchase fulfillment depends on database RPCs that were not present in the inspected project. Keep checkout paused until the Stripe endpoint, RPCs, entitlement handoff, and signed test payment are verified.
 - Keep the production secret out of Preview and isolate Preview before write tests there. The Web integration PR remains a draft.
+
+## Product sprint follow-up (2026-09-30)
+
+The complete local Web flow, all fifteen lesson players, multi-interest onboarding, themes and mobile-waitlist bridge are implemented. Root/Web lint, tests and builds pass. Actual mobile rules/functions were checked in local Firebase emulators, including owner isolation, reward-write rejection, prerequisites and idempotency. The waitlist bridge used the real API handler with an in-memory adapter, not production Supabase or email delivery. See [the product sprint report](PRODUCT_SPRINT_REPORT.md) for exact test scope.
+
+Before shared public accounts, reconcile Web Psychology's bias/retrieval topics with the mobile snapshot's Stoic curriculum: legacy IDs and state parity do not prove content parity. Confirm production Firebase configuration/provider callbacks/recovery, then finish legal operator/address, retention and teen account handling. Minimum age is 15; supplied contact is `este.t1ger.oficial.app@gmail.com`; Plymouth, Michigan, US is a location, not a complete verified postal address. Keep both legal notices drafts until reviewed.

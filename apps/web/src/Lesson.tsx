@@ -7,6 +7,7 @@ import { getApplyDesign } from './product/applyMissionDesign';
 import { calculateCompoundProjection, compoundSeries } from './projection';
 import { cashPurchasingPower, educationBriefs } from './education';
 import { completeApply, explainError, isComplete, prepareApply, readArtifact, recordReview, type Mission } from './state';
+import CurriculumLesson from './CurriculumLesson';
 
 type Stage = 'hook' | 'learn' | 'interact' | 'apply' | 'master' | 'reward';
 const stages: Stage[] = ['hook', 'learn', 'interact', 'apply', 'master', 'reward'];
@@ -40,21 +41,25 @@ function GrowthChart({ monthly, years, rate, cash, cashDecline = false }: { mont
   </div>;
 }
 
-export default function Lesson({ lesson, uid, brain, missions, close, preview = false }: { lesson: AtomicLesson; uid: string; brain: BrainState; missions: Mission[]; close: () => void; preview?: boolean }) {
+type LessonProps = { lesson: AtomicLesson; uid: string; brain: BrainState; missions: Mission[]; artifacts?: SavedLearningArtifact[]; close: () => void; preview?: boolean };
+export default function Lesson(props: LessonProps) {
+  return ['learn-money-01', 'learn-money-02'].includes(props.lesson.id) ? <MoneyLesson {...props}/> : <CurriculumLesson {...props} preview={props.preview || false}/>;
+}
+function MoneyLesson({ lesson, uid, brain, missions, artifacts = [], close, preview = false }: LessonProps) {
   const sessionKey = `t1ger_web_lesson_v1_${uid}_${lesson.id}`;
   const mission = missions.find(item => item.lessonId === lesson.id);
   const completed = isComplete(mission) || brain.missionHistory.some(item => item.missionId === `field-${lesson.id}` && item.completed);
-  const [stage, setStage] = useState<Stage>(() => completed ? 'master' : (sessionStorage.getItem(sessionKey) as Stage) || (mission ? 'apply' : 'hook'));
+  const [stage, setStage] = useState<Stage>(() => completed ? 'master' : mission ? 'apply' : 'hook');
   const [prediction, setPrediction] = useState(''); const [predicted, setPredicted] = useState(false);
   const [choice, setChoice] = useState(''); const [checked, setChecked] = useState(false);
-  const [values, setValues] = useState<Record<string, string | number>>(() => ({ ...Object.fromEntries(lesson.phases[2].widget.fields.map(field => [field.id, field.defaultValue || ''])), ...readArtifact(uid, lesson.id)?.values }));
-  const [artifactSaved, setArtifactSaved] = useState(Boolean(readArtifact(uid, lesson.id) && mission?.supportPayload));
+  const [values, setValues] = useState<Record<string, string | number>>(() => ({ ...Object.fromEntries(lesson.phases[2].widget.fields.map(field => [field.id, field.defaultValue ?? ''])), ...(mission?.artifact || readArtifact(uid, lesson.id, artifacts))?.values }));
+  const [artifactSaved, setArtifactSaved] = useState(Boolean((mission?.artifact || readArtifact(uid, lesson.id, artifacts)) && mission));
   const [reflection, setReflection] = useState(''); const [reviewAnswer, setReviewAnswer] = useState(''); const [answerShown, setAnswerShown] = useState(false);
   const [busy, setBusy] = useState(false); const [error, setError] = useState('');
   const [showDetail, setShowDetail] = useState(0);
   const design = lesson.learningDesign; const gold = design.goldStandard;
   const fields = lesson.phases[2].widget.fields;
-  const monthly = Number(values.monthly || 0), years = Number(values.years || 5), rate = Number(values.rate || 8), cash = Number(values.cash || 0);
+  const monthly = Number(values.monthly ?? 0), years = Number(values.years ?? 5), rate = Number(values.rate ?? 8), cash = Number(values.cash ?? 0);
   const projection = useMemo(() => lesson.id === 'learn-money-02' ? calculateCompoundProjection(monthly, years, rate) : { finalValue: cashPurchasingPower(cash, years, 3), contributed: cash, growth: 0 }, [lesson.id, monthly, years, rate, cash]);
   const challenge = lesson.phases[1].challenge;
   const brief = educationBriefs[lesson.id];
@@ -75,7 +80,7 @@ export default function Lesson({ lesson, uid, brain, missions, close, preview = 
       const artifact: SavedLearningArtifact = { lessonId: lesson.id, trackId: lesson.trackId, title: lesson.phases[2].widget.artifactTitle.en, summary, values, createdAt: Date.now() };
       if (!preview) await prepareApply(uid, lesson, artifact, correct ? 100 : 75);
       setArtifactSaved(true);
-    } catch (cause) { setError(explainError(cause, 'Could not save your tool.')); }
+    } catch (cause) { if (import.meta.env.DEV) console.error('Tool save failed', cause); setError(explainError(cause, 'Could not save your tool.')); }
     finally { setBusy(false); }
   }
   async function finishApply() {
@@ -112,7 +117,6 @@ export default function Lesson({ lesson, uid, brain, missions, close, preview = 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [advance, answerShown, busy, challenge.options, checked, predicted, prediction, predictionOptions, reviewAnswer, stage, submitRating]);
-  if (!['learn-money-01', 'learn-money-02'].includes(lesson.id)) return <div className="lesson-shell"><button className="back-button" onClick={close}><ArrowLeft size={18}/> Back to Learn</button><div className="lesson-unavailable"><h1>This lesson is on mobile today.</h1><p>Your path and progress are still shared with T1GER. This web lesson is being prepared.</p></div></div>;
   return <div className="lesson-shell"><header className="lesson-header"><button className="back-button" onClick={close}><ArrowLeft size={18}/><span>Exit lesson</span></button><div className="lesson-header-title"><span>{lesson.trackId === 'smart-money' ? 'SMART MONEY' : lesson.trackId.toUpperCase()}</span><strong>{lesson.title.en}</strong></div><span className="lesson-count">{String(stages.indexOf(stage) + 1).padStart(2, '0')} / 06</span></header>{preview && <div className="lesson-preview-notice"><span>DESIGN PREVIEW · PROGRESS IS NOT SAVED</span><button onClick={() => { sessionStorage.removeItem(sessionKey); setStage('hook'); setPrediction(''); setPredicted(false); setChoice(''); setChecked(false); setArtifactSaved(false); setReflection(''); setReviewAnswer(''); setAnswerShown(false); }}>Restart lesson</button></div>}<div className="stage-progress" aria-label={`Lesson stage ${stages.indexOf(stage) + 1} of 6`}>{stages.map((item, index) => <span key={item} className={index <= stages.indexOf(stage) ? 'filled' : ''}/>)}</div>
     <div className="stage-labels">{stages.map(item => <span key={item} className={item === stage ? 'active' : ''}>{item.toUpperCase()}</span>)}</div>
     {(stage === 'interact' || stage === 'master' || (stage === 'hook' && gold)) && <p className="lesson-keyboard">{stage === 'master' ? 'AFTER REVEAL  ·  1–4 RATE' : `1–${stage === 'hook' ? predictionOptions?.length : challenge.options?.length} CHOOSE  ·  ENTER CONTINUE`}</p>}

@@ -4,21 +4,22 @@ type LegalPageProps = {
   type: 'terms' | 'privacy';
 };
 
-const updatedAt = 'September 29, 2026';
+const updatedAt = 'September 30, 2026';
 
 function TermsContent() {
   return (
     <>
       <section>
         <h2>1. Agreement and eligibility</h2>
-        <p>By using t1ger.app, joining the waitlist, or purchasing Early Adopter Access, you agree to these Terms. You must be at least 18 years old, or have the consent of a parent or legal guardian who accepts these Terms for you.</p>
+        <p>By using t1ger.app, joining the waitlist, or purchasing Early Adopter Access, you agree to these Terms. T1GER is intended for people aged 15 and older. Do not join or create an account if you are under 15. Requirements for learners aged 15–17 must be finalized before public release.</p>
       </section>
       <section>
         <h2>2. Waitlist and beta access</h2>
-        <p>Your waitlist position is assigned when you join. Referral links can be shared, but they do not currently record attribution or change that position. Launch timing, invitation capacity, features, and availability may change, and a waitlist position does not guarantee admission on a specific date. Beta software may be incomplete, interrupted, or changed before release.</p>
+        <p>The free waitlist is for the upcoming iOS and Android apps. Web learning is separate and available at <a href="/app/">t1ger.app/app</a>; joining the list does not create a learning account. Your waitlist position is assigned when you join. Referral links can be shared, but they do not currently record attribution or change that position. Launch timing, invitation capacity, features, and availability may change, and a waitlist position does not guarantee admission on a specific date. Beta software may be incomplete, interrupted, or changed before release.</p>
       </section>
       <section>
         <h2>3. Early Adopter Access</h2>
+        <p>New Early Adopter purchases are temporarily paused while payment fulfillment is verified. The payment and refund provisions below describe the offer and do not change any rights attached to an existing purchase.</p>
         <p>The first $5 of a qualifying payment purchases Early Adopter Access, including priority consideration for the Closed Beta, six months of Premium access when available, and a permanent Founder badge subject to account and product availability. Benefits have no cash value and may be replaced with substantially similar benefits if required.</p>
       </section>
       <section>
@@ -29,7 +30,7 @@ function TermsContent() {
       <section id="payments-taxes-and-refunds">
         <h2>5. Payments, taxes, and refunds</h2>
         <p>Payments are processed by Stripe under its own terms and privacy policy. Prices are shown in the checkout currency. Applicable sales, use, VAT, or similar taxes may be added or collected where required.</p>
-        <p>You may request a full refund of your Early Adopter payment at any time before T1GER’s public global launch by emailing hello@t1ger.app from the email used at checkout. After the global launch, payments are non-refundable except where required by law. Refunds may take time to appear and access benefits may be revoked.</p>
+        <p>You may request a full refund of your Early Adopter payment at any time before T1GER’s public global launch by emailing este.t1ger.oficial.app@gmail.com from the email used at checkout. After the global launch, payments are non-refundable except where required by law. Refunds may take time to appear and access benefits may be revoked.</p>
       </section>
       <section>
         <h2>6. Acceptable use and intellectual property</h2>
@@ -41,7 +42,7 @@ function TermsContent() {
       </section>
       <section>
         <h2>8. Changes and contact</h2>
-        <p>We may update these Terms as the product and legal requirements develop. Material changes will be posted here with a new effective date. Questions, refund requests, and legal notices may be sent to hello@t1ger.app.</p>
+        <p>We may update these Terms as the product and legal requirements develop. Material changes will be posted here with a new effective date. Questions, refund requests, and legal notices may be sent to este.t1ger.oficial.app@gmail.com.</p>
       </section>
     </>
   );
@@ -68,15 +69,15 @@ function PrivacyContent() {
       </section>
       <section>
         <h2>5. Your choices and rights</h2>
-        <p>You may ask to access, correct, or delete your personal information, or object to certain uses, by emailing hello@t1ger.app. We may need to verify your identity and may retain information where the law permits or requires it. Rights vary by location.</p>
+        <p>You may ask to access, correct, or delete your personal information, or object to certain uses, by emailing este.t1ger.oficial.app@gmail.com. We may need to verify your identity and may retain information where the law permits or requires it. Rights vary by location.</p>
       </section>
       <section>
         <h2>6. Children and international users</h2>
-        <p>T1GER is not directed to children under 13, and we do not knowingly collect their personal information. If you use the service from outside the United States, your information may be processed in the United States and other countries where our providers operate.</p>
+        <p>T1GER is intended for people aged 15 and older. Do not submit personal information if you are under 15. If you use the service from outside the United States, your information may be processed in the United States and other countries where our providers operate.</p>
       </section>
       <section>
         <h2>7. Changes and contact</h2>
-        <p>We may update this Privacy Policy to reflect changes in the service or law. We will post the revised version here with a new effective date. Privacy questions or requests may be sent to hello@t1ger.app.</p>
+        <p>We may update this Privacy Policy to reflect changes in the service or law. We will post the revised version here with a new effective date. Privacy questions or requests may be sent to este.t1ger.oficial.app@gmail.com.</p>
       </section>
     </>
   );
@@ -95,16 +96,16 @@ export default function LegalPage({ type }: LegalPageProps) {
         <header className="mt-10 border-b border-white/10 pb-8">
           <p className="font-mono text-[10px] font-black uppercase tracking-[0.22em] text-[#FF6B00]">T1GER Legal</p>
           <h1 className="mt-3 font-outfit text-4xl font-black uppercase leading-none sm:text-6xl">{isTerms ? 'Terms & Conditions' : 'Privacy Policy'}</h1>
-          <p className="mt-4 font-mono text-xs uppercase tracking-[0.12em] text-white/40">Effective {updatedAt}</p>
+          <p className="mt-4 font-mono text-xs uppercase tracking-[0.12em] text-white/40">Draft update {updatedAt}</p><p className="mt-4 text-sm leading-relaxed text-white/65">Draft for review: legal operator and full postal address pending. Location supplied: Plymouth, Michigan, United States. This is not a final legal notice.</p><p className="mt-3 text-sm text-white/65">Web learning accounts also use the <a className="underline" href="/app/privacy">Web privacy notice</a> and <a className="underline" href="/app/terms">Web terms</a>.</p>
         </header>
         <article className="legal-copy space-y-8 py-10">
           {isTerms ? <TermsContent /> : <PrivacyContent />}
         </article>
         <footer className="flex flex-col gap-4 border-t border-white/10 py-8 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} T1GER. All rights reserved.</span>
-          <a href="mailto:hello@t1ger.app" className="inline-flex items-center gap-2 transition-colors hover:text-white">
+          <a href="mailto:este.t1ger.oficial.app@gmail.com" className="inline-flex items-center gap-2 transition-colors hover:text-white">
             <Mail className="h-4 w-4" aria-hidden="true" />
-            hello@t1ger.app
+            este.t1ger.oficial.app@gmail.com
           </a>
         </footer>
       </div>

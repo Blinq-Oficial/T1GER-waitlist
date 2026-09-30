@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import { ArrowUpRight, Heart, Loader2, Mail, Sparkles, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
+import { ArrowUpRight, Loader2, Mail, Sparkles, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
 import { trackEvent } from '../../lib/analytics';
 import { BorderBeam } from '../ui/border-beam';
 import { ShimmerButton } from '../ui/shimmer-button';
 import { Typewriter } from '../ui/typewriter-text';
 
-const learningTracks = ['ANYTHING', 'INVESTING', 'AI', 'MARKETING', 'BUSINESS', 'FINANCE', 'STRATEGY', 'TECH', 'PSYCHOLOGY', 'SCIENCE'];
+const learningTracks = ['INVESTING', 'AI', 'PSYCHOLOGY'];
 
 type ConfettiParticle = {
   x: number;
@@ -140,6 +140,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
     
     try {
       const data = await joinWaitlist(email);
+      try { sessionStorage.setItem('t1ger_signup_email', email.trim()); } catch { /* Email hint is optional. */ }
       setEmail('');
       setHelperText(data.alreadyJoined ? "You're already in. Showing your position." : 'Position secured.');
       onSuccess(data.position, data.shareUrl);
@@ -377,7 +378,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 className="mb-4 md:mb-6"
               >
                 <span className="inline-flex rounded-full border border-[#FF6B00]/30 bg-[#FF6B00]/10 px-4 py-2 font-mono text-[#FF6B00] tracking-[0.22em] text-[10px] sm:text-xs uppercase font-black shadow-[0_0_24px_rgba(255,107,0,0.08)]">
-                  LEARN AND BUILD
+                  WEB IS HERE · MOBILE IS NEXT
                 </span>
               </motion.div>
 
@@ -388,7 +389,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 className="mb-6 max-w-4xl md:mb-8"
               >
                 <h1 className="font-outfit font-black text-white uppercase leading-[0.92] tracking-tight text-[clamp(2.1rem,6.3vw,4.6rem)]">
-                  <span className="sr-only">Learn anything by doing.</span>
+                  <span className="sr-only">Learn useful ideas by doing.</span>
                   <span aria-hidden="true">
                     <span className="block">Learn</span>
                     <Typewriter
@@ -399,7 +400,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   </span>
                 </h1>
                 <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/65 sm:text-base">
-                  Turn short lessons into real-world missions, proof of work, and a streak you will want to protect. Start with investing; keep expanding from there.
+                  Short lessons. Useful tools. Ideas that stay with you. Start learning on Web today.
                 </p>
               </motion.div>
 
@@ -452,39 +453,26 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   transition={{ duration: 0.55, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
                   className="mt-10 grid w-full max-w-[760px] items-stretch gap-3 text-left md:mt-8 md:grid-cols-2 md:gap-5"
                 >
-                  <button
-                    type="button"
-                    onClick={onOpenEarlyAdopter}
-                    className="group relative order-2 flex min-h-[116px] overflow-hidden rounded-[8px] border border-[#FF6B00]/45 bg-[#FF6B00]/10 p-3 text-left text-white transition-transform hover:-translate-y-1 hover:border-[#FF6B00] sm:min-h-[154px] sm:p-4"
-                  >
-                    <BorderBeam size={160} duration={8} colorFrom="#000000" colorTo="#CCFF00" />
-                    <span className="absolute -right-3 -top-7 hidden font-outfit text-[7rem] font-black leading-none text-white/[0.04] sm:block">SOON</span>
-                    <span className="relative z-10 flex h-full w-full flex-col">
-                      <span className="flex items-center gap-1.5 font-mono text-[8px] font-black uppercase tracking-[0.16em] sm:text-[9px]">
-                        <Heart className="h-3 w-3 fill-[#FF6B00] text-[#FF6B00] sm:h-3.5 sm:w-3.5" aria-hidden="true" />
-                        Access + tiger impact
-                      </span>
-                      <span className="mt-1 block font-outfit text-[1.25rem] font-black uppercase leading-none sm:text-[1.55rem]">Early Adopter</span>
-                      <span className="mt-1.5 hidden max-w-[18rem] text-[11px] font-semibold leading-relaxed text-white/65 sm:block">Founder reservations are temporarily paused. Join the free waitlist for updates.</span>
-                      <span className="mt-2 flex min-h-9 items-center justify-between gap-3 rounded-[6px] bg-black px-3 py-1.5 font-mono text-[8px] font-black uppercase tracking-[0.07em] text-white sm:mt-auto sm:min-h-11 sm:px-4 sm:py-2 sm:text-[10px]">
-                        Learn about Founder access
-                        <ArrowUpRight className="h-4 w-4 shrink-0 text-[#CCFF00] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
-                      </span>
-                    </span>
-                  </button>
+                  <a href="/app/" className="web-start-card">
+                    <span>AVAILABLE ON WEB · FREE TO START</span>
+                    <strong>A useful idea.<br/>Your next move.</strong>
+                    <p>Investing, AI, and Psychology. Learn, apply, and remember.</p>
+                    <span className="web-start-action">Start learning free <ArrowUpRight size={22}/></span>
+                    <small>Already have an account? Continue right where you left off.</small>
+                  </a>
 
                   <form
                     onSubmit={handleSubmit}
                     noValidate
-                    className="relative order-1 flex min-h-[116px] flex-col overflow-hidden rounded-[8px] border border-[#CCFF00]/40 bg-black/70 p-3 backdrop-blur-md sm:min-h-[154px] sm:p-4"
+                    className="relative order-2 flex min-h-[116px] flex-col overflow-hidden rounded-[8px] border border-[#CCFF00]/40 bg-black/70 p-3 backdrop-blur-md sm:min-h-[154px] sm:p-4"
                   >
                     <BorderBeam size={160} duration={10} colorFrom="#CCFF00" colorTo="#FF6B00" />
                     <span className="font-mono text-[8px] font-black uppercase tracking-[0.18em] text-[#CCFF00] sm:text-[9px]">Free · No card required</span>
                     <span className="mt-1 flex items-center gap-1.5 font-outfit text-[1.35rem] font-black uppercase leading-none text-white sm:mt-1.5 sm:gap-2 sm:text-[1.55rem]">
                       <Mail className="h-4 w-4 text-[#CCFF00] sm:h-5 sm:w-5" aria-hidden="true" />
-                      Join Waitlist
+                      Mobile waitlist
                     </span>
-                    <p className="mt-1.5 hidden text-[11px] leading-relaxed text-white/65 sm:block">Secure a stable waitlist position and invite ambitious friends to join you.</p>
+                    <p className="mt-1.5 text-[11px] leading-relaxed text-white/65">iOS & Android are coming next. Get launch updates by email. Web is available now.</p>
 
                     <div className="relative mt-auto pt-1.5 sm:pt-3">
                       <ShieldCheck className="absolute bottom-2.5 left-3 h-3.5 w-3.5 text-white/25 sm:bottom-4 sm:left-4 sm:h-4 sm:w-4" aria-hidden="true" />
@@ -513,10 +501,11 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                         shimmerDuration="2.5s"
                         className="absolute bottom-1 right-1 h-7 min-w-[100px] rounded-[5px] px-2 text-[8px] sm:bottom-1.5 sm:right-1.5 sm:h-9 sm:min-w-[112px] sm:px-3 sm:text-[9px]"
                       >
-                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin text-[#CCFF00]" aria-label="Joining waitlist" /> : 'Join Waitlist'}
+                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin text-[#CCFF00]" aria-label="Joining waitlist" /> : 'Join mobile list'}
                       </ShimmerButton>
                     </div>
 
+                    <p className="mt-2 text-[10px] leading-relaxed text-white/55">Request mobile launch updates. Read our <a className="underline" href="/privacy">Privacy notice</a>.</p>
                     <AnimatePresence mode="wait">
                       {(errorText || helperText) && (
                         <motion.p
@@ -535,7 +524,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   </form>
                 </motion.div>
                 <p className="mt-3 text-center font-mono text-[9px] uppercase tracking-[0.12em] text-white/35">
-                  Free waitlist · Access updates by email
+                  Web available now · Mobile coming soon
                 </p>
               </div>
             </motion.div>
@@ -562,7 +551,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
               >
                 <Sparkles className="w-4 h-4 text-[#FF6B00]" />
                 <span className="font-mono text-xs text-white tracking-[0.4em] uppercase font-bold">
-                  THE HUNT BEGINS
+                  YOU’RE ON THE MOBILE LIST
                 </span>
               </motion.div>              <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -571,7 +560,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 className="mb-14 text-center"
               >
                 <span className="font-mono text-white/50 text-[11px] tracking-[0.5em] uppercase block mb-6">
-                  YOUR ELITE RANK
+                  YOUR MOBILE WAITLIST POSITION
                 </span>
                 <div className="relative inline-flex items-baseline justify-center group">
                   <span className="text-[#FF6B00] font-mono text-[4vw] md:text-[3rem] font-black mr-2 leading-none">#</span>
@@ -595,7 +584,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 transition={{ delay: 0.8 }}
                 className="w-full max-w-sm flex flex-col items-center gap-8"
               >
-                <div className="w-full space-y-4">
+                <div className="w-full space-y-4"><a href="/app/" className="mobile-to-web">Start learning on Web now <ArrowUpRight size={20}/></a><p className="text-sm text-white/65">You don’t need to wait for mobile. Create a free Web account with the same email.</p>
                   <p className="text-white/40 font-mono text-[9px] tracking-[0.3em] uppercase text-center">
                     Invite someone ambitious to join you
                   </p>

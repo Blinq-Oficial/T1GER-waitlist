@@ -18,30 +18,30 @@ The dev-only `?preview=1` query renders a labeled design preview without signing
 
 ## Account entry and legal release
 
-The entry screen defaults to account creation, has a visible sign-in switch, Google sign-in, email/password with a six-character minimum, password visibility, and password recovery. The onboarding screen has one available path and starts the first lesson directly. The light/dark preference is saved in browser local storage.
+Account creation, returning sign-in, Google entry, password visibility and reset requests are implemented. Onboarding has five screens for a single interest or six for multiple interests, three domains, a primary path and a saved daily intention. Per-user drafts survive reload; completion opens the selected first lesson. Light/dark preference persists locally.
 
-`/privacy` and `/terms` are available before sign-in and linked from the account screen, onboarding, and Profile. They are **drafts**, visibly labeled as such. Before publishing them as final notices, confirm the real legal operator and address, privacy/support contact, effective date, audience and age rules, applicable jurisdictions, Firebase processing regions, mobile app data inventory, retention periods, account export/deletion process, and terms for any paid offering. Populate the `VITE_LEGAL_*` values only with verified facts and set `VITE_LEGAL_PUBLISHED=true` only after reviewing the actual text and operations. The flag does not itself make the notices compliant. The web app currently has no account deletion or data export UI, so those processes need an operational owner and testing before launch.
+Public `/app/privacy` and `/app/terms` remain labeled drafts. Supplied facts: minimum age 15; Plymouth, Michigan, United States; contact este.t1ger.oficial.app@gmail.com. Legal operator, complete postal address, retention, teen handling and service-wide export/deletion operations still require review. Profile exports Web learning JSON and offers a support request, not automatic account deletion. Set legal publication flags only after reviewing facts and operations.
 
 ## Mobile architecture map
 
 | Concern | Canonical mobile source | Web use |
 | --- | --- | --- |
 | Account | Firebase Auth; `users/{uid}` | Same Firebase project and UID; Google and email/password sign in |
-| Curriculum | `interactiveCurriculum.ts`, `orbLearningDesign.ts`, `missionBank.ts` | Source snapshot in `src/product/`; stable IDs and lesson content |
+| Curriculum | Pinned snapshot plus Web teaching refinements | Stable identifiers/state, not identical lesson content: reconcile Psychology/legacy Stoic identities before sharing live recall history |
 | Journey | `learningJourney.ts` | Same ordered Apply gate |
 | Progress | `brainService.ts`, `BrainContext.tsx` | Same `brainState` shape and `processMissionResult` transactions |
 | Apply | `fieldMissionService.ts`, `fieldMissionCatalog.ts`, `completeApplyMission` callable | Same `missions/{uid}_field-{lessonId}` and server completion function |
 | Master | `masteryService.ts`, `ts-fsrs` | Same FSRS cards and `processMissionReview`; no fabricated reviews |
 | Rewards | `completeApplyMission` callable | Server awards XP, coins, and streak; client does not award them |
-| Artifacts | `learningArtifactService.ts` | Same browser-local key and mission support payload while pending |
+| Artifacts | Existing local key and mission payload | Additive users.learningArtifacts preserves tools after callable replacement of mission document |
 | Subscription | RevenueCat mobile entitlement | Read-only `isPro` profile display in this build |
-| AI | Authenticated functions in mobile | Not required for the two web lessons |
+| AI | Authenticated mobile functions | Web exercises build prompts and workflows; they do not execute an external AI request |
 
-The web app copies the listed pure mobile modules at the pinned commit and leaves the mobile repository untouched. This avoids an early shared-package refactor that could destabilize the mobile release. When the mobile curriculum changes, refresh the snapshot and rerun parity tests.
+The mobile repository was not edited or deployed. Web retains contract identifiers and copied state/FSRS logic, with explicit teaching refinements. Web Psychology now covers biases, evidence and retrieval, while the inspected mobile snapshot remains Stoic: reconcile topic/card identities and any necessary migration before the shared public release. Passing progression tests is not content parity.
 
 ## Current alpha scope
 
-Learn, Discover, Apply, Master, and Profile use real account and learning state. Investing lessons 01 and 02 have a six-stage web player. Lesson 01 is required before lesson 02 because the existing `completeApplyMission` function requires the previous Apply reward event. AI and Psychology are visible as curriculum previews; their lesson players are not yet available on web. Remaining Investing lessons show an explicit mobile availability state.
+All fifteen lessons are playable in Web: five Investing, five AI and five Psychology. Learn, Discover, Apply, Master and Profile use real account state. Sequential Apply prerequisites remain enforced by the existing completion callable. Profile displays actual server XP/streak; clients do not award rewards. Saved tools remain in the profile after server completion.
 
 The first two web lessons save progress to the same `users/{uid}.brainState`, `missions`, and server reward records as mobile. Master reads and writes the same FSRS card IDs. A saved tool's browser-local details do not yet travel between devices after its mission is completed; meaningful lesson, Apply, reward, and review progress does.
 
@@ -51,6 +51,10 @@ The first two web lessons have source-checked educational briefs with primary so
 
 ## Verification and deployment
 
-`npm test` checks the compounding model and mobile progression/FSRS parity, including the next due review date. `npm run lint` checks TypeScript and ESLint; `npm run build` creates the production bundle. The design preview was visually checked at 360, 390, 430, 768, 1024, 1280, 1440, and 1920 pixels, and the full six-stage flagship lesson was completed in preview. A signed-in end-to-end run against a safe test account remains necessary before calling Web Alpha complete. The local machine has no JDK/Firebase Emulator CLI, and no authorized test account was provided. Use the existing Firebase test project/emulators or a disposable test account to verify the full sign-in → two lessons → Apply → Master → refresh path. Set `VITE_USE_FIREBASE_EMULATOR=true` only when Auth, Firestore, and Functions emulators are running locally.
+Root and Web lint/tests and both builds passed. All fifteen distinct six-stage lesson flows reached Reward in rendered UI; the first lessons of the three domains also completed against isolated local Firebase. Waitlist-to-Web, persisted multiselect onboarding and returning sign-in passed locally. Learn and landing were checked at 360, 390, 430, 768, 1024, 1280, 1440 and 1920 pixels. Google OAuth, real email delivery and production-domain configuration remain unverified. See the root product sprint report for exact evidence and limits.
 
 For a deployment, provide the same Firebase browser configuration as environment variables and authorize the chosen web domain in Firebase Auth. Deploy only Hosting from this repo; never deploy rules or functions from the web project. Preview and production deploys require an explicit target decision because the mobile repository already has Hosting configuration for the same Firebase project.
+
+## Repeatable isolated backend check
+
+`npm run test:emulator-contract` targets demo-t1ger-web only (Auth 9099, Firestore 8080, Functions 5001). It checks owner isolation, client reward-write rejection, prerequisites, completion, artifact retention and retry idempotency using the existing mobile rules/functions. The script creates disposable local emulator data and cannot contact production.

@@ -76,7 +76,7 @@ export default function EarlyAccessSuccess() {
             </div>
             <p className="mt-4 flex items-start gap-2 text-[10px] leading-relaxed text-white/30">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              If the email does not arrive within a few minutes, check spam or contact hello@t1ger.app using the checkout email.
+              If the email does not arrive within a few minutes, check spam or contact este.t1ger.oficial.app@gmail.com using the checkout email.
             </p>
           </aside>
         </div>
