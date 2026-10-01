@@ -79,6 +79,7 @@ textarea::placeholder,input::placeholder { color:var(--quiet); }
 .course-heading>div { flex:1; min-width:0; }
 .course-heading span:not(.domain-icon) { color:var(--quiet); font-size:10px; font-weight:600; letter-spacing:.08em; }
 .course-heading h2 { font-size:21px; margin:3px 0 0; }
+.mobile-next-lesson { display:none; }
 .route-unit { margin-bottom:24px; }
 .unit-banner { background:var(--tint); border:1px solid #f98d2b20; border-radius:19px; padding:19px 24px; }
 .unit-banner>span { color:var(--accent-light); font-size:10px; font-weight:700; letter-spacing:.1em; }
@@ -343,6 +344,7 @@ textarea::placeholder,input::placeholder { color:var(--quiet); }
   .learning-route { width:100%; }
   .learning-side { position:static; width:100%; }
   .learning-side .companion-card { display:none; }
+  .mobile-next-lesson { display:flex; width:100%; margin-bottom:24px; }
   .learning-side .progress-panel { order:-1; }
   .course-heading { padding:17px; border-radius:20px; }
   .course-heading h2 { font-size:19px; }
@@ -428,6 +430,8 @@ textarea::placeholder,input::placeholder { color:var(--quiet); }
 :root[data-theme] .skeleton-line { background:var(--raised-2); }
 :root[data-theme] .skeleton-panel { background:var(--raised); border-radius:24px; }
 :root[data-theme] .auth-panel,:root[data-theme] .onboard-lesson,:root[data-theme] .interest-choice,:root[data-theme] .rhythm-choices button,:root[data-theme] .primary-choices button { background:var(--raised); }
+:root[data-theme] .auth-story { background:transparent; }
+:root[data-theme] .auth-story-body h1 em { color:var(--accent-light); }
 :root[data-theme] .interest-choice.selected,:root[data-theme] .rhythm-choices button[aria-pressed=true],:root[data-theme] .primary-choices button[aria-pressed=true] { background:var(--tint); }
 :root[data-theme] .apply-feature,:root[data-theme] .apply-empty,:root[data-theme] .master-hero,:root[data-theme] .review-session,:root[data-theme] .profile-grid>section,:root[data-theme] .profile-grid>aside { background:var(--raised); }
 :root[data-theme] .master-hero-visual { background:transparent; }
