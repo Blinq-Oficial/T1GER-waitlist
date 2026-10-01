@@ -16,6 +16,7 @@ import Learn from './LearningHome';
 import { Tiger, DomainIcon } from './Visual';
 const Lesson = lazy(() => import('./Lesson'));
 const Review = lazy(() => import('./Review'));
+const MascotStudy = lazy(() => import('./MascotStudy'));
 
 type Destination = 'learn' | 'discover' | 'apply' | 'master' | 'profile';
 const links: { id: Destination; label: string; icon: typeof BookOpen; purpose: string }[] = [
@@ -118,6 +119,7 @@ export default function App() {
   useEffect(() => { const yes = () => setOnline(true), no = () => setOnline(false); window.addEventListener('online', yes); window.addEventListener('offline', no); return () => { window.removeEventListener('online', yes); window.removeEventListener('offline', no); }; }, []);
   function go(path: string) { const href = appHref(path); window.history.pushState({}, '', preview ? `${href}?preview=1` : href); setParts(route()); window.scrollTo(0, 0); }
   const destination: Destination = links.some(link => link.id === parts[0]) ? parts[0] as Destination : 'learn';
+  if (parts[0] === 'mascot') return <Suspense fallback={<LoadingCanvas label="Loading mascot"/>}><MascotStudy/></Suspense>;
   if (parts[0] === 'privacy' || parts[0] === 'terms') return <LegalPage kind={parts[0]} themeAction={<ThemeToggle theme={theme} onToggle={toggleTheme}/>}/>;
   if (!configured && !preview) return <AuthScreen theme={theme} onToggleTheme={toggleTheme}/>;
   if (learner.loading) return <LoadingCanvas label="Loading your path" mode="initial"/>;
@@ -142,4 +144,3 @@ export default function App() {
       <main>{destination === 'learn' ? <Learn track={track} brain={brain} missions={learner.missions} dailyTime={learner.profile.dailyTime || 10} dueCount={snapshot.due.length} openLesson={id => go(`/lesson/${id}`)} go={go}/> : destination === 'discover' ? <Discover active={track} select={async t => { if (preview) learner.setProfile({ ...learner.profile!, primaryTrack: t.legacyTrackId, brainState: { ...brain, currentTrackId: t.legacyTrackId } }); else await changeTrack(learner.user!.uid, t.legacyTrackId); go('/learn'); }}/> : destination === 'apply' ? <Apply artifacts={learner.profile.learningArtifacts} missions={learner.missions} openLesson={id => go(`/lesson/${id}`)} go={go}/> : destination === 'master' ? <Suspense fallback={<LoadingCanvas label="Loading reviews"/>}><Review uid={learner.user.uid} snapshot={snapshot} onLearn={() => go('/learn')} preview={preview}/></Suspense> : <ProfilePage missions={learner.missions} profile={learner.profile} logout={() => void leave()} preview={preview}/>}</main>
     </div></div>;
 }
-

@@ -1,0 +1,32 @@
+.tiger-companion { position:relative; aspect-ratio:1.1; flex:none; }
+.mascot-render,.mascot-canvas { position:absolute; inset:0; }
+.mascot-render { overflow:hidden; }
+.mascot-canvas canvas { display:block; width:100%; height:100%; }
+.mascot-canvas { opacity:0; transition:opacity .25s; }
+.mascot-poster { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; transform:scale(1.75); transition:opacity .25s; }
+.mascot-render.is-ready .mascot-canvas { opacity:1; }
+.mascot-render.is-ready .mascot-poster { opacity:0; }
+.mascot-study { min-height:100svh; background:#09090b; color:#faf7f2; padding:30px clamp(22px,5vw,80px); font-family:Outfit,sans-serif; }
+.mascot-study header { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.mascot-study header a { display:flex; align-items:center; gap:12px; color:#faf7f2; text-decoration:none; font-size:19px; font-weight:700; letter-spacing:.03em; }
+.mascot-study header>span,.mascot-study footer { color:#8c8b93; font-size:11px; letter-spacing:.12em; }
+.mascot-study-content { max-width:740px; margin:54px auto 0; text-align:center; }
+.mascot-study .study-eyebrow { color:#ffac61; font-size:10px; letter-spacing:.18em; font-weight:600; }
+.mascot-study h1 { margin:12px 0; font-size:clamp(36px,5vw,60px); letter-spacing:-.045em; line-height:1.1; }
+.study-intro { color:#a7a6ae; font-size:16px; margin:0; }
+.mascot-stage { height:380px; max-width:640px; margin:12px auto 8px; position:relative; }
+.stage-halo { position:absolute; inset:12% 14% 3%; background:radial-gradient(ellipse,#ff89310c,transparent 66%); }
+.study-controls { display:flex; align-items:center; justify-content:center; gap:14px; }
+.study-controls button { min-height:48px; padding:0 23px; border-radius:15px; font:600 14px Outfit,sans-serif; cursor:pointer; }
+.study-play { display:flex; align-items:center; gap:11px; color:#21170e; background:#ff9a40; border:1px solid #ffbd81; box-shadow:0 3px 0 #a84d18,inset 0 1px 0 #ffd2a3; }
+.study-play:hover { background:#ffad60; }
+.study-play:active { transform:translateY(2px); box-shadow:0 1px 0 #a84d18; }
+.study-speed { color:#d4d1d6; background:#19191e; border:1px solid #303037; }
+.study-speed[aria-pressed=true] { color:#ffac61; border-color:#89542d; }
+.study-controls button:disabled { opacity:.5; cursor:default; }
+.study-controls button:focus-visible,.mascot-study a:focus-visible { outline:3px solid #ffc288; outline-offset:5px; }
+.study-note { color:#89878f; font-size:12px; margin:20px 0 30px; }
+.mascot-study footer { max-width:1040px; margin:30px auto 0; display:flex; justify-content:space-between; gap:24px; padding-top:22px; border-top:1px solid #ffffff0d; }
+.mascot-study footer span { letter-spacing:0; }
+@media(max-width:600px) { .mascot-study { padding:24px 20px; } .mascot-study header>span { font-size:9px; } .mascot-study-content { margin-top:48px; } .mascot-stage { height:320px; margin:4px -15px; } .study-controls { gap:10px; } .study-controls button { padding:0 16px; } .mascot-study footer { margin-top:35px; flex-direction:column; gap:8px; font-size:10px; } }
+@media(prefers-reduced-motion:reduce) { .mascot-canvas,.mascot-poster { transition:none; } }
