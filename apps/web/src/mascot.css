@@ -1,6 +1,15 @@
-.tiger-companion { position:relative; aspect-ratio:1.1; flex:none; }
+.tiger-companion { position:relative; aspect-ratio:1.1; flex:none; overflow:hidden; }
 .mascot-render,.mascot-canvas { position:absolute; inset:0; }
 .mascot-render { overflow:hidden; }
+.companion-cue,.challenge-guide { display:flex; align-items:center; gap:12px; min-height:88px; margin:0 0 18px; color:var(--soft); font-size:13px; }
+.companion-cue .tiger-companion,.challenge-guide .tiger-companion { width:100px; margin:0; }
+.master-session-done>.tiger-companion { width:210px; margin:0 auto 12px; }
+.motion-scenes { display:flex; justify-content:center; flex-wrap:wrap; gap:7px; margin:24px auto 0; max-width:680px; }
+.motion-scenes button { min-height:40px; padding:8px 14px; border-radius:12px; border:1px solid #323238; color:#b8b5bf; background:#17171c; font:500 12px Outfit,sans-serif; cursor:pointer; }
+.motion-scenes button[aria-pressed=true] { color:#ffc28b; background:#342113; border-color:#85512b; }
+.motion-scenes button:focus-visible { outline:3px solid #ffc288; outline-offset:3px; }
+.lesson-focus,.apply-stage,.reward-stage,.lesson-main { animation:lesson-arrive .2s ease-out; }
+@keyframes lesson-arrive { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
 .mascot-canvas canvas { display:block; width:100%; height:100%; }
 .mascot-canvas { opacity:0; transition:opacity .25s; }
 .mascot-poster { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; transform:scale(1.75); transition:opacity .25s; }
@@ -29,4 +38,4 @@
 .mascot-study footer { max-width:1040px; margin:30px auto 0; display:flex; justify-content:space-between; gap:24px; padding-top:22px; border-top:1px solid #ffffff0d; }
 .mascot-study footer span { letter-spacing:0; }
 @media(max-width:600px) { .mascot-study { padding:24px 20px; } .mascot-study header>span { font-size:9px; } .mascot-study-content { margin-top:48px; } .mascot-stage { height:320px; margin:4px -15px; } .study-controls { gap:10px; } .study-controls button { padding:0 16px; } .mascot-study footer { margin-top:35px; flex-direction:column; gap:8px; font-size:10px; } }
-@media(prefers-reduced-motion:reduce) { .mascot-canvas,.mascot-poster { transition:none; } }
+@media(prefers-reduced-motion:reduce) { .mascot-canvas,.mascot-poster { transition:none; } .lesson-focus,.apply-stage,.reward-stage,.lesson-main { animation:none; } }

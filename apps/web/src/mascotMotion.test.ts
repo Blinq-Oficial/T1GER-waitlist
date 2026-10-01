@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { celebrationPose, CELEBRATION_SECONDS } from './mascotMotion';
+import { animationDuration, animationPose, blendPose, celebrationPose, CELEBRATION_SECONDS, type MascotAnimation } from './mascotMotion';
 
 test('celebration anticipates, lifts, lands and settles without discontinuities', () => {
   expect(celebrationPose(.52).y).toBeLessThan(0);
@@ -18,4 +18,36 @@ test('celebration anticipates, lifts, lands and settles without discontinuities'
   }
   expect(celebrationPose(CELEBRATION_SECONDS).y).toBe(0);
   expect(celebrationPose(CELEBRATION_SECONDS).sy).toBe(1);
+});
+
+test('every reaction stays continuous, finite and within the camera framing', () => {
+  const animations: MascotAnimation[] = ['idle', 'welcome', 'thinking', 'correct', 'retry', 'saved', 'recall', 'celebrate', 'milestone'];
+  for (const animation of animations) {
+    const duration = animationDuration(animation);
+    expect(animationPose(animation, -1)).toEqual(animationPose(animation, 0));
+    expect(animationPose(animation, 99)).toEqual(animationPose(animation, duration));
+    let previous = animationPose(animation, 0);
+    for (let t = .005; t <= duration; t += .005) {
+      const pose = animationPose(animation, t);
+      expect(Object.values(pose).every(Number.isFinite)).toBe(true);
+      expect(pose.y).toBeGreaterThanOrEqual(-.15);
+      expect(pose.y).toBeLessThanOrEqual(.57);
+      expect(pose.sx * pose.sy).toBeGreaterThan(.9);
+      expect(pose.eyeRight).toBeGreaterThan(0);
+      expect(Math.abs(pose.ry - previous.ry)).toBeLessThan(.15);
+      expect(Math.abs(pose.y - previous.y)).toBeLessThan(.05);
+      previous = pose;
+    }
+  }
+});
+
+test('interrupted reactions blend from the visible pose without jumping', () => {
+  const from = animationPose('retry', .3), to = animationPose('correct', .08);
+  expect(blendPose(from, to, 0)).toEqual(from);
+  expect(blendPose(from, to, 1)).toEqual(to);
+  expect(blendPose(from, to, -1)).toEqual(from);
+  expect(blendPose(from, to, 2)).toEqual(to);
+  const midpoint = blendPose(from, to, .5);
+  for (const key of Object.keys(to) as (keyof typeof to)[]) expect(midpoint[key]).toBeCloseTo((from[key] + to[key]) / 2);
+  expect(animationPose('saved', .55).eyeRight).toBeLessThan(animationPose('saved', .55).eye);
 });

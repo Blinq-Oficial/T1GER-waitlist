@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { CELEBRATION_SECONDS, celebrationPose } from './mascotMotion';
+import { animationDuration, animationPose, blendPose, type MascotAnimation } from './mascotMotion';
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}mascot/${name}`;
 
-export default function Mascot3D({ celebrate = false, replay = 0, slow = false, onReady, onComplete, onUnavailable }: {
-  celebrate?: boolean; replay?: number; slow?: boolean; onReady?: () => void; onComplete?: () => void; onUnavailable?: () => void;
+export default function Mascot3D({ celebrate = false, animation = celebrate ? 'celebrate' : 'idle', replay = 0, slow = false, onReady, onComplete, onUnavailable }: {
+  celebrate?: boolean; animation?: MascotAnimation; replay?: number; slow?: boolean; onReady?: () => void; onComplete?: () => void; onUnavailable?: () => void;
 }) {
   const host = useRef<HTMLDivElement>(null);
-  const controls = useRef({ celebrate, replay, slow, onReady, onComplete, onUnavailable });
-  controls.current = { celebrate, replay, slow, onReady, onComplete, onUnavailable };
+  const controls = useRef({ animation, replay, slow, onReady, onComplete, onUnavailable });
+  controls.current = { animation, replay, slow, onReady, onComplete, onUnavailable };
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const refreshFrame = useRef<() => void>(() => {});
-  useEffect(() => { refreshFrame.current(); }, [replay, celebrate]);
+  useEffect(() => { refreshFrame.current(); }, [replay, animation]);
 
   useEffect(() => {
     const element = host.current!;
@@ -64,8 +64,9 @@ export default function Mascot3D({ celebrate = false, replay = 0, slow = false, 
       star.visible = false; scene.add(star); return star;
     });
     let disposed = false, model: THREE.Group | undefined, frameId = 0, previousTime = 0, elapsed = 0;
-    let shotTime = controls.current.celebrate ? 0 : CELEBRATION_SECONDS;
-    let lastReplay = controls.current.replay, lastCelebrate = controls.current.celebrate, visible = true;
+    let shotTime = controls.current.animation === 'idle' ? animationDuration('idle') : 0;
+    let lastReplay = controls.current.replay, lastAnimation = controls.current.animation, visible = true;
+    let renderedPose = animationPose('idle', 0), transitionFrom = renderedPose;
     let expressions: { leftEye?: THREE.Object3D; rightEye?: THREE.Object3D; leftBrow?: THREE.Object3D; rightBrow?: THREE.Object3D; leftEar?: THREE.Object3D; rightEar?: THREE.Object3D; smile?: THREE.Object3D } = {};
     const base = new Map<THREE.Object3D, THREE.Euler>();
     const render = (timestamp: number) => {
@@ -74,39 +75,45 @@ export default function Mascot3D({ celebrate = false, replay = 0, slow = false, 
       const delta = previousTime ? Math.min((timestamp - previousTime) / 1000, .05) : 0;
       previousTime = timestamp;
       const control = controls.current;
-      if (control.replay !== lastReplay || (control.celebrate && !lastCelebrate)) {
+      if (control.replay !== lastReplay || control.animation !== lastAnimation) {
+        transitionFrom = { ...renderedPose, ry: Math.atan2(Math.sin(renderedPose.ry), Math.cos(renderedPose.ry)) };
         shotTime = 0; lastReplay = control.replay;
       }
-      lastCelebrate = control.celebrate;
+      lastAnimation = control.animation;
       elapsed += delta;
-      const wasPlaying = shotTime < CELEBRATION_SECONDS;
+      const duration = animationDuration(control.animation);
+      const wasPlaying = shotTime < duration;
       // Reduced motion suppresses autoplay; an explicit Replay requests this one shot.
-      shotTime = motionPreference.matches && control.replay === 0 ? CELEBRATION_SECONDS : Math.min(CELEBRATION_SECONDS, shotTime + delta * (control.slow ? .5 : 1));
-      const playing = shotTime < CELEBRATION_SECONDS;
-      const pose = celebrationPose(shotTime);
+      shotTime = motionPreference.matches && control.replay === 0 ? duration : Math.min(duration, shotTime + delta * (control.slow ? .5 : 1));
+      const playing = shotTime < duration;
+      const targetPose = animationPose(control.animation, shotTime);
+      const pose = blendPose(transitionFrom, targetPose, shotTime / .18);
+      renderedPose = pose;
       const breath = motionPreference.matches ? 0 : Math.sin(elapsed * 1.5) * .009;
       model.position.y = pose.y + (playing ? 0 : breath);
       model.rotation.set(pose.rx, pose.ry + (playing || motionPreference.matches ? 0 : Math.sin(elapsed * .6) * .035), pose.rz);
       model.scale.set(.94 * pose.sx, pose.sy, 1 / Math.sqrt(pose.sx * pose.sy));
       const blinkPhase = elapsed % 4.7;
       const blink = !playing && !motionPreference.matches && blinkPhase > 4.4 ? Math.max(.06, Math.abs((blinkPhase - 4.55) / .15)) : 1;
-      for (const eye of [expressions.leftEye, expressions.rightEye]) if (eye) eye.scale.y = pose.eye * blink;
+      if (expressions.leftEye) expressions.leftEye.scale.y = pose.eye * blink;
+      if (expressions.rightEye) expressions.rightEye.scale.y = pose.eyeRight * blink;
       if (expressions.leftBrow) expressions.leftBrow.rotation.z = base.get(expressions.leftBrow)!.z + pose.brow;
       if (expressions.rightBrow) expressions.rightBrow.rotation.z = base.get(expressions.rightBrow)!.z - pose.brow;
-      const earFollow = playing ? Math.sin((shotTime - .12) * 12) * .15 * Math.sin(Math.PI * shotTime / CELEBRATION_SECONDS) : motionPreference.matches ? 0 : Math.sin(elapsed * 1.3) * .018;
+      const earFollow = playing ? Math.sin((shotTime - .12) * 12) * .15 * Math.sin(Math.PI * shotTime / duration) : motionPreference.matches ? 0 : Math.sin(elapsed * 1.3) * .018;
       if (expressions.leftEar) expressions.leftEar.rotation.z = base.get(expressions.leftEar)!.z + earFollow;
       if (expressions.rightEar) expressions.rightEar.rotation.z = base.get(expressions.rightEar)!.z - earFollow * .8;
       if (expressions.smile) expressions.smile.scale.y = 1 + pose.brow * 1.4;
       shadow.scale.x = 1 - Math.max(0, pose.y) * .45;
       shadowMaterial.opacity = .75 - Math.max(0, pose.y) * .65;
       stars.forEach((star, i) => {
-        const life = (shotTime - 1.56 - i * .028) / 1.25;
-        star.visible = playing && life > 0 && life < 1;
+        const celebration = control.animation === 'celebrate' || control.animation === 'milestone';
+        const life = (shotTime - (celebration ? 1.56 : .45) - i * .028) / (celebration ? 1.25 : .65);
+        star.visible = playing && (celebration || (control.animation === 'saved' && i < 3)) && life > 0 && life < 1;
         if (!star.visible) return;
         const angle = Math.PI * (.12 + i * .76 / 6), radius = 1.12 + life * .75;
         star.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius - life * life * .7 + .05, .4);
         star.rotation.z = life * (i % 2 ? -1 : 1) * 3;
-        star.scale.setScalar(Math.sin(Math.PI * life) * (.7 + (i % 3) * .25));
+        star.scale.setScalar(Math.sin(Math.PI * life) * (.7 + (i % 3) * .25) * (control.animation === 'milestone' ? 1.2 : 1));
         star.material.opacity = 1 - life * life;
       });
       renderer.render(scene, camera);
