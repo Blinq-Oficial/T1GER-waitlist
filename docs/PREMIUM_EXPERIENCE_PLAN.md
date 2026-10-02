@@ -61,3 +61,6 @@ The current Web has a working learning loop and character, but its screen hierar
 - Browser/mobile push delivery remains unavailable pending provider configuration. Preferences sync; encouragement is explicitly unavailable. Founder payment stays paused.
 - The 15-lesson Web release remains the supported curriculum. Other authored domains need validated tools and Apply contracts before they can be represented as working Web paths.
 - Legal pages remain drafts pending the actual legal operator, valid full postal address and publication review. The draft data inventory now includes the newly added companion features.
+
+- Final live check reproduced a Firestore query-rule failure in the emulator: redundant map field/type guards prevented participant-constrained queries. Removing those guards preserves UID membership checks. Challenge and all three friendship queries now pass; cross-account document reads and unscoped collection reads still fail.
+- A real five-minute Focus session completed and saved in the isolated QA account, retaining 540 XP.

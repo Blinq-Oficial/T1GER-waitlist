@@ -67,14 +67,13 @@ service cloud.firestore {
 
     function isFriendshipParticipant(data) {
       return isAuthenticated()
-        && ((('userIds' in data) && data.userIds is list && request.auth.uid in data.userIds)
+        && ((request.auth.uid in data.userIds)
           || request.auth.uid == data.userId1
           || request.auth.uid == data.userId2);
     }
 
     function isChallengeParticipant(data) {
       return isAuthenticated()
-        && data.participantIds is list
         && request.auth.uid in data.participantIds;
     }
 

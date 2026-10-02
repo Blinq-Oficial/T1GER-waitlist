@@ -1,17 +1,24 @@
 const {initializeApp}=require('../../../apps/web/node_modules/firebase/app');
 const {getAuth,connectAuthEmulator,createUserWithEmailAndPassword,signOut}=require('../../../apps/web/node_modules/firebase/auth');
-const {getFirestore,connectFirestoreEmulator,setDoc,getDoc,getDocs,collection,doc,serverTimestamp}=require('../../../apps/web/node_modules/firebase/firestore');
+const {getFirestore,connectFirestoreEmulator,setDoc,getDoc,getDocs,collection,doc,serverTimestamp,query,where,orderBy,limit}=require('../../../apps/web/node_modules/firebase/firestore');
 const assert=require('node:assert/strict');
 (async()=>{const app=initializeApp({apiKey:'demo-key',projectId:'demo-t1ger-web',authDomain:'localhost'});const auth=getAuth(app);connectAuthEmulator(auth,'http://127.0.0.1:9099',{disableWarnings:true});const db=getFirestore(app);connectFirestoreEmulator(db,'127.0.0.1',8080);
 const first=(await createUserWithEmailAndPassword(auth,'owner-'+Date.now()+'@example.invalid','Emulator-only-123!')).user.uid;
 await setDoc(doc(db,'users',first,'blockedUsers','someone-else'),{blockedUid:'someone-else',createdAt:serverTimestamp()});
 assert.equal((await getDocs(collection(db,'users',first,'blockedUsers'))).size,1);
+for (const [label,q] of [['challenges',query(collection(db,'challenges'),where('participantIds','array-contains',first),orderBy('createdAt','desc'),limit(30))],['friend-array',query(collection(db,'friendships'),where('userIds','array-contains',first),limit(100))],['friend-left',query(collection(db,'friendships'),where('userId1','==',first),limit(100))],['friend-right',query(collection(db,'friendships'),where('userId2','==',first),limit(100))]]) { try { await getDocs(q); console.log(label+' query PASS'); } catch (e) { console.log(label+' query '+e.code); throw e; } } 
 await assert.rejects(()=>setDoc(doc(db,'users',first,'blockedUsers',first),{blockedUid:first,createdAt:serverTimestamp()}));
 await setDoc(doc(db,'reports','test-'+Date.now()),{reporterId:first,reportedUserId:'someone-else',reason:'spam',details:'Synthetic emulator-only report',createdAt:serverTimestamp()});
+await setDoc(doc(db,'challenges','private-challenge'),{senderId:first,receiverId:'someone-else',participantIds:[first,'someone-else'],senderName:'Owner',receiverName:'Other',durationDays:7,metric:'missions',stakeCoins:0,potCoins:0,status:'pending',startsAt:null,endsAt:null,senderScore:0,receiverScore:0,createdAt:serverTimestamp()});
+await setDoc(doc(db,'friendships','private-friendship'),{userIds:[first,'someone-else'],userId1:first,userId2:'someone-else',requesterId:first,addresseeId:'someone-else',status:'pending',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
 await signOut(auth);await createUserWithEmailAndPassword(auth,'other-'+Date.now()+'@example.invalid','Emulator-only-123!');
 await assert.rejects(()=>getDoc(doc(db,'users',first,'blockedUsers','someone-else')));
 await assert.rejects(()=>setDoc(doc(db,'users',first,'blockedUsers','another'),{blockedUid:'another',createdAt:serverTimestamp()}));
 await assert.rejects(()=>getDocs(collection(db,'reports')));
+await assert.rejects(()=>getDoc(doc(db,'challenges','private-challenge')));
+await assert.rejects(()=>getDoc(doc(db,'friendships','private-friendship')));
+await assert.rejects(()=>getDocs(collection(db,'challenges')));
+await assert.rejects(()=>getDocs(collection(db,'friendships')));
 await signOut(auth);await assert.rejects(()=>getDoc(doc(db,'users',first,'blockedUsers','someone-else')));
 console.log('PASS: owner safety read/write, self-block rejection, private reports, cross-account and anonymous denial.');process.exit(0);
 })().catch(error=>{console.error(error.code||error.message);process.exit(1);});
