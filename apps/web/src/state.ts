@@ -22,6 +22,17 @@ export interface Profile {
   level?: number;
   streak?: number;
   isPro?: boolean;
+  coins?: number;
+  unlockedAccessories?: string[];
+  equippedAccessories?: string[];
+  verifiedXP?: number;
+  weeklyXP?: number;
+  currentWeekId?: string;
+  leagueTier?: string;
+  photoURL?: string;
+  unlockedAchievements?: string[];
+  notificationPreferences?: Record<string, boolean>;
+  weeklyReportOptIn?: boolean;
   brainState?: BrainState;
 }
 
@@ -39,7 +50,8 @@ export interface Mission {
   submission?: { proofText?: string; createdAt?: number };
 }
 
-export const isComplete = (mission?: Mission) => mission?.status === 'verified' || mission?.status === 'completed';
+import { isComplete } from './product/webProgress';
+export { isComplete } from './product/webProgress';
 export const brainOf = (profile: Profile | null): BrainState => ({ ...DEFAULT_BRAIN_STATE, ...profile?.brainState, missionHistory: profile?.brainState?.missionHistory || [], fsrsCards: profile?.brainState?.fsrsCards || {} });
 
 export function explainError(cause: unknown, fallback: string): string {

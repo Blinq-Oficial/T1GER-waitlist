@@ -276,6 +276,28 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Safety controls: private to the account owner; reports cannot be read by clients.
+    match /reports/{reportId} {
+      allow read, update, delete: if false;
+      allow create: if isAuthenticated()
+        && request.resource.data.reporterId == request.auth.uid
+        && request.resource.data.reportedUserId is string
+        && request.resource.data.reportedUserId != request.auth.uid
+        && request.resource.data.reason in ['spam', 'harassment', 'inappropriate_content', 'offensive_language', 'impersonation', 'other']
+        && isValidString(request.resource.data.get('details', ''), 500)
+        && request.resource.data.keys().hasOnly(['reporterId', 'reportedUserId', 'reason', 'details', 'createdAt'])
+        && request.resource.data.createdAt == request.time;
+    }
+    match /users/{userId}/blockedUsers/{blockedUserId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && blockedUserId != userId
+        && request.resource.data.blockedUid == blockedUserId
+        && request.resource.data.keys().hasOnly(['blockedUid', 'createdAt'])
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isOwner(userId);
+      allow update: if false;
+    }
     match /users/{userId}/dailyQuestions/{questionId} {
       allow read, write: if isOwner(userId);
     }

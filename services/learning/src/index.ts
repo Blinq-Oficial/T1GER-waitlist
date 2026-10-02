@@ -1,10 +1,8 @@
-import { initializeApp } from 'firebase-admin/app';
-import { Timestamp, getFirestore } from 'firebase-admin/firestore';
+import { Timestamp } from 'firebase-admin/firestore';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { FIELD_MISSION_CATALOG } from './fieldMissionCatalog.js';
 
-initializeApp();
-const db = getFirestore();
+import { db } from './admin.js';
 
 const rewardSnapshot = (current: FirebaseFirestore.DocumentData) => ({
   xp: Number(current.xp) || 0, verifiedXP: Number(current.verifiedXP) || 0,
@@ -82,3 +80,6 @@ export const completeWebApplyMission = onCall({ region: 'us-central1', maxInstan
     return { status: 'COMPLETED', submissionId, rewardXP, alreadyRewarded: false, completionMode: 'self_reported', completedAt: now.toMillis(), ...rewardSnapshot(current), xp, coins, level, streak };
   });
 });
+
+export { askT1gerMentor, interactWithSquadActivity, updateWebCosmetic } from './companion.js';
+export { acceptDirectChallenge, countVerifiedChallengeMission, settleExpiredChallenges } from './challenges.js';

@@ -1,0 +1,17 @@
+const {initializeApp}=require('../../../apps/web/node_modules/firebase/app');
+const {getAuth,connectAuthEmulator,createUserWithEmailAndPassword,signOut}=require('../../../apps/web/node_modules/firebase/auth');
+const {getFirestore,connectFirestoreEmulator,setDoc,getDoc,getDocs,collection,doc,serverTimestamp}=require('../../../apps/web/node_modules/firebase/firestore');
+const assert=require('node:assert/strict');
+(async()=>{const app=initializeApp({apiKey:'demo-key',projectId:'demo-t1ger-web',authDomain:'localhost'});const auth=getAuth(app);connectAuthEmulator(auth,'http://127.0.0.1:9099',{disableWarnings:true});const db=getFirestore(app);connectFirestoreEmulator(db,'127.0.0.1',8080);
+const first=(await createUserWithEmailAndPassword(auth,'owner-'+Date.now()+'@example.invalid','Emulator-only-123!')).user.uid;
+await setDoc(doc(db,'users',first,'blockedUsers','someone-else'),{blockedUid:'someone-else',createdAt:serverTimestamp()});
+assert.equal((await getDocs(collection(db,'users',first,'blockedUsers'))).size,1);
+await assert.rejects(()=>setDoc(doc(db,'users',first,'blockedUsers',first),{blockedUid:first,createdAt:serverTimestamp()}));
+await setDoc(doc(db,'reports','test-'+Date.now()),{reporterId:first,reportedUserId:'someone-else',reason:'spam',details:'Synthetic emulator-only report',createdAt:serverTimestamp()});
+await signOut(auth);await createUserWithEmailAndPassword(auth,'other-'+Date.now()+'@example.invalid','Emulator-only-123!');
+await assert.rejects(()=>getDoc(doc(db,'users',first,'blockedUsers','someone-else')));
+await assert.rejects(()=>setDoc(doc(db,'users',first,'blockedUsers','another'),{blockedUid:'another',createdAt:serverTimestamp()}));
+await assert.rejects(()=>getDocs(collection(db,'reports')));
+await signOut(auth);await assert.rejects(()=>getDoc(doc(db,'users',first,'blockedUsers','someone-else')));
+console.log('PASS: owner safety read/write, self-block rejection, private reports, cross-account and anonymous denial.');process.exit(0);
+})().catch(error=>{console.error(error.code||error.message);process.exit(1);});

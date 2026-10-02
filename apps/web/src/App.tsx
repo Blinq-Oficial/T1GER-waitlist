@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState, type FormEvent } from 'react';
-import { ArrowRight, BookOpen, Brain, Compass, LogOut, Moon, Sparkles, Sun, Target, UserRound, Flame, Zap } from 'lucide-react';
+import { ArrowRight, BookOpen, Brain, Compass, LogOut, Moon, Sparkles, Sun, Target, Flame, Zap, MessageCircle, Users, Grid2X2 } from 'lucide-react';
 import { configured } from './firebase';
 import { brainOf, changeTrack, explainError, isComplete, leave, resetPassword, signIn, signInGoogle, signUp, useLearner, type Mission } from './state';
 import LegalPage, { legalDraft, legalContactEmail } from './Legal';
@@ -13,18 +13,25 @@ import type { SavedLearningArtifact } from './product/interactiveCurriculumTypes
 import { getApplyDesign } from './product/applyMissionDesign';
 import { appHref, appRoute } from './basePath';
 import Learn from './LearningHome';
-import { Tiger, DomainIcon } from './Visual';
+import { Tiger } from './Visual';
+import DomainArtwork from './DomainArtwork';
+import { appliedLessonIds } from './product/webProgress';
+const Coach = lazy(() => import('./Coach'));
+const Community = lazy(() => import('./Community'));
+const CompanionTools = lazy(() => import('./CompanionTools'));
 const Lesson = lazy(() => import('./Lesson'));
 const Review = lazy(() => import('./Review'));
 const MascotStudy = lazy(() => import('./MascotStudy'));
 
-type Destination = 'learn' | 'discover' | 'apply' | 'master' | 'profile';
+type Destination = 'learn' | 'discover' | 'apply' | 'master' | 'profile' | 'coach' | 'community' | 'more' | 'focus' | 'library' | 'progress' | 'settings' | 'companion';
 const links: { id: Destination; label: string; icon: typeof BookOpen; purpose: string }[] = [
   { id: 'learn', label: 'Learn', icon: BookOpen, purpose: 'Your next lesson' },
   { id: 'discover', label: 'Discover', icon: Compass, purpose: 'Explore paths' },
   { id: 'apply', label: 'Apply', icon: Target, purpose: 'Put ideas to work' },
   { id: 'master', label: 'Master', icon: Brain, purpose: 'Keep it with you' },
-  { id: 'profile', label: 'Profile', icon: UserRound, purpose: 'Your account' },
+  { id: 'coach', label: 'AI mentor', icon: MessageCircle, purpose: 'Your learning companion' },
+  { id: 'community', label: 'Community', icon: Users, purpose: 'Learn alongside others' },
+  { id: 'more', label: 'More', icon: Grid2X2, purpose: 'Your learning space' },
 ];
 const paths = [getInteractiveTrack('smart-money'), getInteractiveTrack('ai-automation'), getInteractiveTrack('mindset-stoic')];
 const trackFor = (id?: string) => id === 'ai' ? paths[1] : id === 'mindset' ? paths[2] : paths[0];
@@ -75,7 +82,7 @@ function AuthScreen({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () 
 
 function Discover({ active, select }: { active: InteractiveTrack; select: (track: InteractiveTrack) => Promise<void> }) {
   const [busy, setBusy] = useState(''); const [error, setError] = useState('');
-  return <div className="page"><div className="page-top"><p className="eyebrow">DISCOVER</p><h1>Follow a better question.</h1><p className="muted">Three ways to see the world differently. Choose a path; keep the progress you already made.</p></div><div className="discover-list">{paths.map(track => <article key={track.id} className="discover-item"><DomainIcon domain={track.id}/><div><p className="eyebrow">{`${track.lessons.length} LESSONS · INTERACTIVE PATH`}</p><h2>{track.title.en}</h2><p>{track.promise.en}</p><span>{track.outcome.en}</span></div>{<button className={active.id === track.id ? 'button subtle' : 'button primary'} disabled={!!busy || active.id === track.id} onClick={async () => { setBusy(track.id); setError(''); try { await select(track); } catch (cause) { setError(explainError(cause, 'Could not switch paths.')); } finally { setBusy(''); } }}>{active.id === track.id ? 'Current path' : busy === track.id ? 'Switching…' : 'Choose path'}{active.id !== track.id && <ArrowRight size={17}/>}</button>}</article>)}</div>{error && <p role="alert" className="error">{error}</p>}</div>;
+  return <div className="page"><div className="page-top"><p className="eyebrow">DISCOVER</p><h1>Follow your curiosity.</h1><p className="muted">Three paths. A new way to see the world. Start with what draws you in.</p></div><div className="discover-list">{paths.map(track => <article key={track.id} className="discover-item"><DomainArtwork domain={track.id}/><div><p className="eyebrow">{`${track.lessons.length} LESSONS · INTERACTIVE PATH`}</p><h2>{track.title.en}</h2><p>{track.promise.en}</p><span>{track.outcome.en}</span></div>{<button className={active.id === track.id ? 'button subtle' : 'button primary'} disabled={!!busy || active.id === track.id} onClick={async () => { setBusy(track.id); setError(''); try { await select(track); } catch (cause) { setError(explainError(cause, 'Could not switch paths.')); } finally { setBusy(''); } }}>{active.id === track.id ? 'Current path' : busy === track.id ? 'Switching…' : 'Choose path'}{active.id !== track.id && <ArrowRight size={17}/>}</button>}</article>)}</div>{error && <p role="alert" className="error">{error}</p>}</div>;
 }
 
 function Apply({ missions, artifacts = [], openLesson, go }: { missions: Mission[]; artifacts?: SavedLearningArtifact[]; openLesson: (id: string) => void; go: (path: string) => void }) {
@@ -98,7 +105,7 @@ function Apply({ missions, artifacts = [], openLesson, go }: { missions: Mission
 }
 
 function ProfilePage({ profile, missions, logout, preview = false }: { missions: Mission[]; profile: NonNullable<ReturnType<typeof useLearner>['profile']>; logout: () => void; preview?: boolean }) {
-  const brain = brainOf(profile); const completed = new Set(brain.missionHistory.filter(m => m.completed && m.missionId.startsWith('field-learn-')).map(m => m.missionId));
+  const brain = brainOf(profile); const completed = appliedLessonIds(brain, missions);
 
   const [exportData, setExportData] = useState('');
   function exportLearning() {
@@ -114,11 +121,13 @@ export default function App() {
   const preview = import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === '1';
   const learner = useLearner(preview); const [parts, setParts] = useState(route); const [demoOnboarded, setDemoOnboarded] = useState(false);
   const [online, setOnline] = useState(navigator.onLine);
+  useEffect(() => { const invited = new URLSearchParams(window.location.search).get('invite'); if (invited && /^[A-Za-z0-9_-]{1,128}$/.test(invited)) { try { sessionStorage.setItem('t1ger-pending-invite', invited); } catch { /* The current URL still carries the invitation. */ } } }, []);
   useEffect(() => { const update = () => setParts(route()); window.addEventListener('popstate', update); return () => window.removeEventListener('popstate', update); }, []);
   useEffect(() => { window.scrollTo(0, 0); }, [learner.user?.uid, learner.profile?.onboardingComplete]);
   useEffect(() => { const yes = () => setOnline(true), no = () => setOnline(false); window.addEventListener('online', yes); window.addEventListener('offline', no); return () => { window.removeEventListener('online', yes); window.removeEventListener('offline', no); }; }, []);
   function go(path: string) { const href = appHref(path); window.history.pushState({}, '', preview ? `${href}?preview=1` : href); setParts(route()); window.scrollTo(0, 0); }
-  const destination: Destination = links.some(link => link.id === parts[0]) ? parts[0] as Destination : 'learn';
+  const destination: Destination = [...links.map(link => link.id), 'profile', 'focus', 'library', 'progress', 'settings', 'companion'].includes(parts[0]) ? parts[0] as Destination : 'learn';
+  const activeNav = ['profile', 'focus', 'library', 'progress', 'settings', 'companion'].includes(destination) ? 'more' : destination;
   if (parts[0] === 'mascot') return <Suspense fallback={<LoadingCanvas label="Loading mascot"/>}><MascotStudy/></Suspense>;
   if (parts[0] === 'privacy' || parts[0] === 'terms') return <LegalPage kind={parts[0]} themeAction={<ThemeToggle theme={theme} onToggle={toggleTheme}/>}/>;
   if (!configured && !preview) return <AuthScreen theme={theme} onToggleTheme={toggleTheme}/>;
@@ -138,9 +147,9 @@ export default function App() {
     if (node?.state === 'locked' || node?.state === 'review') return <div className="loading-screen"><p className="eyebrow">YOUR PATH, IN ORDER</p><h1>{node.state === 'review' ? 'Refresh the idea first.' : 'Build on the previous idea.'}</h1><p>{node.state === 'review' ? 'A review is due before this next lesson.' : 'Complete the earlier lessons and their Apply steps before opening this one.'}</p><button className="button primary" onClick={() => go(node.state === 'review' ? '/master' : '/learn')}>{node.state === 'review' ? 'Go to Master' : 'Return to Learn'}</button></div>;
   }
   if (lesson) return <Suspense fallback={<LoadingCanvas label="Opening lesson" mode="lesson"/>}><Lesson key={lesson.id} lesson={lesson} uid={learner.user.uid} brain={brain} missions={learner.missions} artifacts={learner.profile.learningArtifacts} close={() => go('/learn')} preview={preview}/></Suspense>;
-  return <div className="app-shell"><aside id="main-navigation" className="sidebar"><div className="brand"><span className="brand-mark">1</span><span>T1GER</span></div><div className="sidebar-middle"><p className="rail-caption">YOUR SPACE</p><nav aria-label="Main navigation">{links.map(link => { const Icon = link.icon; return <a href={appHref(`/${link.id}`)} key={link.id} className={destination === link.id ? 'active' : ''} onClick={e => { e.preventDefault(); go(`/${link.id}`); }} aria-current={destination === link.id ? 'page' : undefined}><Icon size={19}/><span>{link.label}</span></a>; })}</nav></div><div className="sidebar-bottom"><Sparkles size={17}/><span>Learn it. Apply it. Master it.</span></div></aside>
+  return <div className="app-shell"><aside id="main-navigation" className="sidebar"><div className="brand"><span className="brand-mark">1</span><span>T1GER</span></div><div className="sidebar-middle"><p className="rail-caption">YOUR SPACE</p><nav aria-label="Main navigation">{links.map(link => { const Icon = link.icon; return <a href={appHref(`/${link.id}`)} key={link.id} className={(activeNav === link.id ? 'active ' : '') + (link.id === 'coach' || link.id === 'community' ? 'secondary-nav' : '')} onClick={e => { e.preventDefault(); go(`/${link.id}`); }} aria-current={activeNav === link.id ? 'page' : undefined}><Icon size={19}/><span>{link.label}</span></a>; })}</nav></div><div className="sidebar-bottom"><Sparkles size={17}/><span>Learn it. Apply it. Master it.</span></div></aside>
     <div className="workspace"><header className="topbar"><span className="topbar-location">{links.find(link => link.id === destination)?.purpose}</span><span className="topbar-spacer"/>{preview && <span className="preview-label">DESIGN PREVIEW</span>}<div className="account-stats"><span title="Day streak"><Flame size={20} aria-hidden="true"/>{learner.profile.streak || 0}<span className="sr-only"> day streak</span></span><span title="Experience points"><Zap size={20} aria-hidden="true"/>{learner.profile.xp || 0} XP</span></div><ThemeToggle theme={theme} onToggle={toggleTheme}/><button className="topbar-avatar" onClick={() => go('/profile')} aria-label="Open profile">{(learner.profile.displayName || 'T').charAt(0).toUpperCase()}</button></header>
       {!online && <div className="offline-banner" role="status">You are offline. Reconnect before saving learning progress.</div>}
-      <main>{destination === 'learn' ? <Learn track={track} brain={brain} missions={learner.missions} dailyTime={learner.profile.dailyTime || 10} dueCount={snapshot.due.length} openLesson={id => go(`/lesson/${id}`)} go={go}/> : destination === 'discover' ? <Discover active={track} select={async t => { if (preview) learner.setProfile({ ...learner.profile!, primaryTrack: t.legacyTrackId, brainState: { ...brain, currentTrackId: t.legacyTrackId } }); else await changeTrack(learner.user!.uid, t.legacyTrackId); go('/learn'); }}/> : destination === 'apply' ? <Apply artifacts={learner.profile.learningArtifacts} missions={learner.missions} openLesson={id => go(`/lesson/${id}`)} go={go}/> : destination === 'master' ? <Suspense fallback={<LoadingCanvas label="Loading reviews"/>}><Review uid={learner.user.uid} snapshot={snapshot} onLearn={() => go('/learn')} preview={preview}/></Suspense> : <ProfilePage missions={learner.missions} profile={learner.profile} logout={() => void leave()} preview={preview}/>}</main>
+      <main>{destination === 'learn' ? <Learn track={track} brain={brain} missions={learner.missions} dailyTime={learner.profile.dailyTime || 10} dueCount={snapshot.due.length} openLesson={id => go(`/lesson/${id}`)} go={go}/> : destination === 'discover' ? <Discover active={track} select={async t => { if (preview) learner.setProfile({ ...learner.profile!, primaryTrack: t.legacyTrackId, brainState: { ...brain, currentTrackId: t.legacyTrackId } }); else await changeTrack(learner.user!.uid, t.legacyTrackId); go('/learn'); }}/> : destination === 'apply' ? <Apply artifacts={learner.profile.learningArtifacts} missions={learner.missions} openLesson={id => go(`/lesson/${id}`)} go={go}/> : destination === 'master' ? <Suspense fallback={<LoadingCanvas label="Loading reviews"/>}><Review uid={learner.user.uid} snapshot={snapshot} onLearn={() => go('/learn')} preview={preview}/></Suspense> : destination === 'coach' ? <Suspense fallback={<LoadingCanvas label="Opening your mentor"/>}><Coach key={learner.user.uid} uid={learner.user.uid} pathTitle={track.title.en} preview={preview} go={go}/></Suspense> : destination === 'community' ? <Suspense fallback={<LoadingCanvas label="Loading community"/>}><Community key={learner.user.uid} profile={learner.profile} preview={preview}/></Suspense> : destination !== 'profile' ? <Suspense fallback={<LoadingCanvas label="Opening your learning tools"/>}><CompanionTools key={destination + learner.user.uid} destination={destination} profile={learner.profile} missions={learner.missions} paths={paths} preview={preview} go={go}/></Suspense> : <ProfilePage missions={learner.missions} profile={learner.profile} logout={() => void leave()} preview={preview}/>}</main>
     </div></div>;
 }
