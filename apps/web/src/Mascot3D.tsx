@@ -134,7 +134,10 @@ export default function Mascot3D({ celebrate = false, animation = celebrate ? 'c
     const observer = new ResizeObserver(() => {
       const width = element.clientWidth, height = element.clientHeight;
       if (!width || !height) return;
-      renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix(); refresh();
+      renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix();
+      // Resizing clears the canvas. Keep one valid frame even in a background tab.
+      if (model && !disposed) renderer.render(scene, camera);
+      refresh();
     }); observer.observe(element);
     const intersection = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; refresh(); }); intersection.observe(element);
     document.addEventListener('visibilitychange', refresh);
@@ -153,7 +156,8 @@ export default function Mascot3D({ celebrate = false, animation = celebrate ? 'c
       });
       expressions = Object.fromEntries(['leftEye', 'rightEye', 'leftBrow', 'rightBrow', 'leftEar', 'rightEar', 'Smile'].map(name => [name === 'Smile' ? 'smile' : name, model!.getObjectByName(name)]));
       Object.values(expressions).forEach(node => { if (node) base.set(node, node.rotation.clone()); });
-      scene.add(model); setReady(true); controls.current.onReady?.(); refresh();
+      scene.add(model); renderer.render(scene, camera);
+      setReady(true); controls.current.onReady?.(); refresh();
     }).catch(() => { if (!disposed) { setFailed(true); controls.current.onUnavailable?.(); } });
     return () => {
       disposed = true; cancelAnimationFrame(frameId); observer.disconnect(); intersection.disconnect();
