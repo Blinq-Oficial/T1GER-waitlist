@@ -232,6 +232,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 @media (prefers-reduced-motion:no-preference) { .page { animation:product-enter .24s ease-out; } .domain-art { transition:transform .3s ease; } .discover-item:hover .domain-art { transform:scale(1.035); } }
 @media (max-width:1150px) { .page { padding:48px 32px 100px; } .topbar { padding:0 32px; } .learning-layout { gap:28px; grid-template-columns:minmax(0,1fr) 240px; } .daily-hero { padding:32px; } .daily-character .tiger-companion { width:230px; } .feature-grid,.friends-grid,.collection-grid { grid-template-columns:repeat(2,1fr); } .coach-layout { gap:32px; grid-template-columns:minmax(0,1fr) 200px; } .prompt-grid { grid-template-columns:1fr; } .prompt-grid button { flex-direction:row; align-items:center; min-height:70px; } .prompt-grid button>svg:last-child { margin-left:auto; align-self:center; margin-top:0; } }
 @media (max-width:800px) { .page { padding:36px 24px 110px; } .topbar { padding:0 24px; } .learning-layout { grid-template-columns:1fr; } .learning-side { position:static; grid-template-columns:1fr 1fr; gap:24px; } .mentor-entry { grid-column:1/-1; } .discover-list { grid-template-columns:1fr; } .discover-item { display:grid; grid-template-columns:150px minmax(0,1fr); padding:24px; column-gap:24px; } .domain-art { width:150px; height:180px; margin:0; grid-row:1/3; border-radius:20px; } .discover-item>div { margin:0; } .discover-item .button { grid-column:2; margin-top:20px; } .discover-item h2 { margin-top:8px; } .coach-layout { grid-template-columns:1fr; } .coach-sidebar { position:static; display:none; } .badge-grid { grid-template-columns:repeat(2,1fr); } .reflection-card { gap:24px; padding:28px; } .community-intro { align-items:flex-start; flex-direction:column; } }
+@media (max-width:900px) {
+  .sidebar nav .secondary-nav { display:none; }
+  .sidebar nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
+  .sidebar nav:has(.secondary-nav.active) a[href$='/more'] { color:var(--ink); background:var(--tint); }
+}
 @media (max-width:680px) {
   .sidebar nav .secondary-nav { display:none; } .sidebar nav { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); width:100%; gap:0; }
   .sidebar { background:var(--glass); padding:8px 10px calc(8px + env(safe-area-inset-bottom)); }
