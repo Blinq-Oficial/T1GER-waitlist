@@ -273,6 +273,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
 
 /* A question should be reachable before the first scroll. */
+.app-recovery { max-width:560px; margin:10vh auto; padding:32px; }
+.app-recovery h1 { font-size:40px; line-height:1.1; margin-top:32px; }
+.app-recovery p { color:var(--soft); font-size:18px; margin:24px 0 32px; }
 .coach-page .page-top { margin-bottom:32px; }
 .coach-welcome { display:grid; grid-template-columns:120px 1fr; column-gap:24px; text-align:left; padding:0 0 24px; }
 .coach-welcome > .tiger-companion { grid-row:1 / 3; width:120px; height:120px; margin:0; }

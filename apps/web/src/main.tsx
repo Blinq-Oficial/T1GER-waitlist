@@ -12,5 +12,6 @@ import './experience.css';
 import './design-system.css';
 import './premium.css';
 import App from './App';
+import AppBoundary from './AppBoundary';
 
-createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
+createRoot(document.getElementById('root')!).render(<React.StrictMode><AppBoundary><App /></AppBoundary></React.StrictMode>);
