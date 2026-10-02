@@ -11,6 +11,7 @@ import { cashPurchasingPower, educationBriefs } from './education';
 import { completeApply, explainError, isComplete, prepareApply, readArtifact, recordReview, type Mission } from './state';
 import CurriculumLesson from './CurriculumLesson';
 import Challenge from './Challenge';
+import GoldLesson from './GoldLesson';
 
 type Stage = 'hook' | 'learn' | 'interact' | 'apply' | 'master' | 'reward';
 const stages: Stage[] = ['hook', 'learn', 'interact', 'apply', 'master', 'reward'];
@@ -46,6 +47,7 @@ function GrowthChart({ monthly, years, rate, cash, cashDecline = false }: { mont
 
 type LessonProps = { lesson: AtomicLesson; uid: string; brain: BrainState; missions: Mission[]; artifacts?: SavedLearningArtifact[]; close: () => void; preview?: boolean };
 export default function Lesson(props: LessonProps) {
+  if (props.lesson.id === 'learn-money-02') return <GoldLesson {...props}/>;
   return ['learn-money-01', 'learn-money-02'].includes(props.lesson.id) ? <MoneyLesson {...props}/> : <CurriculumLesson {...props} preview={props.preview || false}/>;
 }
 function MoneyLesson({ lesson, uid, brain, missions, artifacts = [], close, preview = false }: LessonProps) {

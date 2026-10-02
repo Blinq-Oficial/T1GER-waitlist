@@ -38,6 +38,23 @@ try {
   const second = (await getDoc(profile)).data();
   assert.equal(second.xp, first.xp, 'Duplicate completion cannot grant extra XP');
   assert.equal(second.streak, first.streak);
+  // Gold Lesson V2 keeps the existing lesson/mission identities and reward contract.
+  const goldId = 'field-learn-money-02';
+  const goldMission = doc(db, 'missions', `${user.uid}_${goldId}`);
+  await setDoc(goldMission, { missionId: goldId, userId: user.uid, lessonId: 'learn-money-02', status: 'ready', learningScore: 100 });
+  const goldArtifact = { lessonId: 'learn-money-02', trackId: 'smart-money', title: 'My compounding learning rule', summary: 'Fictional $100 monthly, 20 years, 5% assumption. Compare contributions, timing and uncertain rates.', values: { monthly:100, years:20, rate:5, learningRule:'Compare timing, contributions and assumptions.' }, createdAt:Date.now() };
+  const evidence = { version:2, firstExposedAt:Date.now(), events:[{id:'local-gold-prediction',name:'prediction_answer',interactionId:'prediction',at:Date.now(),answer:'equal',assessment:'self_reported'}] };
+  await updateDoc(profile, { learningArtifacts:[goldArtifact,artifact], learningConcepts:{'investing.compounding-time':evidence} });
+  const goldPayload = {...payload,lessonId:'learn-money-02',missionId:goldId,reflection:goldArtifact.summary};
+  await complete(goldPayload);
+  const goldSaved = (await getDoc(profile)).data();
+  assert.equal(goldSaved.xp,second.xp+180,'Gold uses existing 130 lesson + 50 Apply reward');
+  assert.equal(goldSaved.streak,second.streak,'Same-day Gold cannot increment the streak twice');
+  assert.equal(goldSaved.learningArtifacts[0].lessonId,'learn-money-02');
+  assert.deepEqual(goldSaved.learningConcepts['investing.compounding-time'],evidence,'Concept evidence survives canonical Apply completion');
+  await complete(goldPayload);
+  assert.equal((await getDoc(profile)).data().xp,goldSaved.xp,'Gold retry cannot grant duplicate XP');
+  assert.equal((await getDoc(goldMission)).data().status,'completed');
   await assert.rejects(complete({ ...payload, reflection: 'short' }), { code: 'functions/invalid-argument' });
   await assert.rejects(complete({ ...payload, lessonId: 'learn-mindset-01', missionId: 'field-learn-mindset-01' }), { code: 'functions/invalid-argument' });
   await assert.rejects(complete({ ...payload, lessonId: 'learn-psychology-v1-02', missionId: 'field-learn-psychology-v1-02' }), { code: 'functions/failed-precondition' });
@@ -47,5 +64,5 @@ try {
   assert.ok(psychReward > second.xp);
   await complete(psychology);
   assert.equal((await getDoc(profile)).data().xp, psychReward);
-  console.log('PASS: empty owner lookup, cloud artifacts, owner isolation, server-only rewards, prerequisite gate, idempotent completion. Local emulators only.');
+  console.log('PASS: owner isolation, server-only rewards, prerequisite gate, idempotent completion, Gold artifact/evidence round trip and original XP/streak contract. Local emulators only.');
 } finally { await deleteApp(app); }
