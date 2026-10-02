@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { animationDuration, animationPose, blendPose, celebrationPose, CELEBRATION_SECONDS, type MascotAnimation } from './mascotMotion';
+import { animationDuration, animationPose, blendPose, celebrationPose, completionAnimation, CELEBRATION_SECONDS, type MascotAnimation } from './mascotMotion';
 
 test('celebration anticipates, lifts, lands and settles without discontinuities', () => {
   expect(celebrationPose(.52).y).toBeLessThan(0);
@@ -50,4 +50,11 @@ test('interrupted reactions blend from the visible pose without jumping', () => 
   const midpoint = blendPose(from, to, .5);
   for (const key of Object.keys(to) as (keyof typeof to)[]) expect(midpoint[key]).toBeCloseTo((from[key] + to[key]) / 2);
   expect(animationPose('saved', .55).eyeRight).toBeLessThan(animationPose('saved', .55).eye);
+});
+
+test('revisiting an applied lesson refreshes memory rather than celebrating a new milestone', () => {
+  expect(completionAnimation(false, 1)).toBe('celebrate');
+  expect(completionAnimation(false, 5)).toBe('milestone');
+  expect(completionAnimation(true, 1)).toBe('recall');
+  expect(completionAnimation(true, 5)).toBe('recall');
 });

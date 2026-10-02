@@ -241,6 +241,18 @@ textarea::placeholder,input::placeholder { color:var(--quiet); }
 .lesson-feedback strong { font-size:17px; }
 .challenge-footer { margin-top:28px; }
 .challenge-footer>.button { margin-top:20px; width:100%; }
+.challenge-response { display:flex; align-items:center; gap:16px; min-height:132px; padding:14px 18px; border:1px solid var(--line); border-radius:20px; background:var(--raised); }
+.challenge-response .tiger-companion { width:140px; margin:0; }
+.challenge-response>div { min-width:0; }
+.challenge-response strong { font-size:17px; line-height:1.4; }
+.challenge-response p { color:var(--soft); font-size:14px; line-height:1.5; margin:7px 0; }
+.challenge-response .button { margin-top:8px; }
+.challenge-footer.is-correct .challenge-response { border-color:#66b48d; background:#72c99c12; }
+.challenge-footer.is-incorrect .challenge-response { border-color:#d77b7b; background:#d77b7b0d; }
+.tool-companion { padding-top:12px; border-top:1px solid var(--line); margin:16px 0 8px; }
+.tool-companion .tiger-companion { width:120px; }
+.master-stage .companion-cue,.review-session-body .companion-cue { margin:12px 0; }
+@media(max-width:600px) { .challenge-response { gap:10px; padding:12px; } .challenge-response .tiger-companion { width:96px; } .challenge-response strong { font-size:15px; } .challenge-response p { font-size:13px; } }
 .lesson-focus>.button { width:100%; margin-top:28px; }
 .prediction-text { color:var(--soft); }
 .prediction-text textarea { margin-top:8px; }
@@ -264,7 +276,11 @@ textarea::placeholder,input::placeholder { color:var(--quiet); }
 .real-action p:not(.eyebrow),.real-action li { color:var(--soft); }
 .real-action small { color:var(--quiet); }
 .reward-stage { max-width:640px; text-align:center; margin:45px auto 75px; }
-.reward-stage .tiger-companion { width:180px; margin:0 auto 20px; }
+.reward-stage .tiger-companion { width:min(300px,70vw); margin:0 auto 8px; }
+.reward-stage>.button { margin-top:16px; }
+.reward-details { margin-top:24px; text-align:left; }
+.reward-details>summary { color:var(--soft); font-size:14px; cursor:pointer; padding:12px; text-align:center; }
+.reward-details .reward-summary { margin:12px 0 0; }
 .reward-symbol { margin:0 auto 26px; background:var(--tint); border-color:var(--accent); color:var(--accent); }
 .reward-stage h1 { font-size:42px; line-height:1.14; }
 .reward-stage>p:not(.eyebrow) { color:var(--soft); font-size:16px; }

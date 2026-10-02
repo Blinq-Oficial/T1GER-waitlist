@@ -4,6 +4,11 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { animationDuration, animationPose, blendPose, type MascotAnimation } from './mascotMotion';
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}mascot/${name}`;
+// Keep one CPU template for stage changes; each canvas owns and disposes its GPU copies.
+let modelTemplate: Promise<THREE.Group> | undefined;
+function loadModel() {
+  return modelTemplate ??= new GLTFLoader().loadAsync(asset('t1ger-head-v1.glb')).then(gltf => gltf.scene).catch(error => { modelTemplate = undefined; throw error; });
+}
 
 export default function Mascot3D({ celebrate = false, animation = celebrate ? 'celebrate' : 'idle', replay = 0, slow = false, onReady, onComplete, onUnavailable }: {
   celebrate?: boolean; animation?: MascotAnimation; replay?: number; slow?: boolean; onReady?: () => void; onComplete?: () => void; onUnavailable?: () => void;
@@ -137,13 +142,19 @@ export default function Mascot3D({ celebrate = false, animation = celebrate ? 'c
     const disposeModel = (object: THREE.Object3D) => object.traverse(node => {
       if (node instanceof THREE.Mesh) { node.geometry.dispose(); for (const material of Array.isArray(node.material) ? node.material : [node.material]) material.dispose(); }
     });
-    new GLTFLoader().load(asset('t1ger-head-v1.glb'), gltf => {
-      if (disposed) { disposeModel(gltf.scene); return; }
-      model = gltf.scene;
+    void loadModel().then(template => {
+      if (disposed) return;
+      model = template.clone(true);
+      model.traverse(node => {
+        if (node instanceof THREE.Mesh) {
+          node.geometry = node.geometry.clone();
+          node.material = Array.isArray(node.material) ? node.material.map(material => material.clone()) : node.material.clone();
+        }
+      });
       expressions = Object.fromEntries(['leftEye', 'rightEye', 'leftBrow', 'rightBrow', 'leftEar', 'rightEar', 'Smile'].map(name => [name === 'Smile' ? 'smile' : name, model!.getObjectByName(name)]));
       Object.values(expressions).forEach(node => { if (node) base.set(node, node.rotation.clone()); });
       scene.add(model); setReady(true); controls.current.onReady?.(); refresh();
-    }, undefined, () => { if (!disposed) { setFailed(true); controls.current.onUnavailable?.(); } });
+    }).catch(() => { if (!disposed) { setFailed(true); controls.current.onUnavailable?.(); } });
     return () => {
       disposed = true; cancelAnimationFrame(frameId); observer.disconnect(); intersection.disconnect();
       refreshFrame.current = () => {};

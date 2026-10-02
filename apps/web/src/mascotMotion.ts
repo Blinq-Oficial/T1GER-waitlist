@@ -17,6 +17,7 @@ const celebrationKeys = [
 ];
 
 export type MascotAnimation = 'idle' | 'welcome' | 'thinking' | 'correct' | 'retry' | 'saved' | 'recall' | 'celebrate' | 'milestone';
+export const completionAnimation = (alreadyApplied: boolean, lessonOrder: number): MascotAnimation => alreadyApplied ? 'recall' : lessonOrder === 5 ? 'milestone' : 'celebrate';
 const neutral = [0, 0, 1, 1, 0, 0, 0, 1, 0];
 const clips: Record<MascotAnimation, number[][]> = {
   idle: [neutral, [.5, 0, 1, 1, 0, 0, 0, 1, 0]],
