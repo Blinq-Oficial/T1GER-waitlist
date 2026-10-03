@@ -19,17 +19,17 @@ test('disabled release blocks requests; enabled release requires explicit adult 
   }
 });
 
-test('pins commercial Nemotron to DeepInfra with privacy and price caps and bounded history; returns answer without reasoning', async () => {
+test('pins free Qwen to ModelRun with zero price ceilings, privacy filters and bounded history; returns answer without reasoning', async () => {
   const original = globalThis.fetch;
   try {
     globalThis.fetch = async (url, options) => {
       assert.equal(url, 'https://openrouter.ai/api/v1/chat/completions');
       const body = JSON.parse(options.body);
       assert.equal(body.model, mentorModel);
-      assert.ok(!body.model.endsWith(':free'));
+      assert.equal(body.model, 'qwen/qwen3.8-27b:free');
       assert.equal(body.models, undefined);
-      assert.deepEqual(body.provider, { only: ['deepinfra'], allow_fallbacks: false, require_parameters: true,
-        data_collection: 'deny', zdr: true, max_price: { prompt: 0.5, completion: 2.2 } });
+      assert.deepEqual(body.provider, { only: ['modelrun'], allow_fallbacks: false, require_parameters: true,
+        data_collection: 'deny', zdr: true, max_price: { prompt: 0, completion: 0 } });
       assert.equal(body.messages[0].role, 'system');
       assert.match(body.messages[0].content, /Spanish/);
       assert.ok(body.messages.length <= 10);

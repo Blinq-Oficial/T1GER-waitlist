@@ -23,4 +23,4 @@ The contract checks owner isolation, client reward/completion rejection, prerequ
 
 ## AI mentor
 
-`askT1gerMentor` uses the server-only `OPENROUTER_API_KEY` secret and commercial NVIDIA Nemotron 3 Ultra pinned to DeepInfra. Keep `T1GER_MENTOR_READY` disabled until the paid route, adult disclosure and authenticated conversation checks pass. See [provider configuration and current blocker](../../docs/OPENROUTER_MENTOR.md). The free NVIDIA trial endpoint is not used for public learners.
+`askT1gerMentor` uses the server-only `OPENROUTER_API_KEY` secret and free Qwen3.8 27B pinned to ModelRun through OpenRouter. Both input/output price ceilings are zero; paid fallback is disabled. Set server `T1GER_MENTOR_READY=true` only after the free route, adult disclosure and authenticated conversation checks pass. Set Web `VITE_MENTOR_AVAILABLE=false` to pause its interface. See [provider configuration and evaluation](../../docs/OPENROUTER_MENTOR.md). The free NVIDIA trial endpoint is not used for public learners.
