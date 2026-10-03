@@ -24,6 +24,22 @@ try {
   assert.ok(evidence.events.some(event=>event.name==='misconception_detected' && event.misconceptionId==='linear-growth'));
   assert.ok(evidence.events.some(event=>event.name==='transfer_result' && event.correct));
   assert.ok(evidence.events.some(event=>event.name==='retrieval_result'));
+  assert.ok(evidence.events.some(event=>event.name==='prediction_answer' && event.answer.includes('unsure')));
+  assert.deepEqual(evidence.events.filter(event=>event.name==='calculation_result' && event.interactionId==='worked').map(event=>event.correct),[false,true]);
+  assert.ok(evidence.events.some(event=>event.name==='manipulation_prediction' && event.answer==='decrease'));
+  assert.ok(evidence.events.some(event=>event.name==='manipulation_interpretation' && event.correct));
+  assert.deepEqual(evidence.events.filter(event=>event.name==='apply_rule').map(event=>event.correct),[false,true]);
+  assert.ok(evidence.events.some(event=>event.name==='retrieval_calculation' && event.correct));
+  assert.ok(evidence.events.some(event=>event.name==='retrieval_mechanism' && !event.correct));
+  const firstRecall=evidence.events.find(event=>event.name==='retrieval_result');
+  assert.equal(firstRecall.rating,40);
+  assert.equal(firstRecall.resultCorrect,true);
+  assert.equal(firstRecall.mechanismCorrect,false);
+  const artifact=profile.learningArtifacts.find(item=>item.lessonId==='learn-money-02');
+  assert.equal(artifact.values.ruleContribution,'increase');
+  assert.equal(artifact.values.ruleBoundary,'compare');
+  assert.equal(artifact.values.optionalReflection,'');
+  assert.ok(artifact.values.learningRule.includes('does not automatically beat every'));
   assert.ok(card.reps>=2);
   console.log(JSON.stringify({result:'PASS',xp:profile.xp,streak:profile.streak,practiceScore:history.score,events:evidence.events.length,retrievals:evidence.events.filter(event=>event.name==='retrieval_result').map(event=>({variant:event.interactionId,correct:event.correct,rating:event.rating})),fsrsReps:card.reps,due:card.due}));
 } finally { await deleteApp(app); }

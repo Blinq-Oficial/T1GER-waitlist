@@ -19,7 +19,7 @@ describe('Gold concept engine', () => {
   it('gates participation and checks the matching task, rather than an arbitrary slider touch', () => {
     const draft = newGoldDraft();
     expect(canAdvanceStep(draft)).toBe(false);
-    expect(canAdvanceStep(addLearningEvent(draft, { name: 'prediction_answer', interactionId: 'prediction', answer: 'equal' }))).toBe(true);
+    expect(canAdvanceStep(addLearningEvent({ ...draft, inputs: { ...draft.inputs, prediction: 'equal', predictionBasis: 'periods' } }, { name: 'prediction_answer', interactionId: 'prediction', answer: 'equal' }))).toBe(true);
     expect(canAdvanceStep({ ...draft, step: 3 })).toBe(false);
     expect(canAdvanceStep(addLearningEvent({ ...draft, step: 3 }, { name: 'interaction_attempt', interactionId: 'worked', correct: false }))).toBe(false);
     expect(canAdvanceStep(addLearningEvent({ ...draft, step: 3 }, { name: 'interaction_attempt', interactionId: 'worked', correct: true }))).toBe(true);

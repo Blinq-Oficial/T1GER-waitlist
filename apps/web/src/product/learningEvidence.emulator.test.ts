@@ -4,7 +4,7 @@ import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth, type Auth
 import { connectFirestoreEmulator, doc, getDoc, getFirestore, setDoc, type Firestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, getFunctions, httpsCallable } from 'firebase/functions';
 import { DEFAULT_BRAIN_STATE, processMissionResult } from './brainService';
-import { GOLD_CONCEPT_ID, GOLD_LESSON_ID, addLearningEvent, newGoldDraft } from './learningEngine';
+import { GOLD_CONCEPT_ID, GOLD_LESSON_ID, addLearningEvent, assessRetrieval, newGoldDraft, retrievalEvidence, retrievalVariants } from './learningEngine';
 
 const handles = vi.hoisted(() => ({ auth: null as Auth | null, db: null as Firestore | null }));
 vi.mock('../firebase', () => ({ get auth() { return handles.auth; }, get db() { return handles.db; }, functions: null }));
@@ -44,12 +44,14 @@ describe.skipIf(process.env.T1GER_EMULATOR_TEST !== '1')('Gold evidence emulator
   it('stores one retrieval and updates FSRS once even when the same response is retried', async () => {
     const ref = doc(handles.db!, 'users', uid);
     const before = (await getDoc(ref)).data()!;
-    const draft = addLearningEvent(newGoldDraft(), { name: 'retrieval_result', interactionId: 'growth-on-growth', correct: true, rating: 80, assessment: 'objective' });
-    const event = draft.events[1];
+    const draft = newGoldDraft();
+    const signals = retrievalEvidence(draft.sessionId + '-review', retrievalVariants[0], assessRetrieval(retrievalVariants[0], '242', 'balance'), 80);
+    draft.events.push(...signals);
+    const event = signals[signals.length - 1];
     const finished = { ...draft, step: 9, finished: true };
-    await service.recordGoldReview(uid, 80, event, finished);
+    await service.recordGoldReview(uid, 80, event, finished, signals);
     const once = (await getDoc(ref)).data()!;
-    await service.recordGoldReview(uid, 80, event, finished);
+    await service.recordGoldReview(uid, 80, event, finished, signals);
     const twice = (await getDoc(ref)).data()!;
     expect(once.brainState.fsrsCards[GOLD_LESSON_ID].reps).toBe(before.brainState.fsrsCards[GOLD_LESSON_ID].reps + 1);
     expect(twice.brainState).toEqual(once.brainState);
@@ -57,5 +59,23 @@ describe.skipIf(process.env.T1GER_EMULATOR_TEST !== '1')('Gold evidence emulator
     expect(twice.xp).toBe(before.xp);
     expect(twice.streak).toBe(before.streak);
     expect(twice.brainState.missionHistory).toEqual(before.brainState.missionHistory);
+  });
+
+  it('constrains a contradictory Easy request to Again at the persistence boundary', async () => {
+    const ref = doc(handles.db!, 'users', uid);
+    const before = (await getDoc(ref)).data()!;
+    const signals = retrievalEvidence('contradictory-review', retrievalVariants[0], assessRetrieval(retrievalVariants[0], '242', 'rate'), 100);
+    const event = signals[signals.length - 1];
+    await service.recordGoldReview(uid, 100, event, undefined, signals);
+    await service.recordGoldReview(uid, 100, event, undefined, signals);
+    const after = (await getDoc(ref)).data()!;
+    const saved = after.learningConcepts[GOLD_CONCEPT_ID].events;
+    expect(saved.find((item: {id:string}) => item.id === event.id).rating).toBe(40);
+    expect(saved.find((item: {id:string}) => item.id === 'contradictory-review-calculation').correct).toBe(true);
+    expect(saved.find((item: {id:string}) => item.id === 'contradictory-review-mechanism').correct).toBe(false);
+    expect(after.brainState.fsrsCards[GOLD_LESSON_ID].reps).toBe(before.brainState.fsrsCards[GOLD_LESSON_ID].reps + 1);
+    expect(after.xp).toBe(before.xp);
+    expect(after.streak).toBe(before.streak);
+    expect(after.brainState.missionHistory).toEqual(before.brainState.missionHistory);
   });
 });

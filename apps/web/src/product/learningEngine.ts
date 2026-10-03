@@ -45,12 +45,12 @@ export const goldSteps: { id: string; phase: LearningPhase; title: string; kind?
   { id: 'transfer', phase: 'interact', title: 'Use it somewhere new', kind: 'transfer' },
   { id: 'apply', phase: 'apply', title: 'Make it useful', kind: 'apply' },
   { id: 'retrieval', phase: 'master', title: 'Bring it back', kind: 'retrieve' },
-  { id: 'reward', phase: 'reward', title: 'What you understand' },
+  { id: 'reward', phase: 'reward', title: 'What you practiced' },
 ];
-export type LearningEventName = 'first_exposure' | 'prediction_answer' | 'interaction_attempt' | 'misconception_detected' | 'retry' | 'transfer_result' | 'apply_completed' | 'retrieval_result' | 'difficulty_rating' | 'lesson_completed';
+export type LearningEventName = 'first_exposure' | 'prediction_answer' | 'interaction_attempt' | 'calculation_result' | 'mechanism_result' | 'manipulation_prediction' | 'manipulation_interpretation' | 'apply_rule' | 'reflection' | 'misconception_detected' | 'retry' | 'transfer_result' | 'apply_completed' | 'retrieval_calculation' | 'retrieval_mechanism' | 'retrieval_result' | 'difficulty_rating' | 'lesson_completed';
 export interface LearningEvent {
   id: string; at: number; name: LearningEventName; interactionId: string; answer?: string;
-  correct?: boolean; misconceptionId?: string; rating?: number; assessment?: 'objective' | 'self_reported';
+  correct?: boolean; resultCorrect?: boolean; mechanismCorrect?: boolean; misconceptionId?: string; rating?: number; assessment?: 'objective' | 'self_reported';
 }
 export interface GoldDraft {
   version: 2; sessionId: string; startedAt: number; step: number; updatedAt: number;
@@ -67,13 +67,22 @@ export function newGoldDraft(now = Date.now()): GoldDraft {
 }
 export function addLearningEvent(draft: GoldDraft, event: Omit<LearningEvent, 'id' | 'at'>): GoldDraft {
   const now = Date.now();
-  return { ...draft, updatedAt: now, events: [...draft.events, { ...event, id: `${draft.sessionId}-${now}-${Math.random().toString(36).slice(2, 9)}`, at: now }].slice(-100) };
+  return { ...draft, updatedAt: now, events: retainLearningEvents([...draft.events, { ...event, id: `${draft.sessionId}-${now}-${Math.random().toString(36).slice(2, 9)}`, at: now }]) };
+}
+/** Keep each signal's first attempt and the most recent corrections inside the existing 100-event budget. */
+export function retainLearningEvents(events: LearningEvent[]): LearningEvent[] {
+  if (events.length <= 100) return events;
+  const first = new Map<string, LearningEvent>();
+  for (const event of events) if (!first.has(event.name + ':' + event.interactionId)) first.set(event.name + ':' + event.interactionId, event);
+  const ids = new Set([...first.values()].slice(0, 50).map(event => event.id));
+  for (const event of [...events].reverse()) { if (ids.size >= 100) break; ids.add(event.id); }
+  return events.filter(event => ids.has(event.id));
 }
 export function mergeEvidence(current: ConceptEvidence | undefined, draft: GoldDraft): ConceptEvidence {
   const unique = new Map((Array.isArray(current?.events) ? current.events : []).map(event => [event.id, event]));
   for (const event of draft.events) unique.set(event.id, event);
   const newest = !current?.draft || draft.updatedAt >= current.draft.updatedAt ? draft : current.draft;
-  return { version: 2, firstExposedAt: current?.firstExposedAt || draft.startedAt, events: [...unique.values()].sort((a, b) => a.at - b.at).slice(-100), draft: newest };
+  return { version: 2, firstExposedAt: current?.firstExposedAt || draft.startedAt, events: retainLearningEvents([...unique.values()].sort((a, b) => a.at - b.at)), draft: newest };
 }
 export function validGoldDraft(value: unknown): value is GoldDraft {
   if (!value || typeof value !== 'object') return false;
@@ -110,9 +119,9 @@ export function practiceScore(draft: GoldDraft) {
 export function canAdvanceStep(draft: GoldDraft) {
   const id = goldSteps[draft.step]?.id;
   const events = draft.events.filter(event => event.interactionId === id);
-  if (id === 'prediction') return events.some(event => event.name === 'prediction_answer');
+  if (id === 'prediction') return validPrediction(draft.inputs) && events.some(event => event.name === 'prediction_answer');
   if (id === 'reveal') return events.some(event => event.name === 'interaction_attempt' && event.answer === 'year-20-contributions-compared');
-  if (id === 'manipulate') return manipulationComplete(draft.inputs);
+  if (id === 'manipulate') return manipulationComplete(draft.inputs) && events.some(event => event.name === 'manipulation_prediction') && events.filter(event => event.name === 'manipulation_interpretation').at(-1)?.correct === true;
   if (id === 'apply') return events.some(event => event.name === 'apply_completed');
   if (['notice', 'worked', 'contrast', 'transfer'].includes(id)) return events.some(event => event.name === 'interaction_attempt' && event.correct === true);
   return false;
@@ -120,14 +129,50 @@ export function canAdvanceStep(draft: GoldDraft) {
 export interface RetrievalVariant {
   id: string; prompt: string; context?: string; explanationPrompt: string; answer: string; expected?: number;
   options?: { id: string; label: string }[]; correctId?: string; misconceptionId: string;
+  mechanismPrompt: string; mechanismOptions: { id: string; label: string }[]; mechanismId: string;
 }
 export const retrievalVariants: RetrievalVariant[] = [
-  { id: 'growth-on-growth', prompt: 'What is its value after two years?', context: 'A fictional fund holds $200. It grows 10% a year, with no new deposits.', explanationPrompt: 'Why is the second year’s growth different from the first?', answer: '$242: $200 → $220 → $242. Year two grows the original money and the first year’s growth. This fixed assumption is not a real-return promise.', expected: 242, misconceptionId: 'linear-growth' },
-  { id: 'zero-rate', prompt: 'Which fund ends with more?', context: 'Two funds receive the same total deposits before the same end date. One starts earlier. The model uses 0% growth.', explanationPrompt: 'What would have to change for deposit timing to affect the model?', answer: 'They are equal at 0%. Timing adds an advantage under the same positive rate because deposits and their growth get more periods. Actual returns remain uncertain.', options: [{ id: 'early', label: 'The earlier fund' }, { id: 'equal', label: 'They are equal' }, { id: 'late', label: 'The later fund' }], correctId: 'equal', misconceptionId: 'time-always-wins' },
-  { id: 'new-context', prompt: 'Which endowment ends higher?', context: 'A museum places $1,000 in a fictional endowment today. Another places $1,000 five years later. Both are measured in year ten at the same positive fixed rate.', explanationPrompt: 'Explain the mechanism, and one reason the real outcome could differ.', answer: 'The earlier endowment has more periods for growth on growth. Equal deposits isolate timing in the fixed-rate model; variable returns, losses and fees can change real outcomes.', options: [{ id: 'late', label: 'The later endowment' }, { id: 'equal', label: 'They must be equal' }, { id: 'early', label: 'The earlier endowment' }], correctId: 'early', misconceptionId: 'more-deposited' },
+  { mechanismPrompt: 'Why is the second increase larger?', mechanismOptions: [{ id: 'rate', label: 'The rate increases every year' }, { id: 'balance', label: 'Growth uses the new balance, including earlier growth' }, { id: 'deposit', label: 'Another $20 was deposited' }, { id: 'time', label: 'Time automatically increases the rate' }], mechanismId: 'balance', id: 'growth-on-growth', prompt: 'What is its value after two years?', context: 'A fictional fund holds $200. It grows 10% a year, with no new deposits.', explanationPrompt: 'Why is the second year’s growth different from the first?', answer: '$242: $200 → $220 → $242. Year two grows the original money and the first year’s growth. This fixed assumption is not a real-return promise.', expected: 242, misconceptionId: 'linear-growth' },
+  { mechanismPrompt: 'Why does starting earlier give no growth advantage here?', mechanismOptions: [{ id: 'zero', label: 'At 0%, no growth is generated on deposits or earlier growth' }, { id: 'always', label: 'Equal deposits always finish equal, at any rate' }, { id: 'rate', label: 'Starting earlier raises the rate automatically' }], mechanismId: 'zero', id: 'zero-rate', prompt: 'Which fund ends with more?', context: 'Two funds receive the same total deposits before the same end date. One starts earlier. The model uses 0% growth.', explanationPrompt: 'What would have to change for deposit timing to affect the model?', answer: 'They are equal at 0%. Timing adds an advantage under the same positive rate because deposits and their growth get more periods. Actual returns remain uncertain.', options: [{ id: 'early', label: 'The earlier fund' }, { id: 'equal', label: 'They are equal' }, { id: 'late', label: 'The later fund' }], correctId: 'equal', misconceptionId: 'time-always-wins' },
+  { mechanismPrompt: 'What explains the difference in this fixed-rate model?', mechanismOptions: [{ id: 'more', label: 'The earlier endowment received more money' }, { id: 'periods', label: 'Equal deposits get different numbers of periods for growth on growth' }, { id: 'promise', label: 'Earlier deposits guarantee a better real outcome' }], mechanismId: 'periods', id: 'new-context', prompt: 'Which endowment ends higher?', context: 'A museum places $1,000 in a fictional endowment today. Another places $1,000 five years later. Both are measured in year ten at the same positive fixed rate.', explanationPrompt: 'Explain the mechanism, and one reason the real outcome could differ.', answer: 'The earlier endowment has more periods for growth on growth. Equal deposits isolate timing in the fixed-rate model; variable returns, losses and fees can change real outcomes.', options: [{ id: 'late', label: 'The later endowment' }, { id: 'equal', label: 'They must be equal' }, { id: 'early', label: 'The earlier endowment' }], correctId: 'early', misconceptionId: 'more-deposited' },
 ];
 export function retrievalVariant(reps: number) { return retrievalVariants[Math.max(0, Math.floor(reps)) % retrievalVariants.length]; }
-export function boundedRecallScore(chosenScore: number, correct: boolean) { return correct ? chosenScore : 40; }
+export function boundedRecallScore(chosenScore: number, correct: boolean) { return correct && [40, 60, 80, 100].includes(chosenScore) ? chosenScore : 40; }
+
+export const predictionReasons = [
+  { id: 'periods', label: 'More deposits have longer to grow' },
+  { id: 'deposits', label: 'More money is contributed' },
+  { id: 'rate', label: 'The return is higher' },
+  { id: 'unsure', label: "I'm not sure yet" },
+];
+export function validPrediction(inputs: GoldDraft['inputs']) {
+  return ['early', 'late', 'equal', 'unsure'].includes(String(inputs.prediction)) && predictionReasons.some(reason => reason.id === inputs.predictionBasis);
+}
+export function coherentRule(inputs: GoldDraft['inputs']) {
+  return inputs.ruleContribution === 'increase' && inputs.ruleBoundary === 'compare';
+}
+export const structuredRule = 'When time available is shorter, the contribution may need to increase to reach the same target at the same positive fixed rate. Starting earlier does not automatically beat every contribution or rate scenario; compare all inputs. Real returns are uncertain.';
+export const goldRewardTitle = 'You practiced.';
+export interface RetrievalResponse {
+  result: string; mechanism: string; reflection: string;
+  resultCorrect: boolean; mechanismCorrect: boolean;
+}
+export function assessRetrieval(variant: RetrievalVariant, result: string, mechanism: string, reflection = ''): RetrievalResponse {
+  return { result, mechanism, reflection, resultCorrect: variant.expected !== undefined ? numericAnswer(result, variant.expected, 0.5) : result === variant.correctId, mechanismCorrect: mechanism === variant.mechanismId };
+}
+/** Separate objective signals; reflection and difficulty remain ungraded self reports. Stable bundle IDs make lost-response retries safe. */
+export function retrievalEvidence(id: string, variant: RetrievalVariant, response: RetrievalResponse, chosenScore: number, at = Date.now()): LearningEvent[] {
+  const correct = response.resultCorrect && response.mechanismCorrect;
+  const rating = boundedRecallScore(chosenScore, correct);
+  const base = { at, interactionId: variant.id };
+  return [
+    { ...base, id: id + '-calculation', name: 'retrieval_calculation', answer: response.result, correct: response.resultCorrect, assessment: 'objective' },
+    { ...base, id: id + '-mechanism', name: 'retrieval_mechanism', answer: response.mechanism, correct: response.mechanismCorrect, assessment: 'objective' },
+    ...(response.reflection ? [{ ...base, id: id + '-reflection', name: 'reflection' as const, answer: response.reflection, assessment: 'self_reported' as const }] : []),
+    { ...base, id: id + '-rating', name: 'difficulty_rating', rating, assessment: 'self_reported' },
+    { ...base, id, name: 'retrieval_result', correct, resultCorrect: response.resultCorrect, mechanismCorrect: response.mechanismCorrect, rating, assessment: 'objective' },
+  ];
+}
 export function generateGoldSession(reps = 0) {
   return { concept: compoundingConcept, steps: goldSteps, retrieval: retrievalVariant(reps),
     // Remediation stays inside each interaction; no speculative adaptive curriculum.

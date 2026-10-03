@@ -1,5 +1,7 @@
 # T1GER Learning Engine V2 — piloto para revisión
 
+**Actualización:** [Gold V2.1](LEARNING_ENGINE_V2.1.md) sustituye las reglas de predicción, manipulación, Apply, recuperación y cierre descritas aquí. Este documento conserva el registro del piloto V2.
+
 Fecha: 2 de octubre de 2026. Alcance: **una lección Web**, `learn-money-02`, “Time is the multiplier”. Las demás lecciones y la aplicación móvil conservan su implementación. La eficacia educativa con personas sigue pendiente de validación.
 
 ## Auditoría y mejoras de enseñanza

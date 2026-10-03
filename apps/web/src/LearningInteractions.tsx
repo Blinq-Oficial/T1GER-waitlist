@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Tiger } from './Visual';
-import { boundedRecallScore, numericAnswer, usd, type RetrievalVariant } from './product/learningEngine';
+import { assessRetrieval, boundedRecallScore, numericAnswer, usd, type RetrievalResponse, type RetrievalVariant } from './product/learningEngine';
 
-export function TeachingFeedback({ correct, children }: { correct: boolean; children: React.ReactNode }) {
-  return <div className={`gold-feedback ${correct ? 'is-correct' : 'is-retry'}`} role="status"><Tiger animation={correct ? 'correct' : 'retry'}/><div><strong>{correct ? 'You found the relationship.' : 'Let’s look at what changed.'}</strong><p>{children}</p></div></div>;
+export function TeachingFeedback({ correct, children, title }: { correct: boolean; children: React.ReactNode; title?: string }) {
+  return <div className={`gold-feedback ${correct ? 'is-correct' : 'is-retry'}`} role="status"><Tiger animation={correct ? 'correct' : 'retry'}/><div><strong>{title || (correct ? 'That answer fits this model.' : 'Let’s look at what changed.')}</strong><p>{children}</p></div></div>;
 }
 type Attempt = (answer: string, correct: boolean) => void;
 export function ChoiceInteraction({ prompt, context, options, correctId, explanation, onAttempt, onDone, busy = false }: {
@@ -21,7 +21,7 @@ export function WorkedExample({ onAttempt, onDone, busy }: { onAttempt: Attempt;
   const [answer, setAnswer] = useState(''), [checked, setChecked] = useState(false);
   const correct = numericAnswer(answer, 121, 0.01);
   return <><h1>Growth can grow too.</h1><p>One $100 deposit. No extra deposits. An illustrative 10% each year.</p><ol className="gold-equation"><li><span>Start</span><strong>$100</strong></li><li><span>Year 1</span><strong>$100 + $10 = $110</strong></li><li><span>Year 2</span><strong>$110 + 10% of $110</strong></li></ol><label className="gold-answer">Complete the second year’s ending value<input type="number" inputMode="decimal" value={answer} disabled={checked} onChange={event => setAnswer(event.target.value)} placeholder="Amount in dollars"/></label>
-    {checked && <TeachingFeedback correct={correct}>{correct ? '10% of $110 is $11. The extra $1 comes from growth on last year’s growth: $110 + $11 = $121.' : 'Year two begins with $110, not $100. Find 10% of the new balance, then add it. The base has changed.'}</TeachingFeedback>}
+    {checked && <TeachingFeedback correct={correct} title={correct ? 'That calculation works.' : undefined}>{correct ? '10% of $110 is $11. The extra $1 comes from growth on last year’s growth: $110 + $11 = $121.' : 'Year two begins with $110, not $100. Find 10% of the new balance, then add it. The base has changed.'}</TeachingFeedback>}
     {checked && !correct && <button className="button subtle" onClick={() => { setChecked(false); setAnswer(''); }}>Complete that step again</button>}
     <button className="button primary large" disabled={!answer.trim() || busy || checked && !correct} onClick={() => { if (checked) onDone(); else { onAttempt(answer, correct); setChecked(true); } }}>{busy ? 'Saving…' : checked ? 'Try it yourself' : 'Check the step'}<ArrowRight size={18}/></button></>;
 }
@@ -45,13 +45,29 @@ export function CompoundingComparison({ plans, year, onYear, breakdown = false }
     <div className="gold-chart-values">{plans.map(plan => <div key={plan.label} className={plan.color}><span>{plan.label}</span><strong>{usd(plan.data[year].finalValue)}</strong>{breakdown && <small>{usd(plan.data[year].contributed)} deposited · {usd(Math.max(0, plan.data[year].finalValue - plan.data[year].contributed))} modeled growth</small>}</div>)}</div>{breakdown && <p className="gold-chart-note">Solid = value · Dashed = contributions</p>}
   </div>;
 }
-export function RetrievalInteraction({ variant, onRate, busy, error }: { variant: RetrievalVariant; onRate: (score: number, answer: string, correct: boolean) => void; busy: boolean; error?: string }) {
-  const [answer, setAnswer] = useState(''), [reason, setReason] = useState(''), [revealed, setRevealed] = useState(false);
-  const correct = variant.expected !== undefined ? numericAnswer(answer, variant.expected, 0.5) : answer === variant.correctId;
+
+export function RetrievalInteraction({ variant, onRate, onCheck, initialResponse, busy, error }: {
+  variant: RetrievalVariant; onRate: (score: number, response: RetrievalResponse) => void;
+  onCheck?: (response: RetrievalResponse) => void; initialResponse?: RetrievalResponse;
+  busy: boolean; error?: string;
+}) {
+  const [answer, setAnswer] = useState(initialResponse?.result || ''), [mechanism, setMechanism] = useState(initialResponse?.mechanism || '');
+  const [reason, setReason] = useState(initialResponse?.reflection || ''), [revealed, setRevealed] = useState(!!initialResponse);
+  const response = assessRetrieval(variant, answer, mechanism, reason);
+  const correct = response.resultCorrect && response.mechanismCorrect;
   return <div className="gold-retrieval"><p className="gold-kicker">From memory · no chart</p><h1>{variant.prompt}</h1>{variant.context && <p>{variant.context}</p>}
+    <p className="gold-small">Part A · result</p>
     {variant.options ? <div className="gold-options">{variant.options.map(option => <button key={option.id} disabled={revealed} aria-pressed={answer === option.id} onClick={() => setAnswer(option.id)}>{option.label}</button>)}</div> : <label className="gold-answer">Your amount in dollars<input type="number" inputMode="decimal" value={answer} disabled={revealed} onChange={event => setAnswer(event.target.value)}/></label>}
-    <label className="gold-answer">{variant.explanationPrompt}<textarea value={reason} maxLength={500} disabled={revealed} onChange={event => setReason(event.target.value)} placeholder="Use your own words. A sentence is enough."/></label>
-    {!revealed ? <button className="button primary large" disabled={!answer || reason.trim().length < 12} onClick={() => setRevealed(true)}>Compare with the idea<ArrowRight size={18}/></button> : <><TeachingFeedback correct={correct}>{variant.answer}</TeachingFeedback><p className="gold-small">The scenario answer is checked. Compare your explanation yourself: did you name the mechanism and its assumptions? It has not been graded by AI.</p><p>{correct ? 'How independently did you recall it?' : 'This answer showed a gap. We’ll schedule another retrieval with Again.'}</p><div className="gold-ratings">{[{ score: 40, label: 'Again', hint: 'I needed the explanation' }, { score: 60, label: 'Hard', hint: 'I needed effort or help' }, { score: 80, label: 'Good', hint: 'I recalled the mechanism' }, { score: 100, label: 'Easy', hint: 'I explained it independently' }].map(rating => <button disabled={busy || !correct && rating.score !== 40} key={rating.label} onClick={() => onRate(boundedRecallScore(rating.score, correct), `${answer} | ${reason}`, correct)}><strong>{rating.label}</strong><small>{rating.hint}</small></button>)}</div></>}
+    <h2>{variant.mechanismPrompt}</h2><p className="gold-small">Part B · mechanism</p>
+    <div className="gold-options">{variant.mechanismOptions.map(option => <button key={option.id} disabled={revealed} aria-pressed={mechanism === option.id} onClick={() => setMechanism(option.id)}>{option.label}</button>)}</div>
+    <details className="gold-hint"><summary>Add an optional reflection</summary><label className="gold-answer">{variant.explanationPrompt}<textarea value={reason} maxLength={500} disabled={revealed} onChange={event => setReason(event.target.value)} placeholder="Optional, ungraded reflection"/></label></details>
+    {!revealed ? <button className="button primary large" disabled={busy || !answer.trim() || !mechanism} onClick={() => { onCheck?.(response); setRevealed(true); }}>Compare with the idea<ArrowRight size={18}/></button> : <>
+      <TeachingFeedback correct={response.resultCorrect} title={response.resultCorrect ? (variant.expected !== undefined ? 'That calculation works.' : 'That result fits this model.') : 'The result needs another look.'}>{response.resultCorrect ? 'Part A is correct. The mechanism is checked separately below.' : 'Part A did not match the model.'}</TeachingFeedback>
+      <TeachingFeedback correct={response.mechanismCorrect} title={response.mechanismCorrect ? 'That mechanism fits this model.' : 'The mechanism needs another look.'}>{variant.answer}</TeachingFeedback>
+      <p className="gold-small">Result and mechanism are checked separately. Optional wording is a reflection, not verified understanding.</p>
+      <p>{correct ? 'How independently did you recall both parts? If you guessed or used help, choose Again or Hard.' : 'One objective check showed a gap. We’ll schedule another retrieval with Again.'}</p>
+      <div className="gold-ratings">{[{ score: 40, label: 'Again', hint: 'I needed the explanation' }, { score: 60, label: 'Hard', hint: 'I needed effort or help' }, { score: 80, label: 'Good', hint: 'I recalled both parts' }, { score: 100, label: 'Easy', hint: 'I recalled both without help' }].map(rating => <button disabled={busy || !correct && rating.score !== 40} key={rating.label} onClick={() => onRate(boundedRecallScore(rating.score, correct), response)}><strong>{rating.label}</strong><small>{rating.hint}</small></button>)}</div>
+    </>}
     {error && <p className="error" role="alert">{error}</p>}
   </div>;
 }
