@@ -17,6 +17,7 @@ export function mentorError(error: unknown): string {
   const code = typeof error === 'object' && error && 'code' in error ? String(error.code) : '';
   if (code.endsWith('/resource-exhausted')) return 'You have reached today’s mentor limit. Your lessons are still available.';
   if (code.endsWith('/unauthenticated')) return 'Sign in again to talk with your mentor.';
+  if (code.endsWith('/permission-denied')) return 'The AI mentor is for adults. Confirm you are 18 or older and review the provider notice before sending.';
   if (code.endsWith('/failed-precondition')) return 'The AI mentor is awaiting a service configuration update. Your question is kept here and your lessons are available.';
   return 'Could not reach your mentor. Your question is kept below; try again.';
 }
