@@ -12,6 +12,7 @@ Reviewed October 3, 2026. David requested a free route after the commercial Nemo
 - Up to eight recent messages, each bounded to 3,000 characters, plus the current bounded question. Output cap 1,200 tokens, provider timeout 40 seconds; concise English/Spanish answers. Hidden reasoning is not returned.
 - Only question/history and the mentor instruction go upstream; no account ID, email, profile or lesson evidence is appended. Users must keep sensitive data out of their messages.
 - Adults must explicitly confirm 18+ and the current provider disclosure (`openrouter-modelrun-v1`). This is a self-declaration, not age verification; other T1GER access remains 15+.
+  Web presents this once, at the first question, in a short native dialog. The declaration, disclosure version and acceptance timestamp are saved privately as `users/{uid}.aiMentorConsent`; only a matching version counts. Cancelling keeps the question. “About AI & privacy” retains provider links and lets the user reset the choice. The callable still checks the explicit declaration and version on every request. This changes presentation and persistence, not server access controls.
 - Server release switch: `T1GER_MENTOR_READY=true`. Web is enabled by default; `VITE_MENTOR_AVAILABLE=false` pauses its interface. Never enable a new route without its live integration checks.
 
 ## Evaluation and selection

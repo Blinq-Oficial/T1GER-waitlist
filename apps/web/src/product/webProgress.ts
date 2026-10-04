@@ -13,6 +13,13 @@ export function focusRemaining(deadline: number | null, pausedSeconds: number, n
   return deadline === null ? pausedSeconds : Math.max(0, Math.ceil((deadline - now) / 1000));
 }
 
+export const mentorConsentVersion = 'openrouter-modelrun-v1';
+export function hasMentorConsent(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const consent = value as { adultConfirmed?: unknown; providerConsentVersion?: unknown };
+  return consent.adultConfirmed === true && consent.providerConsentVersion === mentorConsentVersion;
+}
+
 export function mentorError(error: unknown): string {
   const code = typeof error === 'object' && error && 'code' in error ? String(error.code) : '';
   if (code.endsWith('/resource-exhausted')) return 'You have reached today’s mentor limit. Your lessons are still available.';

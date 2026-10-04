@@ -1,8 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_BRAIN_STATE } from './brainService';
-import { appliedLessonIds, focusRemaining, mentorError } from './webProgress';
+import { appliedLessonIds, focusRemaining, mentorError, hasMentorConsent, mentorConsentVersion } from './webProgress';
 
 describe('Web companion capabilities', () => {
+  it('remembers only an explicit adult choice for the current AI provider notice', () => {
+    expect(hasMentorConsent({ adultConfirmed: true, providerConsentVersion: mentorConsentVersion })).toBe(true);
+    for (const value of [undefined, null, {}, { adultConfirmed: 'true', providerConsentVersion: mentorConsentVersion },
+      { adultConfirmed: false, providerConsentVersion: mentorConsentVersion }, { adultConfirmed: true, providerConsentVersion: 'old' }]) {
+      expect(hasMentorConsent(value)).toBe(false);
+    }
+  });
   it('merges the mission and history sources without counting revisits twice', () => {
     const brain = { ...DEFAULT_BRAIN_STATE, missionHistory: [{ missionId: 'field-learn-money-01', completed: true, score: 100, competency: 'investing' as const, difficulty: 'easy' as const, timestamp: 1 }] };
     expect([...appliedLessonIds(brain, [{ id: 'field-learn-money-01', lessonId: 'learn-money-01', status: 'completed' }, { id: 'field-learn-money-03', lessonId: 'learn-money-03', status: 'completed' }, { id: 'field-learn-money-02', lessonId: 'learn-money-02', status: 'ready' }])]).toEqual(['learn-money-01', 'learn-money-03']);
