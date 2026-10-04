@@ -64,6 +64,13 @@ export function getSectionsForTrack(trackId: string): JourneySection[] {
 export type JourneyNodeState = 'completed' | 'current' | 'review' | 'locked';
 export interface JourneyNode { lesson: AtomicLesson; state: JourneyNodeState; reviewIds: string[] }
 
+/** Previewing a step never bypasses the existing ordered path. */
+export function getJourneyAction(node: JourneyNode, pendingApply = false) {
+  if (node.state === 'locked') return { label: 'Complete earlier ideas first', destination: null };
+  if (node.state === 'review') return { label: 'Review first', destination: 'review' as const };
+  return { label: node.state === 'completed' ? 'Revisit lesson' : pendingApply ? node.lesson.id === 'learn-money-02' ? 'Resume lesson' : 'Continue Apply' : 'Start lesson', destination: 'lesson' as const };
+}
+
 /** The same ordered policy drives the trail and its primary CTA. Reviews never revoke completed work. */
 export function getJourneyNodes(track: InteractiveTrack, brain: BrainState, completedApplyIds: string[] = [], now = Date.now()): JourneyNode[] {
   const done = new Set(brain.missionHistory.filter(record => record.completed).map(record => record.missionId));

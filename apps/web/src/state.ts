@@ -77,6 +77,10 @@ function previewState(): { profile: Profile; missions: Mission[] } {
     const applied = processMissionResult(learned, 'field-learn-money-01', true, 100);
     brainState = { ...applied, fsrsCards: { ...applied.fsrsCards, 'learn-money-01': { ...applied.fsrsCards['learn-money-01'], due: new Date(Date.now() - 1000) } } };
   }
+  if (fixture === 'apply') {
+    const learned = processMissionResult(DEFAULT_BRAIN_STATE, 'learn-money-01', true, 100);
+    brainState = processMissionResult(learned, 'field-learn-money-01', true, 100);
+  }
   return {
     profile: { uid: 'preview', email: 'preview@t1ger.app', displayName: 'Preview learner', onboardingComplete: fixture !== 'onboarding', brainState },
     missions: fixture === 'apply' ? [{ id: 'field-learn-money-02', lessonId: 'learn-money-02', status: 'ready', title: 'Execute: Time is the multiplier', supportPayload: 'My rule: contribute $250 monthly for 10 years and review once a year.' }] : [],
