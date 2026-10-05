@@ -21,6 +21,8 @@ export interface Profile {
   xp?: number;
   level?: number;
   streak?: number;
+  lastVerifiedMissionDay?: string;
+  timeZone?: string;
   isPro?: boolean;
   coins?: number;
   unlockedAccessories?: string[];
@@ -47,6 +49,7 @@ export interface Mission {
   learningScore?: number;
   status: 'ready' | 'pending_review' | 'needs_revision' | 'verified' | 'completed';
   completionMode?: string;
+  completedAt?: number | { seconds: number };
   submission?: { proofText?: string; createdAt?: number };
 }
 
@@ -127,7 +130,7 @@ export async function signUp(email: string, password: string) {
 }
 export async function signInGoogle() {
   if (!auth) throw new Error('Firebase is not configured.');
-  await signInWithPopup(auth, new GoogleAuthProvider());
+  return signInWithPopup(auth, new GoogleAuthProvider());
 }
 export async function resetPassword(email: string) {
   if (!auth) throw new Error('Firebase is not configured.');

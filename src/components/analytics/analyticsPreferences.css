@@ -1,0 +1,15 @@
+.analytics-choice-link{font:inherit;color:inherit;background:none;border:0;text-decoration:underline;text-underline-offset:4px;cursor:pointer;min-height:44px;padding:8px 0}
+.analytics-dialog{width:min(540px,calc(100vw - 32px));padding:32px;border-radius:24px;border:1px solid #73737d;color:#f5f5f7;background:#19191c;font:16px/1.5 Outfit,system-ui,sans-serif;box-sizing:border-box}
+.analytics-dialog::backdrop{background:#0009;backdrop-filter:blur(8px)}
+.analytics-dialog h2{margin:0 0 14px;font-size:27px;line-height:1.15;letter-spacing:-.03em}
+.analytics-dialog p{color:#b7b7c0;margin:14px 0}
+.analytics-dialog>label{display:flex;align-items:center;gap:24px;padding:20px 0;border-top:1px solid #ffffff25}
+.analytics-dialog label span{flex:1}.analytics-dialog small{display:block;color:#b7b7c0;font-size:13px;margin-top:6px}
+.analytics-dialog input{width:22px;height:22px;accent-color:#ff963e;flex:none}.analytics-dialog .analytics-status{font-size:12px}
+.analytics-dialog>div{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}
+.analytics-dialog button{font:600 15px Outfit,sans-serif;min-height:46px;padding:10px 18px;border:1px solid #73737d;border-radius:13px;background:#29292d;color:#f5f5f7;cursor:pointer}
+.analytics-dialog button:last-child{background:#ff963e;color:#21150b;border-color:#ff963e}
+.analytics-dialog button:focus-visible,.analytics-dialog input:focus-visible{outline:3px solid #ffbd8b;outline-offset:3px}
+:root[data-theme='light'] .analytics-dialog{background:#fff;color:#252a36;border-color:#d5d9e1}
+:root[data-theme='light'] .analytics-dialog p,:root[data-theme='light'] .analytics-dialog small{color:#616978}
+:root[data-theme='light'] .analytics-dialog>label{border-color:#d5d9e1}

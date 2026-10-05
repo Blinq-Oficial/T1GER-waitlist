@@ -4,11 +4,12 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 import './index.css'
 import App from './App.tsx'
+import { safeAnalyticsUrl } from './lib/behaviorAnalytics'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
-    <Analytics />
-    <SpeedInsights />
+    <Analytics beforeSend={event => ({ ...event, url: safeAnalyticsUrl(event.url) })}/>
+    <SpeedInsights beforeSend={event => ({ ...event, url: safeAnalyticsUrl(event.url) })}/>
   </StrictMode>,
 )

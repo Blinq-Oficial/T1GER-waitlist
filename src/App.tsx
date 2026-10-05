@@ -7,6 +7,8 @@ import EarlyAdopterModal from './components/modals/EarlyAdopterModal';
 import LegalPage from './components/legal/LegalPage';
 import EarlyAccessSuccess from './components/early-access/EarlyAccessSuccess';
 import SectionWeb from './components/sections/SectionWeb';
+import AnalyticsPreferences from './components/analytics/AnalyticsPreferences';
+import { behaviorPage, behaviorEvent } from './lib/behaviorAnalytics';
 
 const SectionAbout = lazy(() => import('./components/sections/SectionAbout'));
 const SectionVision = lazy(() => import('./components/sections/SectionVision'));
@@ -21,7 +23,9 @@ export default function App() {
   const [waitlistShareUrl, setWaitlistShareUrl] = useState('');
   const [isEarlyAdopterOpen, setIsEarlyAdopterOpen] = useState(false);
 
+  useEffect(() => { behaviorPage(window.location.href); }, []);
   const handleSignup = useCallback((position: number, shareUrl?: string) => {
+    behaviorEvent('waitlist_completed');
     setWaitlistPosition(position);
     setWaitlistShareUrl(shareUrl || 'https://t1ger.app/');
     setIsSignedUp(true);
@@ -81,7 +85,7 @@ export default function App() {
               onOpenEarlyAdopter={() => setIsEarlyAdopterOpen(true)}
             />
             <SectionFAQ />
-            <Footer />
+            <Footer /><div className="landing-analytics-choices"><AnalyticsPreferences/></div>
           </Suspense>
         </main>
         <EarlyAdopterModal isOpen={isEarlyAdopterOpen} onClose={() => setIsEarlyAdopterOpen(false)} />

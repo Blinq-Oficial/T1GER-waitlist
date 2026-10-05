@@ -10,6 +10,11 @@ export function Tiger({ mood = 'curious', animation = mood === 'happy' ? 'correc
   return <div className={`tiger-companion ${className}`} aria-hidden="true"><Suspense fallback={<img className="mascot-poster" src={`${import.meta.env.BASE_URL}mascot/t1ger-avatar.png`} alt=""/>}><Mascot3D animation={animation} replay={replay}/></Suspense></div>;
 }
 
+/** A light portrait for navigation and guidance; celebrations retain the 3D character. */
+export function TigerPortrait({ className = '', animated = false }: { className?: string; animated?: boolean }) {
+  return <span className={`tiger-portrait ${animated ? 'is-animated' : ''} ${className}`} aria-hidden="true"><img src={`${import.meta.env.BASE_URL}mascot/t1ger-avatar.png`} alt="" width="512" height="512" draggable="false"/></span>;
+}
+
 export function DomainIcon({ domain, size = 30 }: { domain: string; size?: number }) {
   const Icon = domain === 'ai-automation' || domain === 'ai' ? Cpu : domain === 'mindset-stoic' || domain === 'mindset' ? Brain : Coins;
   return <span className={`domain-icon ${domain.includes('ai') ? 'ai' : domain.includes('mind') ? 'psychology' : 'investing'}`}><Icon size={size} strokeWidth={1.8}/></span>;

@@ -1,0 +1,10 @@
+import { useRef, useState } from 'react';
+import { analyticsChoice, posthogConfigured, setAnalyticsChoice } from '../../lib/behaviorAnalytics';
+import './analyticsPreferences.css';
+
+export default function AnalyticsPreferences() {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [choice, setChoice] = useState(analyticsChoice);
+  const [error, setError] = useState('');
+  return <><button type="button" className="analytics-choice-link" onClick={() => { setChoice(analyticsChoice()); setError(''); dialog.current?.showModal(); }}>Analytics choices</button><dialog ref={dialog} className="analytics-dialog ph-no-capture" aria-labelledby="analytics-choice-title"><h2 id="analytics-choice-title">Help us make T1GER better.</h2><p>Optional insights help us find confusing steps. Learning works with either choice.</p><label><span><strong>Product insights</strong><small>Browser-level events: screens, account steps and feature use. No email, name or answer text.</small></span><input type="checkbox" checked={choice.events} onChange={event => setChoice({ events: event.target.checked, replay: event.target.checked && choice.replay })}/></label><label><span><strong>Session replay</strong><small>Masked interaction replays on Learn, Discover and navigation screens. No account forms, chats, lessons, profiles or private work. All text and inputs are masked.</small></span><input type="checkbox" disabled={!choice.events} checked={choice.replay} onChange={event => setChoice({ ...choice, replay: event.target.checked })}/></label><p className="analytics-status">{posthogConfigured ? 'PostHog processes optional insights. You can change this choice here at any time.' : 'Optional collection is not active yet. These choices apply when PostHog is connected.'} Vercel also provides aggregate, cookie-free page counts.</p>{error && <p role="alert">{error}</p>}<div><button type="button" onClick={() => dialog.current?.close()}>Cancel</button><button type="button" onClick={() => { if (setAnalyticsChoice(choice)) dialog.current?.close(); else setError('Your browser could not save this choice. Please try again.'); }}>Save choices</button></div></dialog></>;
+}

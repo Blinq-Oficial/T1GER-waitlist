@@ -12,6 +12,9 @@ import './experience.css';
 import './design-system.css';
 import './premium.css';
 import App from './App';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import { safeAnalyticsUrl } from '../../../src/lib/behaviorAnalytics';
 import AppBoundary from './AppBoundary';
 
-createRoot(document.getElementById('root')!).render(<React.StrictMode><AppBoundary><App /></AppBoundary></React.StrictMode>);
+createRoot(document.getElementById('root')!).render(<React.StrictMode><AppBoundary><App /><Analytics beforeSend={event => ({ ...event, url: safeAnalyticsUrl(event.url) })}/><SpeedInsights beforeSend={event => ({ ...event, url: safeAnalyticsUrl(event.url) })}/></AppBoundary></React.StrictMode>);

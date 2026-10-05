@@ -645,3 +645,5 @@ html.lenis, html.lenis body {
 .animate-border-beam {
   animation: border-beam var(--duration, 12s) linear infinite;
 }
+
+.landing-analytics-choices { position:relative; z-index:1; padding:0 8vw 32px; color:#b7b7c0; font-size:13px; }

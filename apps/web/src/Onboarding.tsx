@@ -6,7 +6,9 @@ import { explainError, finishOnboarding, type Profile } from './state';
 import { getInteractiveTrack } from './product/interactiveCurriculum';
 import type { TrackType } from './product/missionBank';
 
-import { Tiger } from './Visual';
+import { TigerPortrait } from './Visual';
+import { behaviorEvent } from '../../../src/lib/behaviorAnalytics';
+import DomainArtwork from './DomainArtwork';
 
 export const interests = [
   { id: 'investing', label: 'Investing', description: 'Understand money. Make deliberate decisions.', icon: Coins, path: 'smart-money' },
@@ -42,7 +44,8 @@ export default function Onboarding({ user, profile, preview, themeAction, onDone
   const first = track.lessons[0];
   useEffect(() => { try { localStorage.setItem(key, JSON.stringify(draft)); } catch { /* Continue without a browser draft. */ } }, [draft, key]);
   useEffect(() => { titleRef.current?.focus(); window.scrollTo(0, 0); }, [draft.step]);
-  function go(step: Step) { setError(''); setDraft(current => ({ ...current, step })); }
+  useEffect(() => { if (!preview) behaviorEvent('onboarding_step_viewed', { step: draft.step }); }, [draft.step, preview]);
+  function go(step: Step) { if (!preview && steps.indexOf(step) > index) behaviorEvent('onboarding_step_completed', { step: draft.step }); setError(''); setDraft(current => ({ ...current, step })); }
   function toggle(id: Interest) {
     setDraft(current => {
       const selected = current.interests.includes(id) ? current.interests.filter(item => item !== id) : [...current.interests, id];
@@ -54,6 +57,7 @@ export default function Onboarding({ user, profile, preview, themeAction, onDone
     try {
       if (!preview) await finishOnboarding(user, user.displayName?.trim() || 'T1GER learner', primary.id as TrackType, { interests: draft.interests, dailyTime: draft.dailyTime });
       try { localStorage.removeItem(key); } catch { /* The saved profile is sufficient. */ }
+      if (!preview) behaviorEvent('onboarding_completed');
       onDone(first.id);
     } catch (cause) { setError(explainError(cause, 'Your setup could not be saved. Your choices are still here; try again.')); }
     finally { setBusy(false); }
@@ -62,8 +66,8 @@ export default function Onboarding({ user, profile, preview, themeAction, onDone
   return <main className="onboard experience-onboard">
     <header className="onboard-head"><a className="brand" href="/"><span className="brand-mark">1</span><span>T1GER</span></a>{themeAction}</header>
     <div className="onboarding-progress"><span>YOUR START / {String(index + 1).padStart(2, '0')} OF {String(steps.length).padStart(2, '0')}</span><progress aria-label="Learning setup progress" value={index + 1} max={steps.length}/></div>
-    <div className="onboard-body"><div className="onboard-guide"><Tiger animation={draft.step === 'interests' ? 'welcome' : draft.step === 'ready' ? 'correct' : 'thinking'}/><p>{draft.step === 'interests' ? "Let’s start with what interests you." : draft.step === 'primary' ? "Which one shall we explore first?" : draft.step === 'rhythm' ? "A pace that fits your day." : "Ready when you are."}</p></div><p className="eyebrow">{draft.step === 'ready' ? primary.label.toUpperCase() : 'CURIOSITY, WITH DIRECTION'}</p><h1 ref={titleRef} tabIndex={-1}>{heading}</h1>
-      {draft.step === 'interests' && <><p className="muted">Choose one or more. All three paths are available on Web, and you can switch later.</p><div className="interest-grid">{interests.map(item => { const Icon = item.icon; return <button key={item.id} className={`interest-choice ${draft.interests.includes(item.id) ? 'selected' : ''}`} aria-pressed={draft.interests.includes(item.id)} onClick={() => toggle(item.id)}><span className="interest-icon"><Icon size={25}/>{draft.interests.includes(item.id) && <Check size={17}/>}</span><strong>{item.label}</strong><span>{item.description}</span></button>; })}</div></>}
+    <div className="onboard-body"><div className="onboard-guide"><TigerPortrait animated/><p>{draft.step === 'interests' ? "Let’s start with what interests you." : draft.step === 'primary' ? "Which one shall we explore first?" : draft.step === 'rhythm' ? "A pace that fits your day." : "Ready when you are."}</p></div><p className="eyebrow">{draft.step === 'ready' ? primary.label.toUpperCase() : 'CURIOSITY, WITH DIRECTION'}</p><h1 ref={titleRef} tabIndex={-1}>{heading}</h1>
+      {draft.step === 'interests' && <><p className="muted">Choose one or more. All three paths are available on Web, and you can switch later.</p><div className="interest-grid">{interests.map(item => { const Icon = item.icon; return <button key={item.id} className={`interest-choice ${draft.interests.includes(item.id) ? 'selected' : ''}`} aria-pressed={draft.interests.includes(item.id)} onClick={() => toggle(item.id)}><DomainArtwork domain={item.path}/><span className="interest-icon"><Icon size={25}/>{draft.interests.includes(item.id) && <Check size={17}/>}</span><strong>{item.label}</strong><span>{item.description}</span></button>; })}</div></>}
       {draft.step === 'primary' && <><p className="muted">This chooses your first lesson, not your only path.</p><div className="primary-choices">{interests.filter(item => draft.interests.includes(item.id)).map(item => <button key={item.id} aria-pressed={draft.primary === item.id} onClick={() => setDraft(current => ({ ...current, primary: item.id }))}><strong>{item.label}</strong><span>{draft.primary === item.id ? <Check size={20}/> : <ArrowRight size={20}/>}</span></button>)}</div></>}
       {draft.step === 'rhythm' && <><p className="muted">Choose a daily intention. You can change it later in Settings.</p><div className="rhythm-choices">{[5, 10, 15].map(minutes => <button key={minutes} aria-pressed={draft.dailyTime === minutes} onClick={() => setDraft(current => ({ ...current, dailyTime: minutes }))}><strong>{minutes}<small> min / day</small></strong><span>{minutes === 5 ? 'One useful idea' : minutes === 10 ? 'Learn and put it to work' : 'A little deeper'}</span>{draft.dailyTime === minutes && <Check size={20}/>}</button>)}</div></>}
       {draft.step === 'ready' && <><p className="muted">Starting with {primary.label}. Your {draft.dailyTime}-minute intention leaves room to learn at your pace.</p><div className="onboard-lesson"><span>LESSON 01 · ABOUT 4 MINUTES · {track.lessons.length} LESSON PATH</span><h2>{first.title.en}</h2><p>{first.objective.en}</p><ul><li>Make a prediction</li><li>Test the idea</li><li>Save something useful</li></ul></div></>}
