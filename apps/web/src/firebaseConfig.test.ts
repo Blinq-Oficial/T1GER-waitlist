@@ -13,4 +13,9 @@ describe('Firebase deployment boundary', () => {
     expect(selectFirebaseConfig(isolated, 't1ger.app')).toBe(isolated);
     expect(selectFirebaseConfig(isolated, 'preview.vercel.app')).toBe(isolated);
   });
+  it('uses the same-origin OAuth helper only for the canonical production project', () => {
+    const oldEnvironment = { ...productionFirebaseConfig, authDomain: 't1ger-69d6a.firebaseapp.com' };
+    expect(selectFirebaseConfig(oldEnvironment, 't1ger.app').authDomain).toBe('t1ger.app');
+    expect(selectFirebaseConfig(oldEnvironment, 'preview.vercel.app')).toBe(oldEnvironment);
+  });
 });

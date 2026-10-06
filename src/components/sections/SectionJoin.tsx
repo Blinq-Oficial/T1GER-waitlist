@@ -123,12 +123,12 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
                     setEmail(event.target.value);
                     setErrorText('');
                   }}
-                  className="h-[60px] min-w-0 flex-1 rounded-full border border-white/15 bg-white/[0.04] pl-13 pr-5 font-mono text-xs tracking-[0.1em] text-white outline-none placeholder:text-white/40 focus:border-[#CCFF00] focus:ring-2 focus:ring-[#CCFF00]/20 sm:border-0 sm:bg-transparent sm:focus:ring-0"
+                  className="h-[60px] min-h-[60px] w-full min-w-0 flex-none rounded-full border border-white/15 bg-white/[0.04] pl-13 pr-5 font-mono text-base tracking-[0.02em] text-white outline-none placeholder:text-white/55 focus:border-[#CCFF00] focus:ring-2 focus:ring-[#CCFF00]/20 sm:w-auto sm:flex-1 sm:border-0 sm:bg-transparent sm:focus:ring-0"
                 />
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex h-[54px] items-center justify-center gap-2 rounded-full bg-[#FF6B00] px-6 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-black transition-colors hover:bg-[#CCFF00] disabled:cursor-wait disabled:opacity-60"
+                  className="flex h-[54px] min-h-[54px] shrink-0 items-center justify-center gap-2 rounded-full bg-[#FF6B00] px-6 font-mono text-xs font-black uppercase tracking-[0.08em] text-black transition-colors hover:bg-[#CCFF00] disabled:cursor-wait disabled:opacity-60"
                 >
                   {isLoading ? <><Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Securing…</> : 'Join mobile waitlist'}
                 </button>

@@ -64,6 +64,7 @@ export function explainError(cause: unknown, fallback: string): string {
   if (code === 'auth/invalid-email') return 'Enter a valid email address.';
   if (code === 'auth/weak-password') return 'Use a password with at least 6 characters.';
   if (code === 'auth/popup-closed-by-user') return 'The sign-in window was closed.';
+  if (code === 'auth/popup-blocked') return 'Your browser blocked the Google sign-in window. Allow popups for T1GER or sign in with email.';
   if (code === 'auth/unauthorized-domain') return 'This web domain is not enabled for T1GER sign-in.';
   if (code === 'auth/too-many-requests') return 'Too many attempts. Try again later.';
   if (code.includes('network') || code.endsWith('/unavailable')) return 'Connection lost. Check your network and retry.';
@@ -86,7 +87,10 @@ function previewState(): { profile: Profile; missions: Mission[] } {
   }
   return {
     profile: { uid: 'preview', email: 'preview@t1ger.app', displayName: 'Preview learner', onboardingComplete: fixture !== 'onboarding', brainState },
-    missions: fixture === 'apply' ? [{ id: 'field-learn-money-02', lessonId: 'learn-money-02', status: 'ready', title: 'Execute: Time is the multiplier', supportPayload: 'My rule: contribute $250 monthly for 10 years and review once a year.' }] : [],
+    missions: fixture === 'apply' ? [
+      { id: 'field-learn-money-02', lessonId: 'learn-money-02', status: 'ready', title: 'Execute: Time is the multiplier', supportPayload: 'My rule: contribute $250 monthly for 10 years and review once a year.' },
+      { id: 'field-learn-money-01', lessonId: 'learn-money-01', status: 'completed', title: 'Cash loses too', supportPayload: 'Keep my emergency buffer accessible. Review the money I will not need for four years separately.' },
+    ] : [],
   };
 }
 
@@ -130,7 +134,9 @@ export async function signUp(email: string, password: string) {
 }
 export async function signInGoogle() {
   if (!auth) throw new Error('Firebase is not configured.');
-  return signInWithPopup(auth, new GoogleAuthProvider());
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  return signInWithPopup(auth, provider);
 }
 export async function resetPassword(email: string) {
   if (!auth) throw new Error('Firebase is not configured.');

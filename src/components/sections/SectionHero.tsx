@@ -474,8 +474,8 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                     </span>
                     <p className="mt-1.5 text-[11px] leading-relaxed text-white/65">iOS & Android are coming next. Get launch updates by email. Web is available now.</p>
 
-                    <div className="relative mt-auto pt-1.5 sm:pt-3">
-                      <ShieldCheck className="absolute bottom-2.5 left-3 h-3.5 w-3.5 text-white/25 sm:bottom-4 sm:left-4 sm:h-4 sm:w-4" aria-hidden="true" />
+                    <div className="relative mt-auto flex flex-col gap-2 pt-3 sm:block">
+                      <ShieldCheck className="pointer-events-none absolute left-3 top-7 h-4 w-4 text-white/40 sm:bottom-4 sm:left-4 sm:top-auto" aria-hidden="true" />
                       <input
                         ref={emailInputRef}
                         id="hero-email"
@@ -485,6 +485,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                         aria-invalid={Boolean(errorText)}
                         aria-describedby={(errorText || helperText) ? 'hero-email-status' : undefined}
                         autoComplete="email"
+                        inputMode="email"
                         placeholder="YOUR EMAIL"
                         value={email}
                         onChange={(event) => {
@@ -492,14 +493,14 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                           setErrorText('');
                         }}
                         disabled={isLoading}
-                        className="h-9 w-full rounded-[6px] border border-white/15 bg-white/[0.06] pl-9 pr-[7.25rem] font-mono text-[9px] tracking-[0.08em] text-white outline-none transition-all placeholder:text-white/30 focus:border-[#CCFF00] focus:ring-2 focus:ring-[#CCFF00]/20 sm:h-12 sm:pl-11 sm:pr-32 sm:text-xs"
+                        className="h-12 min-h-12 w-full rounded-[6px] border border-white/15 bg-white/[0.06] pl-9 pr-3 font-mono text-base text-white outline-none transition-all placeholder:text-white/55 focus:border-[#CCFF00] focus:ring-2 focus:ring-[#CCFF00]/20 sm:pl-11 sm:pr-32 sm:text-sm"
                       />
                       <ShimmerButton
                         type="submit"
                         disabled={isLoading}
                         shimmerColor="#CCFF00"
                         shimmerDuration="2.5s"
-                        className="absolute bottom-1 right-1 h-7 min-w-[100px] rounded-[5px] px-2 text-[8px] sm:bottom-1.5 sm:right-1.5 sm:h-9 sm:min-w-[112px] sm:px-3 sm:text-[9px]"
+                        className="h-11 min-h-11 w-full rounded-[5px] px-3 text-xs sm:absolute sm:bottom-1.5 sm:right-1.5 sm:h-9 sm:min-h-9 sm:w-auto sm:min-w-[112px] sm:text-[9px]"
                       >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin text-[#CCFF00]" aria-label="Joining waitlist" /> : 'Join mobile list'}
                       </ShimmerButton>
