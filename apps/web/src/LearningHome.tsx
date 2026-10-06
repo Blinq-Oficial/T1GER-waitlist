@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { ArrowRight, BookOpen, Check, ChevronDown, Clock, Flag, Library, Lock, Play, RotateCcw, Sparkles, X } from 'lucide-react';
-import { TigerPortrait, DomainIcon } from './Visual';
+import { Tiger, DomainIcon } from './Visual';
 import LearningMomentum from './LearningMomentum';
 import { getJourneyAction, getJourneyNodes, getSectionsForTrack, type JourneyNode } from './product/learningJourney';
 import type { InteractiveTrack } from './product/interactiveCurriculumTypes';
@@ -36,7 +36,7 @@ export default function LearningHome({ track, brain, missions, dueCount, openLes
       <p>{reviewing ? `Review what you learned, then continue with “${next?.lesson.title.en}”.` : pending ? 'Continue from your saved lesson step, then finish Apply to save your work and unlock the next idea.' : next?.lesson.objective.en || 'Revisit an idea, keep your memory fresh, or explore a new path.'}</p>
       <button className="button primary large" onClick={() => next ? continueStep(next) : go(dueCount ? '/master' : '/discover')}>{action?.label || (dueCount ? 'Start review' : 'Explore another path')}<ArrowRight size={20}/></button>
       <span className="hero-duration"><Clock size={14}/>{reviewing ? 'A short recall session' : pending ? 'Pick up where you left off' : next ? 'About 4 minutes · learn, then apply' : 'Your progress stays with you'}</span>
-    </div><div className="daily-character portrait-scene"><span className="character-caption">{reviewing ? 'Let’s bring it back.' : pending ? 'Make it yours.' : next ? 'You’ve got this.' : 'Nicely done.'}</span><div className="portrait-halo"/><TigerPortrait animated/><span className="floating-idea idea-learn"><BookOpen size={19}/><span>Discover</span></span><span className="floating-idea idea-apply"><Check size={19}/><span>Make it useful</span></span><span className="floating-idea idea-recall"><RotateCcw size={18}/><span>Keep it with you</span></span></div></section>
+    </div><div className="daily-character portrait-scene"><span className="character-caption">{reviewing ? 'Let’s bring it back.' : pending ? 'Make it yours.' : next ? 'You’ve got this.' : 'Nicely done.'}</span><div className="portrait-halo"/><Tiger animation={reviewing ? 'recall' : pending ? 'thinking' : next ? 'welcome' : 'milestone'}/><span className="floating-idea idea-learn"><BookOpen size={19}/><span>Discover</span></span><span className="floating-idea idea-apply"><Check size={19}/><span>Make it useful</span></span><span className="floating-idea idea-recall"><RotateCcw size={18}/><span>Keep it with you</span></span></div></section>
     <LearningMomentum profile={profile} missions={missions} savedTools={savedToolCount} dueCount={dueCount} go={go}/>
     <div className="learning-quick-actions" aria-label="Learning shortcuts">
       <button onClick={() => go('/coach')}><span className="quick-icon violet"><Sparkles size={20}/></span><span><strong>Ask your mentor</strong><small>Make a tricky idea click</small></span><ArrowRight size={17}/></button>

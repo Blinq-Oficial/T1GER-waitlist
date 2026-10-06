@@ -1,0 +1,7 @@
+import { useId } from 'react';
+
+/** Original illustration: an idea becomes a saved, reusable tool. Decorative only. */
+export default function CollectionArtwork() {
+  const gradient = useId();
+  return <svg className="collection-artwork" viewBox="0 0 320 210" aria-hidden="true"><defs><linearGradient id={gradient} x2="1" y2="1"><stop stopColor="#ffbc7d"/><stop offset="1" stopColor="#ed8735"/></linearGradient></defs><ellipse cx="162" cy="186" rx="103" ry="13" fill="currentColor" opacity=".07"/><g transform="rotate(-12 125 110)"><rect x="60" y="32" width="113" height="140" rx="20" fill="var(--raised-2)" stroke="var(--line-strong)"/><path d="M82 62h54M82 77h36M82 120h62M82 134h44" stroke="var(--soft)" strokeWidth="5" strokeLinecap="round" opacity=".35"/></g><g transform="rotate(7 190 108)"><rect x="127" y="30" width="120" height="149" rx="22" fill="var(--raised)" stroke="var(--line-strong)"/><rect x="145" y="48" width="84" height="62" rx="13" fill={'url(#' + gradient + ')'}/><path d="m171 81 11 11 23-25" fill="none" stroke="#442611" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/><path d="M148 131h67M148 146h46" stroke="var(--soft)" strokeWidth="5" strokeLinecap="round" opacity=".35"/></g><path d="m268 53 3 10 10 3-10 3-3 10-3-10-10-3 10-3zM45 139l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="var(--accent-light)"/><circle cx="270" cy="147" r="5" fill="var(--accent-light)" opacity=".6"/></svg>;
+}

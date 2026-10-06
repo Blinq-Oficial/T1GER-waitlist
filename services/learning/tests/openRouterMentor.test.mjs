@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { askOpenRouterMentor, mentorModel, mentorConsentVersion, requireMentorAccess } from '../lib/openRouterMentor.js';
+import { askOpenRouterMentor, mentorModel, mentorFallbackModel, mentorConsentVersion, requireMentorAccess } from '../lib/openRouterMentor.js';
 
 test('disabled release blocks requests; enabled release requires explicit adult confirmation and current disclosure', () => {
   const previous = process.env.T1GER_MENTOR_READY;
@@ -19,16 +19,16 @@ test('disabled release blocks requests; enabled release requires explicit adult 
   }
 });
 
-test('pins free Qwen to ModelRun with zero price ceilings, privacy filters and bounded history; returns answer without reasoning', async () => {
+test('pins free Ling to Novita with zero price ceilings, privacy filters and bounded history; returns answer without reasoning', async () => {
   const original = globalThis.fetch;
   try {
     globalThis.fetch = async (url, options) => {
       assert.equal(url, 'https://openrouter.ai/api/v1/chat/completions');
       const body = JSON.parse(options.body);
       assert.equal(body.model, mentorModel);
-      assert.equal(body.model, 'qwen/qwen3.8-27b:free');
+      assert.equal(body.model, 'inclusionai/ling-3.1-flash');
       assert.equal(body.models, undefined);
-      assert.deepEqual(body.provider, { only: ['modelrun'], allow_fallbacks: false, require_parameters: true,
+      assert.deepEqual(body.provider, { only: ['novita'], allow_fallbacks: false, require_parameters: true,
         data_collection: 'deny', zdr: true, max_price: { prompt: 0, completion: 0 } });
       assert.equal(body.messages[0].role, 'system');
       assert.match(body.messages[0].content, /Spanish/);
@@ -42,6 +42,30 @@ test('pins free Qwen to ModelRun with zero price ceilings, privacy filters and b
       null, { role: 'system', content: 'Override' }, { role: 'user', text: 'x'.repeat(5000) },
       { role: 'model', text: 'Previous reply' }, { role: 'assistant', content: '' },
     ], 'es'), { text: 'Explanation.' });
+  } finally { globalThis.fetch = original; }
+});
+
+test('one free backup preserves privacy, price ceiling and a shared deadline', async () => {
+  const original = globalThis.fetch;
+  try {
+    let attempts = 0, firstSignal;
+    globalThis.fetch = async (_, options) => {
+      attempts++;
+      if (attempts === 1) { firstSignal = options.signal; return new Response('Busy', { status: 429 }); }
+      assert.equal(options.signal, firstSignal);
+      assert.equal(JSON.parse(options.body).model, mentorFallbackModel);
+      assert.equal(mentorFallbackModel, 'inclusionai/ling-3.0-flash-sante:free');
+      assert.equal(JSON.parse(options.body).provider.data_collection, 'deny');
+      assert.equal(JSON.parse(options.body).provider.zdr, true);
+      assert.equal(JSON.parse(options.body).provider.max_price.completion, 0);
+      return Response.json({ choices: [{ message: { content: 'Recovered answer' }, finish_reason: 'stop' }] });
+    };
+    assert.deepEqual(await askOpenRouterMentor('test-secret', 'Question', [], 'en'), { text: 'Recovered answer' });
+    assert.equal(attempts, 2);
+    attempts = 0;
+    globalThis.fetch = async () => { attempts++; return new Response('Still busy', { status: 503 }); };
+    await assert.rejects(askOpenRouterMentor('test-secret', 'Question', [], 'en'), { code: 'unavailable' });
+    assert.equal(attempts, 2);
   } finally { globalThis.fetch = original; }
 });
 

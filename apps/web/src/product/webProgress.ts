@@ -13,7 +13,7 @@ export function focusRemaining(deadline: number | null, pausedSeconds: number, n
   return deadline === null ? pausedSeconds : Math.max(0, Math.ceil((deadline - now) / 1000));
 }
 
-export const mentorConsentVersion = 'openrouter-modelrun-v1';
+export const mentorConsentVersion = 'openrouter-novita-v1';
 export function hasMentorConsent(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false;
   const consent = value as { adultConfirmed?: unknown; providerConsentVersion?: unknown };

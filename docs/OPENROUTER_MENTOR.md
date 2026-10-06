@@ -1,4 +1,14 @@
-# OpenRouter mentor — free Qwen configuration
+# OpenRouter mentor — current free configuration
+
+## Current configuration: October 5, 2026
+
+The Qwen route below disappeared from the live catalog. The deployed mentor now uses **Ling 3.1 Flash / Novita AI**, with **Ling 3.0 Flash Sante free / Novita AI** as a single backup for HTTP 404/429/503. Both price ceilings remain zero, paid routing is disabled, and both requests use `data_collection: deny`, `zdr: true`, the same disclosed provider and one shared 40-second deadline. The current disclosure version is `openrouter-novita-v1`; an older choice does not grant access.
+
+Production initially returned 429 while direct requests succeeded. With the backup, the authenticated production test passed: correct Spanish $100 → $110 → $121 explanation, private history saved/reloaded, stale disclosure rejected and another account's history denied. Free routes still depend on capacity. See [complete recovery and UI audit](MENTOR_RECOVERY_AND_RELEASE_AUDIT_2026-10-05.md).
+
+## Historical snapshot: October 3, 2026 — superseded
+
+The configuration below is kept as historical evaluation evidence. Do not redeploy it.
 
 Reviewed October 3, 2026. David requested a free route after the commercial Nemotron route returned HTTP 402. Free requests have succeeded with the same key, without buying credit. Gold V2.1 remains unchanged.
 
