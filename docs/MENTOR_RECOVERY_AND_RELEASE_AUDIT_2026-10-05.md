@@ -17,6 +17,7 @@ Se recupera la composición del chat original de T1GER APP y se conecta a una ru
 7. **Móvil:** se retira el margen de escritorio que inflaba el menú inferior. El chat reserva espacio para navegación y controles; no queda tapado el compositor.
 8. **Racha:** Companion usa la misma racha vigente que Learn, Profile y Progress, evitando mostrar una racha expirada del campo bruto del perfil. No se modifican recompensas.
 9. **Dependencias:** override compatible de `@grpc/grpc-js >=1.13.6` y lockfile actualizado. `npm audit --prefix apps/web --omit=dev` devuelve cero vulnerabilidades. Permanecen dos avisos moderados de herramientas de desarrollo; no se ejecuta una actualización forzada que cambie la versión mayor del SDK.
+10. **Apply pendiente:** continuar la lección aparece antes del detalle de instrucciones. Los tres pasos siguen disponibles en un desplegable nativo; la regla guardada recibe la ilustración de herramienta reutilizable. Así el siguiente paso se encuentra antes y la página muestra menos texto de entrada.
 
 ## Recuperación de la conexión
 

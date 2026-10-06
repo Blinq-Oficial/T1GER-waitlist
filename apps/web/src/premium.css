@@ -494,6 +494,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .portrait-scene>.tiger-companion{width:min(260px,100%);height:240px;z-index:1;margin:0;position:relative}
 .onboard-guide>.tiger-companion{width:100px;height:92px;flex:none}
 .collection-artwork{display:block;width:min(290px,100%);height:auto;color:var(--accent-light);margin:0 auto 22px}
+.apply-rule .collection-artwork{width:210px;margin:0 auto 12px}.apply-instructions{margin-top:20px;border-top:1px solid var(--line);color:var(--soft)}.apply-instructions>summary{min-height:48px;padding:14px 0;cursor:pointer;font-size:14px}.apply-instructions .apply-feature-steps{margin:0;padding-top:0}
 .achievement-medallion{display:grid;place-items:center;width:70px;height:70px;border-radius:23px;margin-bottom:20px;background:var(--raised-2);border:1px solid var(--line-strong);color:var(--quiet);transform:rotate(-4deg)}
 .achievement.unlocked .achievement-medallion{color:#442611;background:linear-gradient(135deg,#ffd5a0,#ff963e);border-color:#e88a42;box-shadow:inset 0 1px 0 #fff8,0 4px 0 #a96325}
 .achievement-medallion svg{transform:rotate(4deg)}
