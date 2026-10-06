@@ -1,5 +1,6 @@
 import type { Mission, Profile } from '../state';
 import { isComplete } from './webProgress';
+import type { BrainState } from './brainService';
 
 export function dayKey(date: Date, timeZone?: string): string {
   try {
@@ -12,6 +13,16 @@ function timestamp(value: Mission['completedAt']): number | null {
   if (typeof value === 'number' && Number.isFinite(value)) return value;
   if (value && typeof value === 'object' && Number.isFinite(value.seconds)) return value.seconds * 1000;
   return null;
+}
+
+/** Read persisted completions only; these goals do not grant extra XP or rewards. */
+export function dailyLearningGoals(brain: Pick<BrainState, 'missionHistory'>, missions: Mission[], timeZone?: string, now = new Date()) {
+  const today = dayKey(now, timeZone);
+  const isToday = (at: number | null) => at !== null && Number.isFinite(at) && at <= now.getTime() && dayKey(new Date(at), timeZone) === today;
+  const records = brain.missionHistory.filter(record => record.completed && isToday(record.timestamp));
+  const learned = records.some(record => record.missionId.startsWith('learn-'));
+  const applied = records.some(record => record.missionId.startsWith('field-learn-')) || missions.some(mission => isComplete(mission) && isToday(timestamp(mission.completedAt)));
+  return { learned, applied, completed: Number(learned) + Number(applied) };
 }
 
 /** Display only. The server remains authoritative for streaks, XP and rewards. */

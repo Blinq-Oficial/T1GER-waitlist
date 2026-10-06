@@ -3,6 +3,7 @@ import { ArrowRight, BookOpen, Check, ChevronDown, Clock, Flag, Library, Lock, P
 import { Tiger, DomainIcon } from './Visual';
 import LearningMomentum from './LearningMomentum';
 import { getJourneyAction, getJourneyNodes, getSectionsForTrack, type JourneyNode } from './product/learningJourney';
+import { dailyLearningGoals } from './product/learningRhythm';
 import type { InteractiveTrack } from './product/interactiveCurriculumTypes';
 import type { BrainState } from './product/brainService';
 import { isComplete, type Mission, type Profile } from './state';
@@ -19,6 +20,9 @@ export default function LearningHome({ track, brain, missions, dueCount, openLes
   const reviewing = next?.state === 'review';
   const action = next && getJourneyAction(next, pending);
   const sections = getSectionsForTrack(track.id);
+  const sectionIndex = next ? sections.findIndex(section => section.lessonIds.includes(next.lesson.id)) : sections.length - 1;
+  const currentSection = sections[Math.max(0, sectionIndex)];
+  const goals = dailyLearningGoals(brain, missions, profile.timeZone);
   const [selected, setSelected] = useState<JourneyNode | null>(null);
   const lessonDialog = useRef<HTMLDialogElement>(null);
   const selectedAction = selected && getJourneyAction(selected, pendingApply(selected.lesson.id));
@@ -31,25 +35,32 @@ export default function LearningHome({ track, brain, missions, dueCount, openLes
   }
   return <div className="page learning-home">
     <header className="learning-heading"><div><p className="eyebrow">Your learning, one step at a time</p><h1>{next ? 'Your next step.' : 'Look how far you’ve come.'}</h1><p>{track.title.en}</p></div><span className="intention-pill"><Clock size={16}/>{dailyTime} min a day</span></header>
+    <div className="learning-dashboard"><div className="learning-main">
+    <section className="current-stage" aria-label="Current stage"><DomainIcon domain={track.id}/><div><span>Stage {Math.max(0, sectionIndex) + 1} of {sections.length}</span><strong>{currentSection.title.en}</strong></div><button className="icon-button" onClick={() => go('/discover')} aria-label="Choose learning path"><ChevronDown size={19}/></button></section>
     <section className="daily-hero"><div className="daily-hero-copy"><span className="eyebrow">{reviewing ? 'A quick recall before moving on' : pending ? 'A lesson to finish' : next ? `Lesson ${next.lesson.order} of ${nodes.length}` : 'Path complete'}</span>
       <h2>{reviewing ? 'Keep your good ideas close.' : next?.lesson.title.en || 'A foundation worth building on.'}</h2>
       <p>{reviewing ? `Review what you learned, then continue with “${next?.lesson.title.en}”.` : pending ? 'Continue from your saved lesson step, then finish Apply to save your work and unlock the next idea.' : next?.lesson.objective.en || 'Revisit an idea, keep your memory fresh, or explore a new path.'}</p>
       <button className="button primary large" onClick={() => next ? continueStep(next) : go(dueCount ? '/master' : '/discover')}>{action?.label || (dueCount ? 'Start review' : 'Explore another path')}<ArrowRight size={20}/></button>
       <span className="hero-duration"><Clock size={14}/>{reviewing ? 'A short recall session' : pending ? 'Pick up where you left off' : next ? 'About 4 minutes · learn, then apply' : 'Your progress stays with you'}</span>
-    </div><div className="daily-character portrait-scene"><span className="character-caption">{reviewing ? 'Let’s bring it back.' : pending ? 'Make it yours.' : next ? 'You’ve got this.' : 'Nicely done.'}</span><div className="portrait-halo"/><Tiger animation={reviewing ? 'recall' : pending ? 'thinking' : next ? 'welcome' : 'milestone'}/><span className="floating-idea idea-learn"><BookOpen size={19}/><span>Discover</span></span><span className="floating-idea idea-apply"><Check size={19}/><span>Make it useful</span></span><span className="floating-idea idea-recall"><RotateCcw size={18}/><span>Keep it with you</span></span></div></section>
-    <LearningMomentum profile={profile} missions={missions} savedTools={savedToolCount} dueCount={dueCount} go={go}/>
+    </div><div className="daily-character portrait-scene"><span className="character-caption">{reviewing ? 'Let’s bring it back.' : pending ? 'Make it yours.' : next ? 'You’ve got this.' : 'Nicely done.'}</span><div className="portrait-halo"/><Tiger animation={reviewing ? 'recall' : pending ? 'thinking' : next ? 'welcome' : 'milestone'}/></div></section>
     <div className="learning-quick-actions" aria-label="Learning shortcuts">
       <button onClick={() => go('/coach')}><span className="quick-icon violet"><Sparkles size={20}/></span><span><strong>Ask your mentor</strong><small>Make a tricky idea click</small></span><ArrowRight size={17}/></button>
       <button onClick={() => go('/library')}><span className="quick-icon mint"><Library size={20}/></span><span><strong>Your saved tools</strong><small>{savedToolCount ? `${savedToolCount} ready to use again` : 'Keep what you make in Apply'}</small></span><ArrowRight size={17}/></button>
     </div>
-    <div className="learning-layout"><section className="learning-route" aria-label="Learning path">
+    <section className="learning-route" aria-label="Learning path">
       <div className="course-heading"><DomainIcon domain={track.id}/><div><span>Your path · {done} of {nodes.length} applied</span><h2>{track.title.en}</h2></div><button className="icon-button" onClick={() => go('/discover')} aria-label="Choose learning path"><ChevronDown size={19}/></button></div>
-      {sections.map((section, index) => <section className="route-unit" key={section.id}><header className="unit-banner"><span>Chapter {index + 1}</span><h3>{section.title.en}</h3><p>{section.description.en}</p></header><ol className="lesson-map">{nodes.filter(node => section.lessonIds.includes(node.lesson.id)).map(node => {
+      {sections.map((section, index) => <section className={`route-unit ${section.id === currentSection.id ? 'active-unit' : ''}`} key={section.id}><header className="unit-banner"><span>Stage {index + 1}{section.id === currentSection.id ? ' · Your current stage' : ''}</span><h3>{section.title.en}</h3><p>{section.description.en}</p></header><ol className="lesson-map">{nodes.filter(node => section.lessonIds.includes(node.lesson.id)).map(node => {
         const Icon = node.state === 'completed' ? Check : node.state === 'locked' ? Lock : node.state === 'review' ? RotateCcw : Play;
         return <li key={node.lesson.id} className={`map-stop ${node.state}`}><div className="node-position"><button className="path-node" aria-label={`Preview ${node.lesson.title.en}${node.state === 'locked' ? ' — locked' : ''}`} aria-haspopup="dialog" aria-current={node.state === 'current' || node.state === 'review' ? 'step' : undefined} onClick={() => { setSelected(node); lessonDialog.current?.showModal(); }}><Icon size={28} fill={node.state === 'current' ? 'currentColor' : 'none'} strokeWidth={2.5}/></button><div className="node-caption"><strong>{node.lesson.title.en}</strong><span>{node.state === 'completed' ? 'Applied · revisit anytime' : node.state === 'locked' ? 'Tap to see what’s ahead' : node.state === 'review' ? 'A review is due first' : pendingApply(node.lesson.id) ? getJourneyAction(node, true).label : 'Your next idea · about 4 min'}</span></div></div></li>;
       })}</ol></section>)}
       <div className="path-finish"><Flag size={26}/><span>{done === nodes.length ? 'You made it. Keep these ideas fresh in Master.' : `${nodes.length} useful ideas. A stronger way to think.`}</span></div>
-    </section><aside className="learning-side">
+    </section></div><aside className="learning-side">
+      <section className="daily-challenges" aria-labelledby="daily-challenges-title"><header><div><span className="eyebrow">A LITTLE, EVERY DAY</span><h2 id="daily-challenges-title">Daily challenges</h2></div><span className="challenge-score" aria-label={`${goals.completed} of 2 challenges complete`}>{goals.completed}<small>/2</small></span></header><p>One idea. One useful action.</p>
+        <div className={`daily-challenge ${goals.learned ? 'is-done' : ''}`}><span className="challenge-icon"><BookOpen size={21}/></span><div><strong>Learn one idea</strong><span>{goals.learned ? 'Completed today' : 'Finish a lesson today'}</span><progress aria-label="Learn one idea" value={Number(goals.learned)} max={1}/></div><span className="challenge-check" aria-label={goals.learned ? 'Complete' : 'Not yet complete'}>{goals.learned ? <Check size={16}/> : '0/1'}</span></div>
+        <div className={`daily-challenge ${goals.applied ? 'is-done' : ''}`}><span className="challenge-icon mint"><Flag size={21}/></span><div><strong>Make it useful</strong><span>{goals.applied ? 'Completed today' : 'Complete one Apply step'}</span><progress aria-label="Make it useful" value={Number(goals.applied)} max={1}/></div><span className="challenge-check" aria-label={goals.applied ? 'Complete' : 'Not yet complete'}>{goals.applied ? <Check size={16}/> : '0/1'}</span></div>
+        <span className="challenge-note">{goals.completed === 2 ? 'Your daily loop is complete. Nicely done.' : 'A fresh pair of challenges every day.'}</span>
+      </section>
+      <LearningMomentum profile={profile} missions={missions} savedTools={savedToolCount} dueCount={dueCount} go={go}/>
       <section className="small-panel progress-panel"><BookOpen size={20}/><div><strong>{done} of {nodes.length} ideas applied</strong><span>Learn it. Use it. Bring it back.</span></div><progress aria-label="Path completion" value={done} max={nodes.length}/><button className="text-link" onClick={() => go('/progress')}>See your progress <ArrowRight size={17}/></button></section>
       <section className="small-panel recall-panel"><Sparkles size={22}/><h3>{dueCount ? `${dueCount} ready to remember` : done ? 'Your memory is up to date.' : 'Make your first idea stick.'}</h3><p>{dueCount ? 'Try recalling the idea before seeing the answer.' : done ? 'Your next review will arrive when it’s due.' : 'Finish a lesson and its application. We’ll bring it back for review later.'}</p>{dueCount ? <button className="button subtle" onClick={() => go('/master')}>Start review<ArrowRight size={16}/></button> : done ? <span className="clear-status"><Check size={15}/>All caught up</span> : <span className="small-copy">Reviews appear after your first Apply</span>}</section>
     </aside></div>

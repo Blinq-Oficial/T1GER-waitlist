@@ -6,7 +6,7 @@ export default class AppBoundary extends Component<{ children: ReactNode }, { fa
   static getDerivedStateFromError() { return { failed: true }; }
   render() {
     if (!this.state.failed) return this.props.children;
-    return <main className="app-recovery" role="alert"><span className="brand-mark">1</span><h1>Let’s reconnect.</h1><p>This screen could not load. Reload to continue. Your saved learning is kept.</p><button className="button primary" onClick={() => window.location.reload()}>Reload T1GER</button></main>;
+    return <main className="app-recovery" role="alert"><span className="brand">T1GER</span><h1>Let’s reconnect.</h1><p>This screen could not load. Reload to continue. Your saved learning is kept.</p><button className="button primary" onClick={() => window.location.reload()}>Reload T1GER</button></main>;
   }
 }
 

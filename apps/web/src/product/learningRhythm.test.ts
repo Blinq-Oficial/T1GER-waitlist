@@ -1,7 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { learningRhythm } from './learningRhythm';
+import { dailyLearningGoals, learningRhythm } from './learningRhythm';
+import { DEFAULT_BRAIN_STATE } from './brainService';
 
 describe('Learning rhythm display', () => {
+  it('counts daily challenges from saved completions in the learner timezone, excluding pending and future work', () => {
+    const now = new Date('2026-10-06T02:00:00Z');
+    const record = { missionId: 'learn-money-01', completed: true, score: 100, competency: 'investing' as const, difficulty: 'easy' as const, timestamp: Date.parse('2026-10-05T20:00:00Z') };
+    const brain = { ...DEFAULT_BRAIN_STATE, missionHistory: [record, { ...record, missionId: 'field-learn-money-01', timestamp: now.getTime() + 1000 }] };
+    const mission = { id: 'field-learn-money-01', lessonId: 'learn-money-01', status: 'ready' as const, completedAt: record.timestamp };
+    expect(dailyLearningGoals(brain, [mission], 'America/New_York', now)).toEqual({ learned: true, applied: false, completed: 1 });
+    expect(dailyLearningGoals(brain, [{ ...mission, status: 'completed' }], 'America/New_York', now).completed).toBe(2);
+    expect(dailyLearningGoals(brain, [], 'UTC', now).completed).toBe(0);
+    expect(dailyLearningGoals({ missionHistory: [{ ...record, missionId: 'field-learn-money-01' }] }, [], 'America/New_York', now).applied).toBe(true);
+    expect(dailyLearningGoals({ missionHistory: [{ ...record, completed: false }] }, [], 'America/New_York', now).completed).toBe(0);
+  });
   it('uses the reward timezone, counts each day once and does not revive an expired streak', () => {
     const now = new Date('2026-10-06T02:00:00Z'); // Still Oct 5 in Michigan.
     const profile = { streak: 3, timeZone: 'America/New_York', lastVerifiedMissionDay: '2026-10-05' };

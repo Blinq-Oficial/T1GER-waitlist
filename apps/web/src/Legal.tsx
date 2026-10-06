@@ -16,7 +16,7 @@ function Contact() {
 
 export default function LegalPage({ kind, themeAction }: { kind: 'privacy' | 'terms'; themeAction?: ReactNode }) {
   const privacy = kind === 'privacy';
-  return <main className="legal-page"><header className="legal-head"><a className="brand" href={appHref('/')}><span className="brand-mark">1</span><span>T1GER</span></a><div className="legal-actions"><nav aria-label="Legal pages"><a href={appHref('/privacy')} aria-current={privacy ? 'page' : undefined}>Privacy</a><a href={appHref('/terms')} aria-current={!privacy ? 'page' : undefined}>Terms</a></nav>{themeAction}</div></header>
+  return <main className="legal-page"><header className="legal-head"><a className="brand" href={appHref('/')}><span>T1GER</span></a><div className="legal-actions"><nav aria-label="Legal pages"><a href={appHref('/privacy')} aria-current={privacy ? 'page' : undefined}>Privacy</a><a href={appHref('/terms')} aria-current={!privacy ? 'page' : undefined}>Terms</a></nav>{themeAction}</div></header>
     <article className="legal-content"><p className="eyebrow">T1GER / {privacy ? 'PRIVACY' : 'TERMS'}</p><h1>{privacy ? 'Privacy notice' : 'Terms of use'}</h1>
       {legalDraft && <div className="legal-draft" role="status"><strong>Draft for product review.</strong> The legal operator, full postal address, retention schedule and requirements for learners aged 15–17 must be confirmed before public release. This page is not a final legal notice.</div>}
       <p className="legal-updated">{effectiveDate ? `Effective ${effectiveDate}` : 'Effective date to be confirmed'} · Operator: <Contact/></p>
