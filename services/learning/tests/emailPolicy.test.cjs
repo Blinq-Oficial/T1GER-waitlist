@@ -1,5 +1,10 @@
 const { test }=require('node:test'); const assert=require('node:assert/strict');
 const { normalizeEmailPreferences, emailLocalTime, chooseEmail, learningEmail }=require('../lib/emailPolicy.js');
+const { isLearningEmailEvent }=require('../lib/emailPolicy.js');
+test('webhook ignores untagged and other-product messages in a shared provider account',()=>{
+ assert.equal(isLearningEmailEvent({tags:{product:'t1ger-learning-v1'}}),true);
+ for(const data of [null,{}, {tags:{product:'other-app'}}, {tags:[{name:'product',value:'other-app'}]}])assert.equal(isLearningEmailEvent(data),false);
+});
 const p={enabled:true,reminders:true,weekly:true,milestones:true,language:'en',timeZone:'America/New_York',hour:10};
 test('email consent, timezone, quiet hours, caps and completed activity are enforced',()=>{
  const now=new Date('2026-10-07T15:00:00Z'),facts={due:0,pending:false,appliedToday:false,weeklyApply:1,lastActivity:now.getTime(),milestone:0,welcomeSent:true,returnSent:false};

@@ -1,4 +1,8 @@
 export type EmailKind = 'welcome' | 'review' | 'apply' | 'practice' | 'weekly' | 'return' | 'milestone';
+export const learningEmailProduct = 't1ger-learning-v1';
+export function isLearningEmailEvent(data: any): boolean {
+  return data?.tags?.product === learningEmailProduct;
+}
 export interface EmailPreferences {
   enabled: boolean; reminders: boolean; weekly: boolean; milestones: boolean;
   language: 'en' | 'es'; timeZone: string; hour: number;

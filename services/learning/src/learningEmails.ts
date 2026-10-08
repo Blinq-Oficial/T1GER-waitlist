@@ -5,7 +5,7 @@ import { HttpsError, onCall, onRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { error as logError } from 'firebase-functions/logger';
 import { db } from './admin.js';
-import { chooseEmail, emailLocalTime, learningEmail, normalizeEmailPreferences, type EmailKind } from './emailPolicy.js';
+import { chooseEmail, emailLocalTime, learningEmail, normalizeEmailPreferences, isLearningEmailEvent, learningEmailProduct, type EmailKind } from './emailPolicy.js';
 
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 const defaults = { enabled:false, reminders:false, weekly:false, milestones:false, language:'en', timeZone:'UTC', hour:18 };
@@ -79,7 +79,7 @@ async function dispatch(ref:FirebaseFirestore.DocumentReference) {
   try {
     const latest=(await prefRef.get()).data();
     if(!latest?.enabled || latest.suppressed){await ref.set({state:'suppressed',leaseUntil:0},{merge:true});return;}
-    const response=await fetch('https://api.resend.com/emails',{method:'POST',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':`learning-${ref.id}`},body:JSON.stringify({from:process.env.T1GER_EMAIL_FROM,to:[account.email],reply_to:process.env.T1GER_EMAIL_REPLY_TO,...content,headers:{'List-Unsubscribe':`<${unsubscribe}>`,'List-Unsubscribe-Post':'List-Unsubscribe=One-Click'}})});
+    const response=await fetch('https://api.resend.com/emails',{method:'POST',signal:AbortSignal.timeout(15000),headers:{Authorization:`Bearer ${process.env.T1GER_RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':`learning-${ref.id}`},body:JSON.stringify({from:process.env.T1GER_EMAIL_FROM,to:[account.email],reply_to:process.env.T1GER_EMAIL_REPLY_TO,...content,tags:[{name:"product",value:learningEmailProduct}],headers:{'List-Unsubscribe':`<${unsubscribe}>`,'List-Unsubscribe-Post':'List-Unsubscribe=One-Click'}})});
     if(!response.ok){
       await response.body?.cancel();
       const transient=response.status===429 || response.status>=500;
@@ -101,7 +101,7 @@ async function dispatch(ref:FirebaseFirestore.DocumentReference) {
   } finally {await prefRef.set({lockUntil:0},{merge:true});}
 }
 
-export const sendLearningEmails=onSchedule({region:'us-central1',schedule:'every 15 minutes',maxInstances:1,timeoutSeconds:540,secrets:['RESEND_API_KEY']},async()=>{
+export const sendLearningEmails=onSchedule({region:'us-central1',schedule:'every 15 minutes',maxInstances:1,timeoutSeconds:540,secrets:['T1GER_RESEND_API_KEY']},async()=>{
   if(!emailProgramReady())return;
   // Bounded pages across invocations; no scan of every account when nobody opts in.
   const cursorRef=db.doc('operations/email-scan'), cursor=(await cursorRef.get()).data()?.cursor;
@@ -150,10 +150,13 @@ export function verifyEmailWebhook(raw:Buffer,headers:Record<string,any>,secret:
   const expected=createHmac('sha256',Buffer.from(secret.slice(6),'base64')).update(`${id}.${timestamp}.`).update(raw).digest();
   return signatures.split(' ').some(value=>{const [version,encoded]=value.split(','); const candidate=Buffer.from(encoded||'','base64');return version==='v1'&&candidate.length===expected.length&&timingSafeEqual(candidate,expected);});
 }
-export const learningEmailWebhook=onRequest({region:'us-central1',maxInstances:2,secrets:['RESEND_WEBHOOK_SECRET']},async(req,res)=>{
-  if(req.method!=='POST'||req.rawBody.length>100000||!verifyEmailWebhook(req.rawBody,req.headers,process.env.RESEND_WEBHOOK_SECRET||'')){res.status(400).send('Invalid webhook.');return;}
+export const learningEmailWebhook=onRequest({region:'us-central1',maxInstances:2,secrets:['T1GER_RESEND_WEBHOOK_SECRET']},async(req,res)=>{
+  if(req.method!=='POST'||req.rawBody.length>100000||!verifyEmailWebhook(req.rawBody,req.headers,process.env.T1GER_RESEND_WEBHOOK_SECRET||'')){res.status(400).send('Invalid webhook.');return;}
   const event=req.body;
   if(!['email.delivered','email.bounced','email.complained'].includes(event?.type)){res.sendStatus(200);return;}
+  // Shared Resend accounts can emit events for other products. Never persist
+  // those events or make the provider retry them against T1GER's outbox.
+  if(!isLearningEmailEvent(event.data)){res.sendStatus(200);return;}
   const id=event.data?.email_id;
   if(typeof id!=='string'||id.length>100){res.sendStatus(400);return;}
   const jobs=await db.collection('emailOutbox').where('providerId','==',id).limit(1).get();

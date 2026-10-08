@@ -21,10 +21,10 @@ Estado observado: 8 de octubre de 2026. Este informe distingue código construid
 - Un correo por día y tres por semana por cuenta. Presupuesto compartido predeterminado de veinte intentos diarios para la primera activación controlada.
 - Cola durable, exclusión mediante leases, reintentos limitados y claves de idempotencia. Los estados ambiguos requieren revisión.
 - Baja por token opaco: GET muestra confirmación; POST modifica la preferencia. Compatible con baja de un clic.
-- Webhook firmado y validación temporal; que Resend acepte un envío no significa que llegue al buzón. Rebotes y quejas bloquean nuevos envíos.
+- Webhook firmado y validación temporal; que Resend acepte un envío no significa que llegue al buzón. Rebotes y quejas bloquean nuevos envíos. Solo procesa eventos etiquetados `t1ger-learning-v1`; ignora mensajes de otros productos de la cuenta compartida.
 - El frontend permite guardar preferencias mientras explica que la entrega todavía está pendiente.
 
-**No se han desplegado los workers de correo ni el webhook.** No se ha enviado un email real de aprendizaje. Faltan identidad del operador, remitente verificado y la conexión de secretos/webhook autorizada.
+El propietario autorizó la conexión Resend/Firebase/Vercel. La cuenta correcta de Resend tiene `t1ger.app` verificado; se comprobó que su clave «Vercel Integration» coincide con la existente. El webhook de entrega, rebote y queja ya está conectado y desplegado. No se ha enviado un email real de aprendizaje: `T1GER_EMAIL_READY=false` hasta completar identidad del operador y la prueba de entrega.
 
 ### Waitlist
 
@@ -33,7 +33,7 @@ Estado observado: 8 de octubre de 2026. Este informe distingue código construid
 - La respuesta pública ya no revela si una dirección pertenece a la lista, su posición ni su código de referido. Se conservan esos datos para el email privado.
 - Timeouts para Supabase y Resend. Los fallos del proveedor conservan el alta válida.
 - El nuevo sender conserva la clave de idempotencia del anterior. Un conflicto de payload o un trabajo con más de 23 horas desde su creación se retiene como `ambiguous`; no se cambia la clave para forzar un envío.
-- Endpoint privado de recuperación de la cola: `POST /api/waitlist-emails`. Falta conectar `WAITLIST_CRON_SECRET` y el worker programado. El intento inmediato de nuevas altas funciona con el sender ya configurado en Vercel; no se ha certificado la entrega de ese remitente.
+- Endpoint privado de recuperación de la cola: `POST /api/waitlist-emails`. `WAITLIST_CRON_SECRET` está guardado como Secret en Vercel Production y Firebase Secret Manager. El intento inmediato de nuevas altas funciona con el sender ya configurado en Vercel; no se ha certificado la entrega de ese remitente.
 
 ### Soporte y operación
 
@@ -54,7 +54,7 @@ Estado observado: 8 de octubre de 2026. Este informe distingue código construid
 
 ## 2. Servicios desplegados y controles de infraestructura
 
-Proyecto Firebase: `t1ger-69d6a`. Se desplegaron exclusivamente estas siete funciones del codebase `web-learning`:
+Proyecto Firebase: `t1ger-69d6a`. Se desplegaron exclusivamente estas diez funciones del codebase `web-learning`:
 
 1. `completeWebApplyMission`
 2. `askT1gerMentor`
@@ -63,6 +63,11 @@ Proyecto Firebase: `t1ger-69d6a`. Se desplegaron exclusivamente estas siete func
 5. `reportWebIssue`
 6. `createSupportRequest`
 7. `t1gerOperations`
+8. `sendLearningEmails`
+9. `learningEmailWebhook`
+10. `retryWaitlistEmails`
+
+Las tres funciones de correo están ACTIVE y los dos jobs de Cloud Scheduler ENABLED, cada quince minutos. El worker de aprendizaje retorna sin enviar mientras `T1GER_EMAIL_READY=false`. El worker de waitlist recupera únicamente la cola privada existente. El primer despliegue de los workers falló al subir imágenes a Artifact Registry (503); el reintento terminó correctamente el 8 de octubre, 16:01 UTC.
 
 No se desplegó todo el backend compartido con móvil. Las reglas live coinciden con las versionadas antes de esta entrega.
 
@@ -78,28 +83,28 @@ No se desplegó todo el backend compartido con móvil. Las reglas live coinciden
 | --- | --- |
 | Root | 17 tests aprobados, incluidos errores/reintentos del correo, permisos del worker y transición desde el sender anterior |
 | Web | 42 tests aprobados; los 3 contratos Gold que se omiten sin emulador también se ejecutaron y aprobaron con emulador |
-| Servicio | 9 tests unitarios aprobados y build TypeScript correcto |
+| Servicio | 10 tests unitarios aprobados y build TypeScript correcto, incluido aislamiento de eventos de otros productos |
 | Contratos reales de emuladores | Seguridad de propietario/anonimato, soporte, paginación 50+6, mentor, preferencias, baja y firma webhook aprobados |
 | SQL en Supabase | Migración aplicada y contrato transaccional con rollback aprobado; sin insertar personas reales ni adelantar la secuencia de la waitlist |
 | Persistencia local | 1.000 cuentas sintéticas, 2.000 llamadas, diez cuentas en paralelo, reintentos secuenciales: cero errores o recompensas duplicadas; p95 161 ms |
 | Dos llamadas simultáneas en producción | Primera aplicación de una misión en una cuenta sintética: una recompensa, un reintento sin XP, cero XP duplicado; 8 de octubre, 15:09 UTC |
 | Gating en producción | Correo no preparado y sin opt-in por defecto, operador denegado a cuenta normal y funciones privadas denegadas a anónimos |
 | Recuperación de backup | Restauración nativa terminada, datos recuperados comprobados y lectura de cliente denegada; 8 de octubre, 15:14 UTC |
-| Responsive de los nuevos formularios | 320 y 390 px; sin desbordamiento horizontal observado; guardado y ticket en preview sin envíos externos |
+| Responsive de los nuevos formularios | 320 y 390 px; sin desbordamiento horizontal observado; guardado y ticket en preview; preferencias de email guardadas desactivadas con una cuenta sintética real en producción; inputs corregidos en modo claro y oscuro |
+| Webhook HTTP en producción | Eventos sintéticos firmados: entrega aceptada, queja suprime envíos, entrega posterior conserva la queja y evento sin firma rechazado. Fixtures privados retirados; ningún correo real enviado |
 | Gold congelada | Los seis archivos congelados siguen iguales a `74f4b48` |
-| GitHub CI | Workflow `Verify release` aprobado en el commit de implementación `bed1ad482f53f8caaf0b10fa5a8b5488bd1ef4b5`; incluidos PostgreSQL y emuladores |
+| GitHub CI | Workflow `Verify release` aprobado en los commits `bed1ad4`, `3ad6881` y `b6c9b70`; incluidos PostgreSQL y emuladores |
 
 La prueba de simultaneidad en el emulador antiguo presentó bloqueos de transacción; la comprobación pequeña en producción sí pasó. Esto no sustituye una prueba de carga cloud del sistema completo. No se han probado 1.000 personas concurrentes, la disponibilidad de OpenRouter a ese volumen ni la entregabilidad real de los correos.
 
 ## 4. Activación del correo — pasos que faltan
 
 1. Facilitar nombre legal del operador. La dirección proporcionada permanece en un archivo local ignorado; no está en el repositorio ni publicada. Confirmar la dirección que deba aparecer en el footer comercial.
-2. Verificar `t1ger.app` en la cuenta Resend que corresponda a la clave existente. En la organización visible se observó únicamente otro dominio verificado; no se asumió que fuera la cuenta de esa clave.
-3. Aprobar específicamente la copia de la clave Resend de Vercel a Firebase Secret Manager, creación de `WAITLIST_CRON_SECRET` en ambos destinos y conexión del webhook. La petición de aprobación ya está pendiente.
-4. Configurar `T1GER_EMAIL_OPERATOR` con identidad y domicilio completos, `T1GER_EMAIL_FROM`, `T1GER_EMAIL_REPLY_TO` y mantener `T1GER_EMAIL_READY=false` hasta la prueba.
-5. Desplegar únicamente `sendLearningEmails`, `learningEmailWebhook` y `retryWaitlistEmails` con sus secretos. Conectar eventos de entrega, rebote y queja al webhook, usando su secreto de firma.
-6. Hacer una prueba con un buzón controlado autorizado: aceptación, entrega, clic en destino, baja y supresión. No enviar a la lista histórica ni simular entregabilidad.
-7. Activar una cohorte pequeña con presupuesto de veinte intentos diarios y revisar cola/quejas antes de aumentar.
+2. Configurar `T1GER_EMAIL_OPERATOR` con identidad y domicilio completos. El remitente y reply-to ya están configurados; mantener `T1GER_EMAIL_READY=false` hasta la prueba.
+3. Hacer una prueba con un buzón controlado autorizado: aceptación, entrega, clic en destino, baja y supresión. No enviar a la lista histórica ni simular entregabilidad.
+4. Activar una cohorte pequeña con presupuesto de veinte intentos diarios y revisar cola/quejas antes de aumentar. Desplegar el mismo gate en `learningEmailPreferences` y `sendLearningEmails`.
+
+Los secretos de Firebase usan nombres propios de T1GER: `T1GER_RESEND_API_KEY`, `T1GER_RESEND_WEBHOOK_SECRET` y `WAITLIST_CRON_SECRET`. No se sustituyeron secretos del backend móvil. Vercel no permite convertir a Secret la clave gestionada por su integración Resend: permanece en su tipo original; la copia autorizada de Firebase sí está en Secret Manager. Ningún valor secreto ni domicilio personal está en Git.
 
 Resend mantiene la idempotencia durante 24 horas: [documentación del proveedor](https://resend.com/changelog/idempotency-keys). El sistema retiene estados ambiguos antes de que termine esa protección.
 
@@ -128,7 +133,6 @@ Resend mantiene la idempotencia durante 24 horas: [documentación del proveedor]
 
 - Nombre legal del operador y domicilio postal que autorice usar en emails comerciales.
 - Email de la cuenta T1GER que debe tener acceso privado de operador.
-- Aprobación específica de la conexión Resend/Firebase/Vercel y acceso al remitente/DNS si hace falta.
 - Identificador público y región del proyecto PostHog, o creación de ese proyecto por el propietario.
 - Confirmación de recepción de alerta y buzón autorizado para prueba de entrega.
 - Personas reales para validar la educación y responsable de revisión editorial/privacidad/soporte.
