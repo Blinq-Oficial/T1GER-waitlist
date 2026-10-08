@@ -136,6 +136,7 @@ export default function App() {
   const [entry, setEntry] = useState<'welcome' | 'setup' | 'account'>(() => new URLSearchParams(window.location.search).get('signin') === '1' ? 'account' : 'welcome');
   const [accessMode, setAccessMode] = useState<'signin' | 'signup'>(() => new URLSearchParams(window.location.search).get('signin') === '1' ? 'signin' : 'signup');
   const [chosenSetup, setChosenSetup] = useState<OnboardingDraft | undefined>();
+  useEffect(() => { window.scrollTo(0, 0); }, [entry]);
   const contentRef = useRef<HTMLElement>(null);
   useEffect(() => { contentRef.current?.focus({ preventScroll: true }); window.scrollTo(0, 0); }, [parts]);
   useEffect(() => { const invited = new URLSearchParams(window.location.search).get('invite'); if (invited && /^[A-Za-z0-9_-]{1,128}$/.test(invited)) { try { sessionStorage.setItem('t1ger-pending-invite', invited); } catch { /* The current URL still carries the invitation. */ } } }, []);
