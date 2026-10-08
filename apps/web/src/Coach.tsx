@@ -1,3 +1,4 @@
+import { reportOperationalIssue } from './operationalTelemetry';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { ArrowLeft, ArrowUp, BookOpen, Lightbulb, MessageCirclePlus, Puzzle, Sparkles } from 'lucide-react';
 import { addDoc, collection, doc, getDoc, getDocs, limitToLast, orderBy, query, serverTimestamp, updateDoc } from 'firebase/firestore';
@@ -84,7 +85,7 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
       const pair: Message[] = [{ role: 'user', text: draft.trim() }, { role: 'model', text: result.data.text.trim() }];
       setMessages(previous => [...previous, ...pair]); setDraft('');
       try { await persist(pair); } catch { setUnsaved(pair); setSaveError('Reply received. Conversation could not save. Keep this page open and retry saving.'); }
-    } catch (cause) { setError(mentorError(cause)); }
+    } catch (cause) { reportOperationalIssue('mentor', cause); setError(mentorError(cause)); }
     finally { setBusy(false); }
   }
   const locked = busy || loading || historyFailed || !!unsaved;

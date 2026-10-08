@@ -45,7 +45,7 @@ export const completeWebApplyMission = onCall({ region: 'us-central1', maxInstan
   const submissionId = `${uid}_${missionId}`;
   const missionRef = db.doc(`missions/${submissionId}`);
   return db.runTransaction(async transaction => {
-    const [user, reward, saved] = await Promise.all([transaction.get(userRef), transaction.get(rewardRef), transaction.get(missionRef)]);
+    const [user, reward, saved] = await transaction.getAll(userRef, rewardRef, missionRef);
     const current = user.data();
     if (!current || current.onboardingComplete !== true) throw new HttpsError('failed-precondition', 'Finish onboarding first.');
     if (reward.exists) return { status: 'COMPLETED', submissionId, rewardXP: 0, alreadyRewarded: true,
@@ -83,3 +83,5 @@ export const completeWebApplyMission = onCall({ region: 'us-central1', maxInstan
 
 export { askT1gerMentor, interactWithSquadActivity, updateWebCosmetic } from './companion.js';
 export { acceptDirectChallenge, countVerifiedChallengeMission, settleExpiredChallenges } from './challenges.js';
+export { learningEmailPreferences, sendLearningEmails, emailUnsubscribe, learningEmailWebhook, retryWaitlistEmails } from './learningEmails.js';
+export { reportWebIssue, createSupportRequest, t1gerOperations } from './operations.js';

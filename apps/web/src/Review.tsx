@@ -1,3 +1,5 @@
+import { behaviorEvent } from '../../../src/lib/behaviorAnalytics';
+import { reportOperationalIssue } from './operationalTelemetry';
 import { useCallback, useEffect, useState } from 'react';
 import { ArrowRight, CornerDownLeft } from 'lucide-react';
 import type { MasterySnapshot } from './product/masteryService';
@@ -38,9 +40,9 @@ export default function Review({ uid, snapshot, onLearn, preview = false }: { ui
     const signals = retrievalEvidence(`${reviewSessionId}-${item.lesson.id}`, variant, response, score);
     const event = signals[signals.length - 1];
     try {
-      if (!preview) await recordGoldReview(uid, score, event, undefined, signals);
+      if (!preview) { await recordGoldReview(uid, score, event, undefined, signals); behaviorEvent('review_completed', {lesson_id:item.lesson.id}); }
       setReviewedIds(ids => [...ids, item.lesson.id]); setRevealed(false); setAnswer('');
-    } catch (cause) { setError(explainError(cause, 'Could not save recall. Your answer is kept. Retry the rating.')); }
+    } catch (cause) { reportOperationalIssue('review_save',cause); setError(explainError(cause, 'Could not save recall. Your answer is kept. Retry the rating.')); }
     finally { setBusy(false); }
   }
 

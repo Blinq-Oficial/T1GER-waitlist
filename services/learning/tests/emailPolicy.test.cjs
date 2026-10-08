@@ -1,0 +1,20 @@
+const { test }=require('node:test'); const assert=require('node:assert/strict');
+const { normalizeEmailPreferences, emailLocalTime, chooseEmail, learningEmail }=require('../lib/emailPolicy.js');
+const p={enabled:true,reminders:true,weekly:true,milestones:true,language:'en',timeZone:'America/New_York',hour:10};
+test('email consent, timezone, quiet hours, caps and completed activity are enforced',()=>{
+ const now=new Date('2026-10-07T15:00:00Z'),facts={due:0,pending:false,appliedToday:false,weeklyApply:1,lastActivity:now.getTime(),milestone:0,welcomeSent:true,returnSent:false};
+ assert.throws(()=>normalizeEmailPreferences({...p,timeZone:'invalid'}));
+ assert.throws(()=>normalizeEmailPreferences({...p,hour:22}));
+ assert.equal(chooseEmail({...p,enabled:false},facts,{},now),null);
+ assert.equal(chooseEmail(p,facts,{suppressed:true},now),null);
+ assert.equal(chooseEmail(p,facts,{lastDay:'2026-10-07'},now),null);
+ assert.equal(chooseEmail(p,facts,{week:'2026-10-05',weekCount:3},now),null);
+ assert.equal(chooseEmail(p,{...facts,appliedToday:true},{},now),null);
+ assert.equal(chooseEmail(p,{...facts,due:2},{},now).kind,'review');
+ assert.equal(chooseEmail(p,facts,{},new Date('2026-10-07T03:00:00Z')),null);
+ assert.equal(emailLocalTime(new Date('2026-11-01T05:30:00Z'),p.timeZone).day,emailLocalTime(new Date('2026-11-01T06:30:00Z'),p.timeZone).day);
+ assert.equal(chooseEmail(p,{...facts,lastActivity:now.getTime()-8*86400000},{},now).kind,'return');
+ assert.equal(chooseEmail(p,{...facts,lastActivity:now.getTime()-8*86400000,returnSent:true},{},now),null);
+ const email=learningEmail('weekly','es',2,'https://example.com/?a=1&b=2','<Operator>');
+ assert.match(email.text,/2 aplicaciones/); assert.match(email.html,/&lt;Operator&gt;/);
+});

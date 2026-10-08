@@ -142,8 +142,8 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
       const data = await joinWaitlist(email);
       try { sessionStorage.setItem('t1ger_signup_email', email.trim()); } catch { /* Email hint is optional. */ }
       setEmail('');
-      setHelperText(data.alreadyJoined ? "You're already in. Showing your position." : 'Position secured.');
-      onSuccess(data.position, data.shareUrl);
+      setHelperText('Check your email for your mobile waitlist details.');
+      onSuccess(data.position || 0, data.shareUrl);
       trackEvent('Waitlist Signup Success', { source: 'hero', returning: Boolean(data.alreadyJoined) });
       fireConfetti();
     } catch (err: unknown) {
@@ -552,7 +552,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
               >
                 <Sparkles className="w-4 h-4 text-[#FF6B00]" />
                 <span className="font-mono text-xs text-white tracking-[0.4em] uppercase font-bold">
-                  YOU’RE ON THE MOBILE LIST
+                  CHECK YOUR EMAIL
                 </span>
               </motion.div>              <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -561,19 +561,19 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                 className="mb-14 text-center"
               >
                 <span className="font-mono text-white/50 text-[11px] tracking-[0.5em] uppercase block mb-6">
-                  YOUR MOBILE WAITLIST POSITION
+                  YOUR DETAILS ARE PRIVATE
                 </span>
                 <div className="relative inline-flex items-baseline justify-center group">
-                  <span className="text-[#FF6B00] font-mono text-[4vw] md:text-[3rem] font-black mr-2 leading-none">#</span>
+                  {waitlistPosition > 0 && <span className="text-[#FF6B00] font-mono text-[4vw] md:text-[3rem] font-black mr-2 leading-none">#</span>}
                   <span
                     className="font-outfit font-black text-white block relative z-10 transition-transform group-hover:scale-105 duration-700"
                     style={{
-                      fontSize: 'clamp(6rem, 22vw, 14rem)',
+                      fontSize: waitlistPosition > 0 ? 'clamp(6rem, 22vw, 14rem)' : 'clamp(3rem, 10vw, 6rem)',
                       lineHeight: 0.7,
                       letterSpacing: '-0.06em',
                     }}
                   >
-                    {waitlistPosition}
+                    {waitlistPosition > 0 ? waitlistPosition : 'All set.'}
                   </span>
                   <div className="absolute inset-0 bg-[#FF6B00]/10 blur-[100px] rounded-full -z-10 group-hover:bg-[#FF6B00]/20 transition-colors duration-700" />
                 </div>
@@ -604,7 +604,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
 
                   <div className="flex gap-3">
                     <a 
-                      href={`https://wa.me/?text=${encodeURIComponent(`I just joined the T1GER waitlist! 🐅 I'm Rank #${waitlistPosition}. Join the hunt: ${shareUrl}`)}`}
+                      href={`https://wa.me/?text=${encodeURIComponent(`I just joined the T1GER waitlist! 🐅 Start learning on Web now: ${shareUrl}`)}`}
                       onClick={() => trackEvent('Referral Shared', { channel: 'whatsapp', source: 'hero' })}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -613,7 +613,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                       WHATSAPP
                     </a>
                     <a 
-                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just secured my rank on the T1GER waitlist. 🐅\n\nRank: #${waitlistPosition}\nJoin the elite 1%: ${shareUrl}`)}`}
+                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Start learning with me on T1GER: ${shareUrl}`)}`}
                       onClick={() => trackEvent('Referral Shared', { channel: 'x', source: 'hero' })}
                       target="_blank"
                       rel="noopener noreferrer"

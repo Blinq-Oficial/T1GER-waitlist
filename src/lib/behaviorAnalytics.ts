@@ -66,7 +66,7 @@ export function setAnalyticsChoice(choice: AnalyticsChoice) {
   window.dispatchEvent(new Event('t1ger-analytics-choice'));
   return true;
 }
-const allowedEvents = new Set(['auth_viewed', 'signup_started', 'signup_completed', 'signin_completed', 'auth_failed', 'onboarding_step_viewed', 'onboarding_step_completed', 'onboarding_completed', 'page_viewed', 'lesson_opened', 'waitlist_completed', 'learning_action_clicked']);
+const allowedEvents = new Set(['auth_viewed', 'signup_started', 'signup_completed', 'signin_completed', 'auth_failed', 'onboarding_step_viewed', 'onboarding_step_completed', 'onboarding_completed', 'page_viewed', 'lesson_opened', 'waitlist_completed', 'learning_action_clicked', 'apply_completed', 'review_completed', 'lesson_completed']);
 const allowedProperties = new Set(['method', 'step', 'route', 'lesson_id', 'action', 'screen']);
 export function behaviorEvent(name: string, properties: Record<string, string | number | boolean> = {}) {
   if (!allowedEvents.has(name) || !analyticsChoice().events) return;

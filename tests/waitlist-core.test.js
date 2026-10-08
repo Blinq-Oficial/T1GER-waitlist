@@ -72,7 +72,7 @@ test('rate limits the eleventh attempt within the window', () => {
   assert.equal(isRateLimited(key, 1_000 + 10 * 60 * 1_000), false);
 });
 
-test('creates a signup and returns its stable numeric position', async () => {
+test('creates a signup without exposing waitlist ownership or position', async () => {
   const previousFetch = global.fetch;
   const previousResendKey = process.env.RESEND_API_KEY;
   const previousUrl = process.env.SUPABASE_URL;
@@ -115,9 +115,7 @@ test('creates a signup and returns its stable numeric position', async () => {
   );
 
   assert.equal(response.statusCode, 200);
-  assert.equal(response.body.position, 37);
-  assert.equal(response.body.alreadyJoined, false);
-  assert.equal(response.body.emailSent, false);
+  assert.deepEqual(response.body,{success:true,message:'Check your email for your mobile waitlist details. Web is available now.'});
   assert.deepEqual(calls, ['GET', 'POST', 'GET']);
 
   global.fetch = previousFetch;

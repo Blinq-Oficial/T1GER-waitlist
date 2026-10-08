@@ -1,8 +1,10 @@
 import { Component, type ReactNode } from 'react';
+import { reportOperationalIssue } from './operationalTelemetry';
 
 /** Keep a recoverable screen when a route chunk or rendering fails. */
 export default class AppBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
+  componentDidCatch() { reportOperationalIssue('render'); }
   static getDerivedStateFromError() { return { failed: true }; }
   render() {
     if (!this.state.failed) return this.props.children;

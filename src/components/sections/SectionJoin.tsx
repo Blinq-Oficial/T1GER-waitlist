@@ -39,7 +39,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
     try {
       const data = await joinWaitlist(email);
       try { sessionStorage.setItem('t1ger_signup_email', email.trim()); } catch { /* Email hint is optional. */ }
-      onSuccess(data.position, data.shareUrl);
+      onSuccess(data.position || 0, data.shareUrl);
       trackEvent('Waitlist Signup Success', { source: 'final-cta', returning: Boolean(data.alreadyJoined) });
     } catch (error) {
       setErrorText(error instanceof Error ? error.message : 'Connection failed. Please try again.');
@@ -69,7 +69,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
     try {
       await navigator.share({
         title: 'T1GER Waitlist',
-        text: `Join me on the T1GER waitlist. My position is #${waitlistPosition}.`,
+        text: `Join me on the T1GER waitlist. Start learning on Web now.`,
         url: shareUrl,
       });
       trackEvent('Referral Shared', { channel: 'native', source: 'final-cta' });
@@ -156,9 +156,9 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#CCFF00] text-black shadow-[0_0_45px_rgba(204,255,0,0.25)]">
               <Check className="h-7 w-7 stroke-[3]" aria-hidden="true" />
             </div>
-            <p className="mt-6 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#CCFF00]">Mobile position secured</p>
-            <h2 className="mt-3 font-outfit text-5xl font-black uppercase text-white sm:text-7xl">You are #{waitlistPosition}</h2>
-            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/65">You’re on the mobile waitlist. You can start learning on Web today with a free account.</p>
+            <p className="mt-6 font-mono text-[11px] font-black uppercase tracking-[0.24em] text-[#CCFF00]">Details sent privately</p>
+            <h2 className="mt-3 font-outfit text-5xl font-black uppercase text-white sm:text-7xl">{waitlistPosition > 0 ? `You are #${waitlistPosition}` : 'Check your email.'}</h2>
+            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/65">If this address is eligible, your mobile waitlist details arrive by email. Start learning on Web today with a free account.</p>
 
             <a href="/app/" className="mobile-to-web mt-6">Start learning on Web now →</a><div className="mt-8 flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] py-1.5 pl-5 pr-1.5">
               <span className="min-w-0 flex-1 truncate text-left font-mono text-[10px] text-white/65">{shareUrl}</span>
@@ -175,7 +175,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
               <a href={`https://wa.me/?text=${encodeURIComponent(`Join me on T1GER: ${shareUrl}`)}`} onClick={() => trackEvent('Referral Shared', { channel: 'whatsapp', source: 'final-cta' })} target="_blank" rel="noopener noreferrer" className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/15 text-[10px] font-bold uppercase text-white/75 hover:border-[#25D366]/60">
                 <MessageCircle className="h-4 w-4" aria-hidden="true" /> WhatsApp
               </a>
-              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I joined the T1GER waitlist at position #${waitlistPosition}. ${shareUrl}`)}`} onClick={() => trackEvent('Referral Shared', { channel: 'x', source: 'final-cta' })} target="_blank" rel="noopener noreferrer" className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/15 text-[10px] font-bold uppercase text-white/75 hover:border-white/40">
+              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Join me on T1GER. ${shareUrl}`)}`} onClick={() => trackEvent('Referral Shared', { channel: 'x', source: 'final-cta' })} target="_blank" rel="noopener noreferrer" className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/15 text-[10px] font-bold uppercase text-white/75 hover:border-white/40">
                 <Send className="h-4 w-4" aria-hidden="true" /> X
               </a>
             </div>

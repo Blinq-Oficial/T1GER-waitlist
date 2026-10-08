@@ -1,5 +1,5 @@
 // T1GER Waitlist Core Utilities - Restored and verified working state.
-import { Resend } from 'resend';
+import { createHash, createHmac } from 'node:crypto';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const referralPattern = /^[A-Za-z0-9_-]{1,80}$/;
@@ -93,6 +93,8 @@ function getClientIp(req) {
 }
 
 export function isRateLimited(key, now = Date.now()) {
+  for (const [id, value] of signupAttempts) if (now - value.startedAt >= rateLimitWindowMs) signupAttempts.delete(id);
+  if (!signupAttempts.has(key) && signupAttempts.size >= 10000) return true;
   const current = signupAttempts.get(key);
   if (!current || now - current.startedAt >= rateLimitWindowMs) {
     signupAttempts.set(key, { count: 1, startedAt: now });
@@ -111,6 +113,7 @@ async function supabaseRequest(path, options = {}) {
   try {
     response = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
       ...options,
+      signal: AbortSignal.timeout(8000),
       headers: {
         apikey: supabaseSecretKey,
         ...options.headers,
@@ -187,14 +190,21 @@ async function sendWelcomeEmail({ email, position, refCode }) {
     return false;
   }
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
   const shareUrl = `https://t1ger.app/?ref=${encodeURIComponent(refCode)}`;
+  // Preserve the previous sender's key so cutover cannot duplicate a welcome.
+  const legacyKey = `t1ger-waitlist-${encodeURIComponent(email)}`;
+  const idempotencyKey = legacyKey.length <= 256 ? legacyKey :
+    `t1ger-waitlist-${createHash('sha256').update(email).digest('hex')}`;
 
-  const { error } = await resend.emails.send(
-    {
+  const response = await fetch('https://api.resend.com/emails', {
+    method:'POST', signal:AbortSignal.timeout(10000),
+    headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`,'Content-Type':'application/json','Idempotency-Key':idempotencyKey},
+    body:JSON.stringify({
       from: process.env.RESEND_FROM || 'T1GER <equipo@t1ger.app>',
       to: [email],
       subject: 'Your T1GER position is secured',
+      text: `Welcome to T1GER. Your mobile waitlist position is #${position}. Start learning now: https://t1ger.app/app/\nShare T1GER: ${shareUrl}\nFor help, reply to this email.`,
+      reply_to: 'este.t1ger.oficial.app@gmail.com',
       html: `
       <div style="font-family: Inter, Arial, sans-serif; max-width: 620px; margin: 0 auto; background-color: #050505; color: #fff; padding: 40px; border: 1px solid #222;">
         <h1 style="color: #FF6B00; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px;">Welcome to T1GER.</h1>
@@ -211,16 +221,48 @@ async function sendWelcomeEmail({ email, position, refCode }) {
         <p style="font-size: 12px; color: #666; text-align: center; text-transform: uppercase; letter-spacing: 3px;">T1GER | Build Discipline</p>
       </div>
       `,
-    },
-    { idempotencyKey: `t1ger-waitlist-${encodeURIComponent(email)}` },
-  );
+    }),
+  });
 
-  if (error) {
-    console.error('Resend waitlist email failed:', error.name);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    if (response.status === 409 && error.name === 'invalid_idempotent_request') {
+      throw new Error('WAITLIST_EMAIL_AMBIGUOUS');
+    }
+    console.error('waitlist_email_provider_failed', {status:response.status});
     return false;
   }
 
-  return true;
+  const result=await response.json();
+  return typeof result.id === 'string';
+}
+
+export async function deliverWaitlistEmail(email = null) {
+  const claim = await supabaseRequest('rpc/claim_waitlist_email', { method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_email:email}) });
+  if(!claim.response.ok) throw new Error('WAITLIST_OUTBOX_UNAVAILABLE');
+  const job=claim.data?.[0]; if(!job) return false;
+  async function holdForReview() {
+    const result = await supabaseRequest(`waitlist_email_outbox?id=eq.${encodeURIComponent(job.id)}&status=eq.sending`, {
+      method:'PATCH',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({status:'ambiguous',lease_until:null}),
+    });
+    if (!result.response.ok) throw new Error('WAITLIST_EMAIL_STATE_FAILED');
+    console.error('waitlist_email_ambiguous');
+    return false;
+  }
+  // A legacy send could have happened when the row was created. Provider
+  // deduplication expires 24 hours after that send, not after our first claim.
+  const created = Date.parse(job.created_at);
+  if (!Number.isFinite(created) || Date.now() - created >= 23 * 60 * 60 * 1000) return holdForReview();
+  let accepted=false;
+  try { accepted=await sendWelcomeEmail({email:job.email,position:job.position,refCode:job.ref_code}); }
+  catch (error) {
+    if (error.message === 'WAITLIST_EMAIL_AMBIGUOUS') return holdForReview();
+    console.error('waitlist_email_transport_failed');
+  }
+  const finished=await supabaseRequest('rpc/finish_waitlist_email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_id:job.id,p_accepted:accepted})});
+  if(!finished.response.ok)console.error('waitlist_email_state_failed');
+  return accepted;
 }
 
 export async function handleWaitlistSignup(req, res) {
@@ -230,7 +272,7 @@ export async function handleWaitlistSignup(req, res) {
 
   const { email, referredBy, website } = normalizeSignup(req.body);
 
-  if (!emailPattern.test(email)) {
+  if (email.length > 254 || !emailPattern.test(email)) {
     return jsonResponse(res, 400, { error: 'Enter a valid email address.' });
   }
 
@@ -244,7 +286,15 @@ export async function handleWaitlistSignup(req, res) {
   }
 
   const rateLimitKey = getClientIp(req) || email;
-  if (isRateLimited(rateLimitKey)) {
+  let limited=isRateLimited(rateLimitKey);
+  if (!limited && process.env.T1GER_WAITLIST_V2 === 'true') {
+    try {
+      const result=await supabaseRequest('rpc/consume_waitlist_limit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_key:createHmac('sha256',getSupabaseSecretKey()).update(rateLimitKey).digest('hex')})});
+      if(!result.response.ok)return jsonResponse(res,503,{error:'Unable to process signups right now. Try again shortly.'});
+      limited=result.data !== true;
+    } catch {return jsonResponse(res,503,{error:'Unable to process signups right now. Try again shortly.'});}
+  }
+  if (limited) {
     res.setHeader?.('Retry-After', '600');
     return jsonResponse(res, 429, { error: 'Too many attempts. Please try again in a few minutes.' });
   }
@@ -255,7 +305,7 @@ export async function handleWaitlistSignup(req, res) {
     );
 
     if (!existingResult.response.ok) {
-      console.error('Supabase lookup error:', existingResult.data);
+      console.error('waitlist_lookup_failed');
       return jsonResponse(res, 502, { error: 'Unable to check the waitlist right now.' });
     }
 
@@ -297,7 +347,7 @@ export async function handleWaitlistSignup(req, res) {
           );
           user = Array.isArray(retryResult.data) ? retryResult.data[0] : null;
         } else {
-          console.error('Supabase insert error:', insertResult.data);
+          console.error('waitlist_insert_failed');
           return jsonResponse(res, 502, { error: 'Unable to join the waitlist right now.' });
         }
       } else {
@@ -316,26 +366,23 @@ export async function handleWaitlistSignup(req, res) {
     }
     const refCode = getRefCode(user, position);
 
-    let emailSent = false;
 
-    if (!alreadyJoined) {
+    if (process.env.T1GER_WAITLIST_V2 === 'true') {
+      try {await deliverWaitlistEmail(email);} catch {console.error('waitlist_email_outbox_failed');}
+    } else if (!alreadyJoined) {
       try {
-        emailSent = await sendWelcomeEmail({ email, position, refCode });
-      } catch (emailError) {
-        console.error('Resend email error:', emailError);
+        await sendWelcomeEmail({ email, position, refCode });
+      } catch {
+        console.error('waitlist_email_transport_failed');
       }
     }
 
     return jsonResponse(res, 200, {
       success: true,
-      alreadyJoined,
-      emailSent,
-      position,
-      refCode,
-      shareUrl: `https://t1ger.app/?ref=${encodeURIComponent(refCode)}`,
+      message: 'Check your email for your mobile waitlist details. Web is available now.',
     });
   } catch (error) {
-    console.error('Waitlist signup error:', error);
+    console.error('waitlist_signup_failed', publicErrorDetails(error));
     return jsonResponse(res, 500, {
       error: 'Internal server error. Please try again later.',
       ...publicErrorDetails(error),

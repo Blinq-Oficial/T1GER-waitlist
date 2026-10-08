@@ -2,7 +2,7 @@ export interface WaitlistSignupResult {
   success: boolean;
   alreadyJoined?: boolean;
   emailSent?: boolean;
-  position: number;
+  position?: number;
   refCode?: string;
   shareUrl?: string;
 }
@@ -30,7 +30,7 @@ export async function joinWaitlist(email: string): Promise<WaitlistSignupResult>
     throw new Error(data.error || 'Unable to join the waitlist right now.');
   }
 
-  if (!data.success || typeof data.position !== 'number') {
+  if (!data.success) {
     throw new Error('Signup API is unavailable in this environment. Please try again from the live site.');
   }
 

@@ -3,6 +3,8 @@ import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { db } from './admin.js';
 import { purchaseCosmetic, equipCosmetic } from './cosmeticPolicy.js';
 import { askOpenRouterMentor, mentorConsentVersion, requireMentorAccess } from './openRouterMentor.js';
+import { acquireMentor } from './mentorAdmission.js';
+import { error as logError } from 'firebase-functions/logger';
 
 export const updateWebCosmetic = onCall({ region:'us-central1', maxInstances:2 }, async request => {
   if (!request.auth) throw new HttpsError('unauthenticated','Sign in first.');
@@ -46,8 +48,15 @@ export const askT1gerMentor = onCall({ region: 'us-central1', secrets: ['OPENROU
   const message = String(request.data?.message || '').trim();
   if (!message || message.length > 3000) throw new HttpsError('invalid-argument', 'Use 1–3000 characters.');
   const profile = (await db.doc(`users/${request.auth.uid}`).get()).data();
-  await consumeDailyQuota(request.auth.uid, 'mentor', profile?.isPro === true ? 50 : 10);
-  return askOpenRouterMentor(process.env.OPENROUTER_API_KEY || '', message, request.data?.history, request.data?.language === 'es' ? 'es' : 'en');
+  const release = await acquireMentor(request.auth.uid, profile?.isPro === true ? 50 : 10, mentorConsentVersion);
+  let failed = true;
+  try {
+    const reply = await askOpenRouterMentor(process.env.OPENROUTER_API_KEY || '', message, request.data?.history, request.data?.language === 'es' ? 'es' : 'en');
+    failed = false;
+    return reply;
+  } finally {
+    await release(failed).catch(() => logError('mentor_lease_release_failed'));
+  }
 });
 
 

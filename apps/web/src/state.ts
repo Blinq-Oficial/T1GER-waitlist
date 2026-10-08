@@ -1,7 +1,9 @@
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, type User } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, setDoc, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, onSnapshot, query, runTransaction, setDoc, where, limit } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { useEffect, useState } from 'react';
+import { behaviorEvent } from '../../../src/lib/behaviorAnalytics';
+import { reportOperationalIssue } from './operationalTelemetry';
 import { auth, db, functions } from './firebase';
 import { DEFAULT_BRAIN_STATE, processMissionResult, processMissionReview, type BrainState } from './product/brainService';
 import type { TrackType } from './product/missionBank';
@@ -114,10 +116,10 @@ export function useLearner(preview = false) {
       stopProfile = onSnapshot(doc(db!, 'users', nextUser.uid), snap => {
         setProfile(snap.exists() ? snap.data() as Profile : null);
         setLoading(false);
-      }, () => { setError('Could not load your learning state. Check your connection and retry.'); setLoading(false); });
-      stopMissions = onSnapshot(query(collection(db!, 'missions'), where('userId', '==', nextUser.uid)), snap => {
+      }, cause => { reportOperationalIssue('profile_load', cause); setError('Could not load your learning state. Check your connection and retry.'); setLoading(false); });
+      stopMissions = onSnapshot(query(collection(db!, 'missions'), where('userId', '==', nextUser.uid), where('lessonId','in',['money','ai','psychology-v1'].flatMap(track => [1,2,3,4,5].map(order => `learn-${track}-0${order}`))), limit(30)), snap => {
         setMissions(snap.docs.map(item => ({ ...item.data(), id: item.data().missionId || item.id }) as Mission));
-      }, () => setError('Your Apply history is temporarily unavailable.'));
+      }, cause => { reportOperationalIssue('missions_load', cause); setError('Your Apply history is temporarily unavailable.'); });
     });
     return () => { stopAuth(); stopProfile?.(); stopMissions?.(); };
   }, [preview]);
@@ -194,6 +196,7 @@ export async function recordCompletion(uid: string, lessonId: string, score: num
 
 export async function recordReview(uid: string, lessonId: string, score: number) {
   await updateBrain(uid, state => processMissionReview(state, lessonId, score));
+  behaviorEvent('review_completed', { lesson_id: lessonId });
 }
 
 export async function completeApply(uid: string, lessonId: string, reflection: string, score: number) {
@@ -205,6 +208,7 @@ export async function completeApply(uid: string, lessonId: string, reflection: s
     await complete({ missionId, lessonId, reflection: reflection.trim(), language: 'en', timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
   }
   await recordCompletion(uid, lessonId, score);
+  behaviorEvent('apply_completed', { lesson_id: lessonId });
 }
 
 export function readArtifact(uid: string, lessonId: string, cloudArtifacts: SavedLearningArtifact[] = []): SavedLearningArtifact | null {
@@ -224,7 +228,7 @@ export async function prepareApply(uid: string, lesson: AtomicLesson, artifact: 
   const missionId = `field-${lesson.id}`;
   const ref = doc(db, 'missions', `${uid}_${missionId}`);
   // Owner queries are permitted even when no mission exists; direct reads of missing missions are not.
-  const owned = await getDocs(query(collection(db, 'missions'), where('userId', '==', uid)));
+  const owned = await getDocs(query(collection(db, 'missions'), where('userId', '==', uid), where('lessonId', '==', lesson.id), where('missionId','==',missionId), limit(1)));
   const existing = owned.docs.find(item => item.id === ref.id);
   if (!existing || !isComplete(existing.data() as Mission)) {
     await setDoc(ref, {
@@ -243,5 +247,6 @@ export async function prepareApply(uid: string, lesson: AtomicLesson, artifact: 
     const saved = (profile.data().learningArtifacts || []) as SavedLearningArtifact[];
     transaction.update(userRef, { learningArtifacts: [artifact, ...saved.filter(item => item.lessonId !== lesson.id)].slice(0, 100) });
   });
+  behaviorEvent('lesson_completed', { lesson_id: lesson.id });
   try { localStorage.setItem(key, JSON.stringify([artifact, ...items.filter(item => item.lessonId !== lesson.id)].slice(0, 100))); } catch { /* The cloud copy remains authoritative if browser storage is full or unavailable. */ }
 }

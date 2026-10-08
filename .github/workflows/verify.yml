@@ -1,0 +1,67 @@
+name: Verify release
+on:
+  push:
+    branches: [main, codex/web-waitlist-monorepo]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  waitlist_sql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: disposable-ci-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Disposable schema matching the observed production columns
+        run: psql -v ON_ERROR_STOP=1 -c "create role anon; create role authenticated; create role service_role; create table public.waitlist (id bigint generated always as identity primary key, created_at timestamptz default now(), email text unique);"
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: disposable-ci-only
+      - name: Apply migration and exercise rollback-only queue contract
+        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261007_waitlist_delivery_and_limits.sql -f tests/waitlist-delivery-contract.sql
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: disposable-ci-only
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            apps/web/package-lock.json
+            services/learning/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm ci --prefix apps/web
+      - run: npm ci --prefix services/learning
+      - run: npm run lint && npm run lint:web && npm test && npm run test:web
+      - run: npm --prefix services/learning run build && npm --prefix services/learning test
+      - run: npm run build
+      - name: Isolated security, reward and Gold persistence contracts
+        run: npx --yes firebase-tools@15.18.0 emulators:exec --project demo-t1ger-web --only auth,firestore,functions 'node services/learning/tests/safetyRules.test.cjs && node services/learning/tests/launchContract.test.cjs && npm --prefix apps/web test -- src/product/learningEvidence.emulator.test.ts'
+        env:
+          T1GER_EMULATOR_TEST: '1'
+          T1GER_MENTOR_READY: 'false'

@@ -1,0 +1,12 @@
+import { useState } from 'react';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from './firebase';
+import { legalContactEmail } from './Legal';
+export default function SupportCard({preview=false}:{preview?:boolean}) {
+  const [category,setCategory]=useState('support'),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[ticket,setTicket]=useState(''),[error,setError]=useState(''),[requestId,setRequestId]=useState(()=>crypto.randomUUID());
+  return <section className="settings-section support-card ph-no-capture"><h2>A little help.</h2><p>Tell us what happened, suggest a correction, or request account data or deletion.</p><form onSubmit={async e=>{e.preventDefault();setBusy(true);setError('');try{if(preview)setTicket('Preview — no request submitted.');else if(functions){const result=await httpsCallable<object,{ticket:string}>(functions,'createSupportRequest')({category,message,requestId});setTicket(result.data.ticket);}}catch{setError('Could not submit. Your message is kept. Retry or email us.');}finally{setBusy(false);}}}>
+    <label htmlFor="support-category">What can we help with?</label><select id="support-category" value={category} disabled={busy || !!ticket} onChange={e=>setCategory(e.target.value)}><option value="support">Using T1GER</option><option value="content_correction">Lesson correction</option><option value="privacy_export">Complete account data request</option><option value="privacy_delete">Shared account deletion request</option></select>
+    <label htmlFor="support-message">Your message</label><textarea id="support-message" rows={4} minLength={10} maxLength={1500} required value={message} disabled={busy || !!ticket} onChange={e=>setMessage(e.target.value)} placeholder="The screen, what you expected, and what happened. Please do not include passwords or payment details."/>
+    {!ticket && <button className="button primary" disabled={busy || message.trim().length<10}>{busy?'Submitting…':'Submit request'}</button>}
+  </form>{ticket && <div role="status"><p>Request recorded: <strong>{ticket}</strong>. Our team needs to review it. A deletion request does not delete your account immediately.</p><button className="text-link" onClick={()=>{setTicket('');setMessage('');setRequestId(crypto.randomUUID());}}>Start another request</button></div>}{error && <p className="error" role="alert">{error}</p>}<a className="text-link" href={`mailto:${legalContactEmail}`}>Or email T1GER support ↗</a></section>;
+}
