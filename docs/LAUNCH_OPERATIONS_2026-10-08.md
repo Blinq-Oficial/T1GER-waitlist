@@ -69,7 +69,7 @@ No se desplegó todo el backend compartido con móvil. Las reglas live coinciden
 - Copia diaria nativa de Firestore, retención de siete días, ubicación `nam5`.
 - Primera copia observada READY: 8 de octubre, 11:32:05 UTC.
 - Alerta de errores operativos y canal de email de soporte configurados. El evento sintético fue aceptado por Cloud Logging; recepción efectiva de la alerta en el buzón pendiente de confirmar.
-- Recuperación de la copia solicitada en una base independiente `t1ger-restore-drill-20261008`. El resultado de la recuperación se registra por separado al finalizar; solicitar la operación no prueba que se haya recuperado.
+- Recuperación real completada en una base independiente `t1ger-restore-drill-20261008`: cinco perfiles recuperados y un registro de recompensa inmutable coincidente con el original. Se comprobó que un cliente autenticado no pudiera leer esa copia. Tras la prueba se eliminó exclusivamente la base del ensayo y se confirmó HTTP 404, conservando la base de producción y el backup.
 - La tabla de Supabase no tiene un backup nativo confirmado en el plan observado. Hace falta establecer exportación/restauración privada para la waitlist; Firestore no respalda Supabase.
 
 ## 3. Evidencia de pruebas
@@ -84,8 +84,10 @@ No se desplegó todo el backend compartido con móvil. Las reglas live coinciden
 | Persistencia local | 1.000 cuentas sintéticas, 2.000 llamadas, diez cuentas en paralelo, reintentos secuenciales: cero errores o recompensas duplicadas; p95 161 ms |
 | Dos llamadas simultáneas en producción | Primera aplicación de una misión en una cuenta sintética: una recompensa, un reintento sin XP, cero XP duplicado; 8 de octubre, 15:09 UTC |
 | Gating en producción | Correo no preparado y sin opt-in por defecto, operador denegado a cuenta normal y funciones privadas denegadas a anónimos |
+| Recuperación de backup | Restauración nativa terminada, datos recuperados comprobados y lectura de cliente denegada; 8 de octubre, 15:14 UTC |
 | Responsive de los nuevos formularios | 320 y 390 px; sin desbordamiento horizontal observado; guardado y ticket en preview sin envíos externos |
 | Gold congelada | Los seis archivos congelados siguen iguales a `74f4b48` |
+| GitHub CI | Workflow `Verify release` aprobado en el commit de implementación `bed1ad482f53f8caaf0b10fa5a8b5488bd1ef4b5`; incluidos PostgreSQL y emuladores |
 
 La prueba de simultaneidad en el emulador antiguo presentó bloqueos de transacción; la comprobación pequeña en producción sí pasó. Esto no sustituye una prueba de carga cloud del sistema completo. No se han probado 1.000 personas concurrentes, la disponibilidad de OpenRouter a ese volumen ni la entregabilidad real de los correos.
 
