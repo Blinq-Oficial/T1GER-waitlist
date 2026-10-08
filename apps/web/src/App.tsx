@@ -11,6 +11,8 @@ import { getInteractiveTrack } from './product/interactiveCurriculum';
 import type { InteractiveTrack } from './product/interactiveCurriculumTypes';
 import { buildMasterySnapshot } from './product/masteryService';
 import Onboarding from './Onboarding';
+import Welcome from './Welcome';
+import type { OnboardingDraft } from './onboardingDraft';
 import { getJourneyNodes } from './product/learningJourney';
 import type { SavedLearningArtifact } from './product/interactiveCurriculumTypes';
 import { getApplyDesign } from './product/applyMissionDesign';
@@ -52,8 +54,8 @@ function ThemeToggle({ theme, onToggle }: { theme: Theme; onToggle: () => void }
   return <button type="button" className="theme-toggle" onClick={onToggle} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}<span>{theme === 'dark' ? 'Light' : 'Dark'}</span></button>;
 }
 
-function AuthScreen({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => void }) {
-  const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>(() => new URLSearchParams(window.location.search).get('signin') === '1' ? 'signin' : 'signup');
+function AuthScreen({ theme, onToggleTheme, initialMode = 'signup', onBack, draft }: { theme: Theme; onToggleTheme: () => void; initialMode?: 'signin' | 'signup'; onBack?: () => void; draft?: OnboardingDraft }) {
+  const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>(initialMode);
   const [email, setEmail] = useState(() => { try { return sessionStorage.getItem('t1ger_signup_email') || ''; } catch { return ''; } });
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -71,9 +73,10 @@ function AuthScreen({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () 
     finally { setBusy(false); }
   }
   function switchMode(next: 'signin' | 'signup' | 'reset') { setMode(next); setPassword(''); setError(''); setResetSent(false); setShowPassword(false); }
-  return <div className="auth-layout">
+  return <div className="auth-layout access-v2">
+    {onBack && <div className="access-topbar"><button type="button" className="text-link" disabled={busy} onClick={onBack}>← {draft?.interests.length ? 'Edit my path' : 'Back to welcome'}</button>{draft?.interests.length ? <span><BookOpen size={16}/>{trackFor(draft.primary).title.en} · {draft.dailyTime} min / day</span> : null}</div>}
     <div className="auth-story"><div className="auth-story-head"><div className="brand"><span>T1GER</span></div><ThemeToggle theme={theme} onToggle={onToggleTheme}/></div><div className="auth-story-body"><TigerPortrait animated className="auth-portrait"/><p className="eyebrow">CURIOSITY, WITH DIRECTION</p><h1>Learn it.<br/><em>Apply it.</em><br/>Master it.</h1><p>One useful idea, a real decision, and a reason to remember it.</p><div className="story-line"><span>01 — LEARN</span><span>02 — APPLY</span><span>03 — MASTER</span></div></div></div>
-    <div className="auth-panel"><div className="auth-form"><div className="auth-mode-switch" aria-label="Account access"><button type="button" aria-pressed={mode === 'signup'} onClick={() => switchMode('signup')}>Create account</button><button type="button" aria-pressed={mode === 'signin'} onClick={() => switchMode('signin')}>Sign in</button></div><p className="eyebrow">{mode === 'reset' ? 'ACCOUNT RECOVERY' : 'YOUR LEARNING PATH STARTS HERE'}</p><h2>{mode === 'signin' ? 'Welcome back.' : mode === 'reset' ? 'Reset your password.' : 'Start with a useful idea.'}</h2><p className="muted auth-description">{mode === 'reset' ? 'Enter your account email and we’ll send reset instructions.' : mode === 'signin' ? 'Your learning is waiting where you left it.' : 'Choose Investing, AI, or Psychology. Start your first lesson free and keep your progress across devices.'}</p>
+    <div className="auth-panel"><div className="auth-form"><div className="auth-mode-switch" aria-label="Account access"><button type="button" aria-pressed={mode === 'signup'} disabled={busy} onClick={() => switchMode('signup')}>Create account</button><button type="button" aria-pressed={mode === 'signin'} disabled={busy} onClick={() => switchMode('signin')}>Sign in</button></div><p className="eyebrow">{mode === 'reset' ? 'ACCOUNT RECOVERY' : 'YOUR LEARNING PATH STARTS HERE'}</p><h2>{mode === 'signin' ? 'Welcome back.' : mode === 'reset' ? 'Reset your password.' : draft?.interests.length ? 'Keep your path.' : 'Start with a useful idea.'}</h2><p className="muted auth-description">{mode === 'reset' ? 'Enter your account email and we’ll send reset instructions.' : mode === 'signin' ? 'Your learning is waiting where you left it.' : draft?.interests.length ? 'Save your progress and start your first lesson. Your choices are ready.' : 'Choose Investing, AI, or Psychology. Start your first lesson free and keep your progress across devices.'}</p>
       {!configured ? <div className="notice">{import.meta.env.DEV ? <>Firebase is not configured. Add the values in <code>.env.local</code> from the existing T1GER project.</> : <>Account access is temporarily unavailable. Please try again later. <a href="/">Return to T1GER</a>.</>}</div> : <>
         {mode !== 'reset' && <><button className="button google" onClick={async () => { setBusy(true); setError(''); try { if (mode === 'signup') behaviorEvent('signup_started', { method: 'google' }); const result = await signInGoogle(); behaviorEvent(getAdditionalUserInfo(result)?.isNewUser ? 'signup_completed' : 'signin_completed', { method: 'google' }); } catch (cause) { behaviorEvent('auth_failed', { method: 'google' }); setError(explainError(cause, 'Google sign in failed.')); } finally { setBusy(false); } }} disabled={busy} aria-describedby="auth-legal"><img src={appHref('/brand/google-g.png')} width="20" height="20" alt=""/><span>Continue with Google</span></button><div className="divider">or use email</div></>}
         <form onSubmit={submit} className="form-stack"><div className="auth-field"><label htmlFor="auth-email">Email</label><input id="auth-email" name="email" type="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} /></div>{mode !== 'reset' && <div className="auth-field"><label htmlFor="auth-password">Password</label><div className="password-control"><input id="auth-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} minLength={mode === 'signup' ? 6 : undefined} aria-describedby={mode === 'signup' ? 'password-help' : undefined} required value={password} onChange={e => setPassword(e.target.value)} /><button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Hide password' : 'Show password'}>{showPassword ? 'Hide' : 'Show'}</button></div>{mode === 'signup' && <small className="field-help" id="password-help">Use at least 6 characters.</small>}</div>}<button className="button primary" aria-describedby={mode !== 'reset' ? 'auth-legal' : undefined} disabled={busy || (mode === 'reset' && resetSent)}>{busy ? 'One moment…' : mode === 'signin' ? 'Sign in' : mode === 'reset' ? 'Send reset link' : 'Create account'} <ArrowRight size={18}/></button></form>
@@ -128,8 +131,11 @@ export default function App() {
   const [theme, setTheme] = useState<Theme>(initializeTheme);
   function toggleTheme() { const next = theme === 'dark' ? 'light' : 'dark'; applyTheme(next); setTheme(next); }
   const preview = import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === '1';
-  const learner = useLearner(preview); const [parts, setParts] = useState(route); const [demoOnboarded, setDemoOnboarded] = useState(false);
+  const learner = useLearner(preview); const [parts, setParts] = useState(route); const [onboardedAccount, setOnboardedAccount] = useState('');
   const [online, setOnline] = useState(navigator.onLine);
+  const [entry, setEntry] = useState<'welcome' | 'setup' | 'account'>(() => new URLSearchParams(window.location.search).get('signin') === '1' ? 'account' : 'welcome');
+  const [accessMode, setAccessMode] = useState<'signin' | 'signup'>(() => new URLSearchParams(window.location.search).get('signin') === '1' ? 'signin' : 'signup');
+  const [chosenSetup, setChosenSetup] = useState<OnboardingDraft | undefined>();
   const contentRef = useRef<HTMLElement>(null);
   useEffect(() => { contentRef.current?.focus({ preventScroll: true }); window.scrollTo(0, 0); }, [parts]);
   useEffect(() => { const invited = new URLSearchParams(window.location.search).get('invite'); if (invited && /^[A-Za-z0-9_-]{1,128}$/.test(invited)) { try { sessionStorage.setItem('t1ger-pending-invite', invited); } catch { /* The current URL still carries the invitation. */ } } }, []);
@@ -144,9 +150,14 @@ export default function App() {
   if (parts[0] === 'privacy' || parts[0] === 'terms') return <LegalPage kind={parts[0]} themeAction={<ThemeToggle theme={theme} onToggle={toggleTheme}/>}/>;
   if (!configured && !preview) return <AuthScreen theme={theme} onToggleTheme={toggleTheme}/>;
   if (learner.loading) return <LoadingCanvas label="Loading your path" mode="initial"/>;
-  if (!learner.user) return <AuthScreen theme={theme} onToggleTheme={toggleTheme}/>;
+  if (!learner.user) {
+    const themeAction = <ThemeToggle theme={theme} onToggle={toggleTheme}/>;
+    if (entry === 'welcome') return <Welcome themeAction={themeAction} start={() => { pauseBehaviorReplay(); setEntry('setup'); }} signIn={() => { pauseBehaviorReplay(); setAccessMode('signin'); setEntry('account'); }}/>;
+    if (entry === 'setup') return <Onboarding user={null} profile={null} preview={false} initialDraft={chosenSetup} themeAction={themeAction} onDone={() => {}} onExit={() => setEntry('welcome')} onCreateAccount={draft => { setChosenSetup(draft); setAccessMode('signup'); setEntry('account'); }}/>;
+    return <AuthScreen theme={theme} onToggleTheme={toggleTheme} initialMode={accessMode} draft={chosenSetup} onBack={() => setEntry(chosenSetup ? 'setup' : 'welcome')}/>;
+  }
   if (learner.error) return <div className="loading-screen error-screen"><div className="brand"><span>T1GER</span></div><p className="eyebrow">CONNECTION INTERRUPTED</p><h1>We couldn't load your path.</h1><p>{learner.error}</p><button className="button primary" onClick={() => window.location.reload()}>Try again <ArrowRight size={17}/></button></div>;
-  if (!learner.profile?.onboardingComplete && !demoOnboarded) return <Onboarding user={learner.user} preview={preview} profile={learner.profile} themeAction={<ThemeToggle theme={theme} onToggle={toggleTheme}/>} onDone={id => { setDemoOnboarded(true); go(`/lesson/${id}`); }}/>;
+  if (!learner.profile?.onboardingComplete && onboardedAccount !== learner.user.uid) return <Onboarding key={learner.user.uid} user={learner.user} preview={preview} profile={learner.profile} initialDraft={chosenSetup} themeAction={<ThemeToggle theme={theme} onToggle={toggleTheme}/>} onDone={id => { setOnboardedAccount(learner.user!.uid); go(`/lesson/${id}`); }}/>;
   if (!learner.profile) return <LoadingCanvas label="Loading your account" mode="initial"/>;
   if (parts[0] === 'operations' && !preview) return <Operations/>;
   const brain = brainOf(learner.profile); const track = trackFor(brain.currentTrackId || learner.profile.primaryTrack);

@@ -11,6 +11,7 @@ import './access.css';
 import './experience.css';
 import './design-system.css';
 import './premium.css';
+import './entry.css';
 import App from './App';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
