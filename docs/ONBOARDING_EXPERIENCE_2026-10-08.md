@@ -35,7 +35,8 @@ Tanda centrada en bienvenida, elección del tema, ritmo, registro y apertura de 
 - 44 tests Web aprobados. Las tres pruebas que requieren emulador no cuentan como ejecutadas en este comando; el workflow de publicación las ejecuta con emulador.
 - Build y lint locales correctos durante la implementación; el CI vuelve a comprobar la versión del commit publicado.
 - Recorrido de invitado: selección, avance, retroceso, edición desde registro y continuidad de tema/minutos.
-- Modos claro y oscuro. Inspección a 320 × 568 y 390 × 844, sin desbordamiento horizontal observado.
+- Modos claro y oscuro. Inspección a 320 × 568, 390 × 844 y 1440 × 900, sin desbordamiento horizontal observado.
+- Edición desde registro → tema nuevo → bienvenida → retomar: se conserva la elección nueva también en memoria, sin recuperar la anterior.
 - Selección del ritmo mediante flecha del teclado.
 - En preview, elegir Psicología y empezar abrió `learn-psychology-v1-01`, con la pregunta inicial de Confirmation bias. No se guardó progreso real.
 - Las funciones de servidor, correo, pagos y los archivos congelados de Gold permanecen fuera del diff de esta tanda.

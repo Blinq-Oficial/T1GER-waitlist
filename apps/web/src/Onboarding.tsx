@@ -18,7 +18,7 @@ const steps: SetupStep[] = ['interests', 'rhythm', 'ready'];
 
 export default function Onboarding({ user, profile, preview, themeAction, onDone, onExit, onCreateAccount, initialDraft }: {
   user: User | null; profile: Profile | null; preview: boolean; themeAction: ReactNode;
-  onDone: (lessonId: string) => void; onExit?: () => void; onCreateAccount?: (draft: OnboardingDraft) => void; initialDraft?: OnboardingDraft;
+  onDone: (lessonId: string) => void; onExit?: (draft: OnboardingDraft) => void; onCreateAccount?: (draft: OnboardingDraft) => void; initialDraft?: OnboardingDraft;
 }) {
   const key = onboardingKey(user?.uid);
   const [draft, setDraft] = useState(() => {
@@ -53,7 +53,7 @@ export default function Onboarding({ user, profile, preview, themeAction, onDone
   const heading = draft.step === 'interests' ? 'What would you like to explore?' : draft.step === 'rhythm' ? 'How much time feels right?' : 'Your first useful idea.';
   return <main className="onboard experience-onboard setup-v2">
     <header className="onboard-head"><a className="brand" href="/"><span>T1GER</span></a>{themeAction}</header>
-    <div className="setup-navigation"><button className="icon-button" disabled={busy || (index === 0 && !onExit)} aria-label={index ? 'Previous setup step' : 'Back to welcome'} onClick={() => index ? go(steps[index - 1]) : onExit?.()}><ArrowLeft size={22}/></button><div className="setup-progress"><progress aria-label="Learning setup progress" value={index + 1} max={3}/><span>Step {index + 1} of 3 <span>{['Your curiosity', 'Your rhythm', 'Your first lesson'][index]}</span></span></div></div>
+    <div className="setup-navigation"><button className="icon-button" disabled={busy || (index === 0 && !onExit)} aria-label={index ? 'Previous setup step' : 'Back to welcome'} onClick={() => index ? go(steps[index - 1]) : onExit?.(draft)}><ArrowLeft size={22}/></button><div className="setup-progress"><progress aria-label="Learning setup progress" value={index + 1} max={3}/><span>Step {index + 1} of 3 <span>{['Your curiosity', 'Your rhythm', 'Your first lesson'][index]}</span></span></div></div>
     <section className="onboard-body" key={draft.step}>
       <div className="onboard-guide">{draft.step === 'ready' ? <Tiger animation="welcome"/> : <TigerPortrait animated/>}<p>{draft.step === 'interests' ? "One path to start. Plenty to discover." : draft.step === 'rhythm' ? "Small steps count. Choose your pace." : "You've got a good place to start."}</p></div>
       <h1 ref={titleRef} tabIndex={-1}>{heading}</h1>

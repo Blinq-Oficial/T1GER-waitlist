@@ -153,7 +153,7 @@ export default function App() {
   if (!learner.user) {
     const themeAction = <ThemeToggle theme={theme} onToggle={toggleTheme}/>;
     if (entry === 'welcome') return <Welcome themeAction={themeAction} start={() => { pauseBehaviorReplay(); setEntry('setup'); }} signIn={() => { pauseBehaviorReplay(); setAccessMode('signin'); setEntry('account'); }}/>;
-    if (entry === 'setup') return <Onboarding user={null} profile={null} preview={false} initialDraft={chosenSetup} themeAction={themeAction} onDone={() => {}} onExit={() => setEntry('welcome')} onCreateAccount={draft => { setChosenSetup(draft); setAccessMode('signup'); setEntry('account'); }}/>;
+    if (entry === 'setup') return <Onboarding user={null} profile={null} preview={false} initialDraft={chosenSetup} themeAction={themeAction} onDone={() => {}} onExit={draft => { setChosenSetup(draft); setEntry('welcome'); }} onCreateAccount={draft => { setChosenSetup(draft); setAccessMode('signup'); setEntry('account'); }}/>;
     return <AuthScreen theme={theme} onToggleTheme={toggleTheme} initialMode={accessMode} draft={chosenSetup} onBack={() => setEntry(chosenSetup ? 'setup' : 'welcome')}/>;
   }
   if (learner.error) return <div className="loading-screen error-screen"><div className="brand"><span>T1GER</span></div><p className="eyebrow">CONNECTION INTERRUPTED</p><h1>We couldn't load your path.</h1><p>{learner.error}</p><button className="button primary" onClick={() => window.location.reload()}>Try again <ArrowRight size={17}/></button></div>;
