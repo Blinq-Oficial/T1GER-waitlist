@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { animationDuration, animationPose, blendPose, type MascotAnimation } from './mascotMotion';
+import { centerMascot, mascotFrame } from './mascotFraming';
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}mascot/${name}`;
 // Keep one CPU template for stage changes; each canvas owns and disposes its GPU copies.
@@ -34,9 +35,9 @@ export default function Mascot3D({ celebrate = false, animation = celebrate ? 'c
     renderer.domElement.setAttribute('aria-hidden', 'true');
     element.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(36, 1, .1, 20);
-    camera.position.set(0, .38, 4.1);
-    camera.lookAt(0, .32, 0);
+    const camera = new THREE.OrthographicCamera(-1.575, 1.575, 1.575, -1.575, .1, 20);
+    camera.position.set(0, 0, 4.1);
+    camera.lookAt(0, 0, 0);
     scene.add(new THREE.HemisphereLight('#fff2df', '#30241e', 1.15));
     const keyLight = new THREE.DirectionalLight('#fff1de', 2.5);
     keyLight.position.set(-3, 4, 5); scene.add(keyLight);
@@ -54,7 +55,7 @@ export default function Mascot3D({ celebrate = false, animation = celebrate ? 'c
     const shadowTexture = new THREE.CanvasTexture(shadowCanvas);
     const shadowMaterial = new THREE.MeshBasicMaterial({ map: shadowTexture, transparent: true, depthWrite: false });
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.35, .45), shadowMaterial);
-    shadow.position.set(0, -.82, -.25); scene.add(shadow);
+    shadow.position.set(0, -.94, -.25); scene.add(shadow);
 
     const starShape = new THREE.Shape();
     for (let i = 0; i < 8; i++) {
@@ -134,7 +135,7 @@ export default function Mascot3D({ celebrate = false, animation = celebrate ? 'c
     const observer = new ResizeObserver(() => {
       const width = element.clientWidth, height = element.clientHeight;
       if (!width || !height) return;
-      renderer.setSize(width, height); camera.aspect = width / height; camera.updateProjectionMatrix();
+      renderer.setSize(width, height); Object.assign(camera, mascotFrame(width / height)); camera.updateProjectionMatrix();
       // Resizing clears the canvas. Keep one valid frame even in a background tab.
       if (model && !disposed) renderer.render(scene, camera);
       refresh();
@@ -147,7 +148,7 @@ export default function Mascot3D({ celebrate = false, animation = celebrate ? 'c
     });
     void loadModel().then(template => {
       if (disposed) return;
-      model = template.clone(true);
+      model = centerMascot(template.clone(true));
       model.traverse(node => {
         if (node instanceof THREE.Mesh) {
           node.geometry = node.geometry.clone();

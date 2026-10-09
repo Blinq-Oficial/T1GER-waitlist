@@ -15,6 +15,8 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
+  const [pendingQuestion, setPendingQuestion] = useState('');
+  const [replySlow, setReplySlow] = useState(false);
   const [loading, setLoading] = useState(!preview);
   const [error, setError] = useState('');
   const [historyFailed, setHistoryFailed] = useState(false);
@@ -26,6 +28,11 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
   const consentDialog = useRef<HTMLDialogElement>(null);
   const end = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (!pendingQuestion) return;
+    const timer = window.setTimeout(() => setReplySlow(true), 15000);
+    return () => window.clearTimeout(timer);
+  }, [pendingQuestion]);
   useEffect(() => { if (input.current) { input.current.style.height = 'auto'; input.current.style.height = Math.min(input.current.scrollHeight, 128) + 'px'; } }, [draft]);
   useEffect(() => {
     if (preview || !db) return;
@@ -40,7 +47,7 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
     }).catch(() => { if (active) { setHistoryFailed(true); setError('Your mentor settings or conversations could not load. Reload before continuing.'); } }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [uid, preview]);
-  useEffect(() => { if (messages.length || busy) end.current?.scrollIntoView({ block: 'nearest' }); }, [messages.length, busy]);
+  useEffect(() => { if (messages.length || pendingQuestion) end.current?.scrollIntoView({ block: 'nearest' }); }, [messages.length, pendingQuestion]);
   async function persist(pair: Message[]) {
     if (!db) throw new Error('Account unavailable');
     await addDoc(collection(db, 'users', uid, 'coachingSessions'), { coachId: 't1ger', schemaVersion: 2, messages: pair, summary: pair[1].text.slice(0, 100), timestamp: serverTimestamp() });
@@ -77,17 +84,21 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
   }
   async function requestReply() {
     if (preview) { setError('Design preview. Sign in to use the live AI mentor.'); return; }
+    const question = draft.trim();
+    setPendingQuestion(question); setReplySlow(false);
     setBusy(true); setError('');
     try {
       if (!functions) throw new Error('Mentor unavailable');
-      const result = await httpsCallable<{ message: string; history: Message[]; language: string; adultConfirmed: boolean; providerConsentVersion: string }, { text: string }>(functions, 'askT1gerMentor', { timeout: 70000 })({ message: draft.trim(), history: messages.slice(-8), language, adultConfirmed: true, providerConsentVersion: mentorConsentVersion });
+      const result = await httpsCallable<{ message: string; history: Message[]; language: string; adultConfirmed: boolean; providerConsentVersion: string }, { text: string }>(functions, 'askT1gerMentor', { timeout: 70000 })({ message: question, history: messages.slice(-8), language, adultConfirmed: true, providerConsentVersion: mentorConsentVersion });
       if (!result.data.text?.trim()) throw new Error('Empty reply');
-      const pair: Message[] = [{ role: 'user', text: draft.trim() }, { role: 'model', text: result.data.text.trim() }];
+      const pair: Message[] = [{ role: 'user', text: question }, { role: 'model', text: result.data.text.trim() }];
       setMessages(previous => [...previous, ...pair]); setDraft('');
+      setPendingQuestion('');
       try { await persist(pair); } catch { setUnsaved(pair); setSaveError('Reply received. Conversation could not save. Keep this page open and retry saving.'); }
     } catch (cause) { reportOperationalIssue('mentor', cause); setError(mentorError(cause)); }
-    finally { setBusy(false); }
+    finally { setPendingQuestion(''); setReplySlow(false); setBusy(false); }
   }
+  const displayedMessages: Message[] = pendingQuestion ? [...messages, { role: 'user', text: pendingQuestion }] : messages;
   const locked = busy || loading || historyFailed || !!unsaved;
   const prompts = [
     { icon: Lightbulb, title: 'Make it click', text: 'Explain one important idea from ' + pathTitle + ' with a simple example.' },
@@ -101,10 +112,10 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
       {!mentorAvailable && <p className="notice" role="status">Your mentor is getting ready. Keep learning while we finish connecting it.</p>}
       {loading && <div className="mentor-loading" role="status"><span className="mentor-dots"><i/><i/><i/></span>Opening your conversations…</div>}
       {!messages.length && !loading && !busy && <div className="mentor-empty"><div className="mentor-orb"><span className="mentor-orb-glow"/><Tiger animation="welcome"/></div><p className="eyebrow">A little curiosity goes a long way</p><h2>What’s on your mind?</h2><p>Exploring {pathTitle}? Let’s make it click.</p><div className="mentor-prompts">{prompts.map(prompt => <button key={prompt.title} disabled={locked || !mentorAvailable} onClick={() => { setDraft(prompt.text); input.current?.focus(); }}><prompt.icon size={19}/><span>{prompt.title}</span></button>)}</div></div>}
-      <div className="mentor-messages" role="log" aria-label="Conversation with your AI mentor" aria-live="polite" aria-relevant="additions">{messages.map((message, index) => <article className={'mentor-message ' + message.role} key={index}>{message.role === 'model' && <TigerPortrait/>}<div><span className="mentor-speaker">{message.role === 'user' ? 'You' : 'T1GER'}</span><div className="mentor-reply">{message.text.split(/\n\n+/).map((paragraph, i) => <p key={i}>{paragraph.replace(/^#{1,4}\s+/gm, '').split(/(\*\*[^*]+\*\*)/g).map((part, j) => part.startsWith('**') && part.endsWith('**') ? <strong key={j}>{part.slice(2, -2)}</strong> : part)}</p>)}</div></div></article>)}{busy && <div className="mentor-thinking" role="status"><Tiger animation="thinking"/><span>Thinking it through<span className="mentor-dots"><i/><i/><i/></span></span></div>}</div><div ref={end}/>
+      <div className="mentor-messages" role="log" aria-label="Conversation with your AI mentor" aria-live="polite" aria-relevant="additions">{displayedMessages.map((message, index) => <article className={'mentor-message ' + message.role} key={index}>{message.role === 'model' && <TigerPortrait/>}<div><span className="mentor-speaker">{message.role === 'user' ? 'You' : 'T1GER'}</span><div className="mentor-reply">{message.text.split(/\n\n+/).map((paragraph, i) => <p key={i}>{paragraph.replace(/^#{1,4}\s+/gm, '').split(/(\*\*[^*]+\*\*)/g).map((part, j) => part.startsWith('**') && part.endsWith('**') ? <strong key={j}>{part.slice(2, -2)}</strong> : part)}</p>)}</div></div></article>)}{pendingQuestion && <MentorThinking slow={replySlow}/>}</div><div ref={end}/>
     </div>
     <div className="mentor-bottom">{error && <div className="mentor-error" role="alert"><p>{error}</p>{historyFailed && <button className="button subtle" onClick={() => window.location.reload()}>Reload conversations</button>}</div>}{saveError && <div className="mentor-error" role="alert"><p>{saveError}</p><button className="button subtle" disabled={busy} onClick={async () => { if (!unsaved) return; setBusy(true); try { await persist(unsaved); setUnsaved(null); setSaveError(''); } catch { setSaveError('Still unable to save. Your reply remains on this page.'); } finally { setBusy(false); } }}>Retry saving</button></div>}
-      <form className="mentor-composer" onSubmit={send}><label className="sr-only" htmlFor="coach-question">Your question</label><textarea ref={input} id="coach-question" value={draft} onChange={event => setDraft(event.target.value)} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} maxLength={3000} rows={1} placeholder="Ask anything about your learning…" disabled={locked || !mentorAvailable}/><button type="submit" className="button primary mentor-send" aria-label={busy ? 'Waiting for your mentor' : 'Send question'} disabled={!mentorAvailable || !draft.trim() || locked}><ArrowUp size={23}/></button></form>
+      <form className="mentor-composer" onSubmit={send}><label className="sr-only" htmlFor="coach-question">Your question</label><textarea ref={input} id="coach-question" value={pendingQuestion ? '' : draft} onChange={event => setDraft(event.target.value)} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} maxLength={3000} rows={1} placeholder={pendingQuestion ? 'Your mentor is working on a reply…' : 'Ask anything about your learning…'} disabled={locked || !mentorAvailable}/><button type="submit" className="button primary mentor-send" aria-label={busy ? 'Waiting for your mentor' : 'Send question'} disabled={!mentorAvailable || !draft.trim() || locked}><ArrowUp size={23}/></button></form>
       <div className="mentor-controls"><label>Reply in <select disabled={busy} value={language} onChange={event => setLanguage(event.target.value as 'en' | 'es')} aria-label="Mentor response language"><option value="en">English</option><option value="es">Español</option></select></label><span>AI can make mistakes.</span><details className="mentor-privacy"><summary>AI &amp; privacy</summary><div><p>Your question and up to eight recent messages go to OpenRouter and Novita AI. For adults 18+. Keep private information out of your questions. Free replies depend on daily limits and provider capacity.</p><a href={appHref('/privacy')} target="_blank" rel="noreferrer">Privacy notice</a><a href="https://openrouter.ai/terms" target="_blank" rel="noreferrer">OpenRouter terms</a><a href="https://novita.ai/legal/terms-of-service" target="_blank" rel="noreferrer">Novita terms</a>{adultConfirmed && <button type="button" onClick={() => void resetMentorChoice()} disabled={busy}>Reset my AI choice</button>}</div></details></div>
     </div>
     <dialog ref={consentDialog} className="mentor-intro" aria-labelledby="mentor-intro-title" aria-describedby="mentor-intro-description" onCancel={event => { if (busy) event.preventDefault(); }}>
@@ -112,4 +123,8 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
       {consentError && <p className="error" role="alert">{consentError}</p>}<div className="mentor-intro-actions"><button className="button primary" onClick={() => void confirmMentor()} disabled={busy}>{busy ? 'One moment…' : 'I’m 18+ · Start chatting'}</button><button className="mentor-intro-later" onClick={() => consentDialog.current?.close()} disabled={busy}>Not now</button></div>
     </dialog>
   </section>;
+}
+
+export function MentorThinking({ slow = false }: { slow?: boolean }) {
+  return <div className="mentor-thinking" role="status"><TigerPortrait animated/><div><span className="mentor-speaker">T1GER</span><span className="mentor-thinking-label">{slow ? 'Still working on your reply…' : 'Thinking…'}</span><span className="mentor-dots" aria-hidden="true"><i/><i/><i/></span>{slow && <small>Your question is here. Some replies take a little longer.</small>}</div></div>;
 }

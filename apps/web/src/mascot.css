@@ -12,7 +12,7 @@
 @keyframes lesson-arrive { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
 .mascot-canvas canvas { display:block; width:100%; height:100%; }
 .mascot-canvas { opacity:0; transition:opacity .25s; }
-.mascot-poster { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; transform:scale(1.75); transition:opacity .25s; }
+.mascot-poster { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; transform:scale(1.45); transition:opacity .25s; }
 .mascot-render.is-ready .mascot-canvas { opacity:1; }
 .mascot-render.is-ready .mascot-poster { opacity:0; }
 .mascot-study { min-height:100svh; background:#09090b; color:#faf7f2; padding:30px clamp(22px,5vw,80px); font-family:Outfit,sans-serif; }

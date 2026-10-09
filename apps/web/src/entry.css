@@ -10,7 +10,7 @@
 .welcome-copy .button { min-width:244px; font-weight:600; box-shadow:0 3px 0 #ad5919; background:linear-gradient(135deg,#ffb36d,#ff963e); color:#21150b; border:1px solid #e78936; }
 .welcome-reassurance { display:block; color:var(--soft); font-size:13px; margin-top:16px; }
 .welcome-scene { position:relative; min-height:400px; display:grid; place-items:center; }
-.welcome-scene>.tiger-companion { width:300px; margin:32px 0 0; z-index:1; }
+.welcome-scene>.tiger-companion { width:310px; margin:0; z-index:1; }
 .welcome-orbit { position:absolute; width:310px; height:310px; border:1px solid var(--line-strong); border-radius:50%; background:radial-gradient(circle,var(--tint),transparent 72%); }
 .welcome-bubble { position:absolute; top:18px; left:50%; transform:translateX(-50%); white-space:nowrap; padding:12px 18px; border:1px solid var(--line-strong); border-radius:20px 20px 20px 5px; background:var(--raised); color:var(--soft); font-size:14px; z-index:2; }
 .welcome-subject { position:absolute; z-index:2; display:grid; place-items:center; width:86px; padding:5px 0 9px; border:1px solid var(--line-strong); border-radius:20px; background:var(--raised); box-shadow:var(--shadow); }
@@ -98,7 +98,7 @@
   .welcome-page { padding:20px 24px; }
   .welcome-hero { gap:16px; padding:28px 0 32px; grid-template-columns:1fr; text-align:center; }
   .welcome-scene { grid-row:1; min-height:230px; width:300px; max-width:100%; margin:auto; }
-  .welcome-scene>.tiger-companion { width:200px; margin:25px 0 0; }
+  .welcome-scene>.tiger-companion { width:220px; margin:0; }
   .welcome-orbit { width:200px; height:200px; }
   .welcome-bubble { top:0; font-size:12px; padding:8px 12px; }
   .welcome-subject { width:60px; padding:0 0 5px; border-radius:14px; }

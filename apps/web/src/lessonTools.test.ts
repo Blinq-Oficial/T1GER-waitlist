@@ -8,7 +8,7 @@ describe('existing curriculum tools on Web', () => {
     const values = { situation: 'I think this app will help', evidence: 'It does not reduce my planning time', decision: 'Measure one week before deciding' };
     const result = buildTool(widget, values);
     expect(result.ready).toBe(true);
-    expect(result.summary).toContain('Current belief: I think this app will help');
+    expect(result.summary).toContain('What I believe: I think this app will help');
     expect(result.summary).toContain('Measure one week');
     expect(result.summary).not.toContain('Within my control');
   });

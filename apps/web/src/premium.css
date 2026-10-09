@@ -588,7 +588,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .learning-dashboard .daily-hero-copy h2 { font-size:30px; }
 .learning-dashboard .daily-hero-copy>p { font-size:15px; }
 .learning-dashboard .portrait-scene { display:grid; place-items:center; align-content:center; position:relative; inset:auto; width:180px; height:230px; min-height:0; padding:0; margin:0; }
-.learning-dashboard .portrait-scene>.tiger-companion { position:absolute; top:0; left:50%; width:220px; max-width:none; height:220px; margin:0; transform:translate(-50%,-12px); }
+.learning-dashboard .portrait-scene>.tiger-companion { position:absolute; top:50%; left:50%; width:220px; max-width:none; height:220px; margin:0; transform:translate(-50%,-50%); }
 .learning-dashboard .portrait-halo { width:174px; height:174px; top:50%; left:50%; transform:translate(-50%,-50%); box-shadow:0 0 0 12px #ff963e04; }
 .learning-dashboard .character-caption { display:block; top:0; z-index:2; padding:6px 11px; font-size:11px; background:var(--raised-2); }
 .learning-dashboard .learning-quick-actions { gap:12px; margin-bottom:32px; }
