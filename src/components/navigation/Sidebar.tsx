@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
   { label: 'HOME', href: '#hero', id: 'hero' },
+  { label: 'WEB APP', href: '#web', id: 'web' },
   { label: 'ABOUT', href: '#about', id: 'about' },
   { label: 'VISION', href: '#vision', id: 'vision' },
   { label: 'PROTOCOL', href: '#protocol', id: 'protocol' },
@@ -19,6 +20,23 @@ interface Props {
 export default function Sidebar({ isPreloaded }: Props) {
   const [activeId, setActiveId] = useState('hero');
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [pendingSection, setPendingSection] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!pendingSection) return;
+    const scrollWhenReady = () => {
+      const section = document.getElementById(pendingSection);
+      if (!section) return false;
+      section.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      setPendingSection(null);
+      return true;
+    };
+    if (scrollWhenReady()) return;
+    // Lazy sections may still be loading when someone first opens the menu.
+    const observer = new MutationObserver(() => { if (scrollWhenReady()) observer.disconnect(); });
+    observer.observe(document.getElementById('main-content') ?? document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [pendingSection]);
 
   useEffect(() => {
     // ScrollSpy Logic
@@ -42,20 +60,18 @@ export default function Sidebar({ isPreloaded }: Props) {
 
   const scrollTo = (href: string) => {
     setMobileOpen(false);
-    const id = href.replace('#', '');
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    setPendingSection(href.replace('#', ''));
   };
 
   return (
     <>
-      <a href="/app/" className="landing-app-link">Open Web ↗</a>
+      <a href="/app/" className="landing-app-link">Open T1GER ↗</a>
       {/* ─── DESKTOP SIDEBAR (Liquid Glass Capsule) ─── */}
       <motion.aside
         initial={{ opacity: 0, x: -30, y: '-50%' }}
         animate={isPreloaded ? { opacity: 1, x: 0, y: '-50%' } : { opacity: 0, x: -30, y: '-50%' }}
         transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-        className="fixed left-6 top-1/2 -translate-y-1/2 w-[124px] hidden md:flex flex-col py-8 px-3 z-[60] rounded-[2.5rem] bg-white/[0.02] border border-white/10 backdrop-blur-xl shadow-[inset_1px_1px_1px_rgba(255,255,255,0.15),_0_20px_40px_rgba(0,0,0,0.6)] items-center pointer-events-auto"
+        className="fixed left-6 top-1/2 w-[124px] hidden md:flex flex-col py-8 px-3 z-[60] rounded-[2.5rem] bg-[#121214]/95 border border-white/10 backdrop-blur-xl shadow-[inset_1px_1px_1px_rgba(255,255,255,0.15),_0_20px_40px_rgba(0,0,0,0.6)] items-center pointer-events-auto"
       >
         {/* Decorative Brand Accent Dot */}
         <div className="w-2 h-2 rounded-full bg-[#FF6B00] shadow-[0_0_10px_rgba(255,107,0,0.8)] animate-pulse mb-8" />
@@ -82,7 +98,7 @@ export default function Sidebar({ isPreloaded }: Props) {
                   className={`relative z-10 font-mono text-[9px] tracking-[0.2em] uppercase cursor-pointer bg-transparent border-none transition-all duration-300 py-1.5 w-full flex items-center justify-center font-black select-none ${
                     isActive 
                       ? 'text-white font-extrabold scale-[1.04]' 
-                      : 'text-white/35 group-hover:text-white/70 group-hover:scale-[1.04]'
+                      : 'text-white/65 group-hover:text-white group-hover:scale-[1.04]'
                   }`}
                   style={{
                     textShadow: isActive ? '0 0 10px rgba(255,255,255,0.3)' : 'none',
@@ -113,17 +129,17 @@ export default function Sidebar({ isPreloaded }: Props) {
         </button>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => { window.location.href = '/app/'; }}
+          <a
+            href="/app/"
             aria-label="Start learning on Web"
-            className="rounded-full bg-[#FF6B00] px-4 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-black shadow-[0_0_12px_rgba(255,107,0,0.3)] hover:scale-105 transition-transform"
+            className="inline-flex min-h-11 items-center rounded-full bg-[#FF6B00] px-4 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-black shadow-[0_0_12px_rgba(255,107,0,0.3)] hover:scale-105 transition-transform"
           >
-            Start Web
-          </button>
+            Open app
+          </a>
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="w-8 h-8 flex flex-col items-center justify-center gap-1.5 cursor-pointer rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+            className="w-11 h-11 flex flex-col items-center justify-center gap-1.5 cursor-pointer rounded-full bg-white/5 hover:bg-white/10 transition-colors"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
           >
@@ -141,7 +157,7 @@ export default function Sidebar({ isPreloaded }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[55] bg-[#050505]/95 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 md:hidden"
+            className="fixed inset-0 z-[55] overflow-y-auto bg-[#050505]/95 backdrop-blur-2xl flex flex-col items-center justify-center gap-4 py-20 md:hidden"
           >
             {navLinks.map((link, i) => {
               const isActive = activeId === link.id;

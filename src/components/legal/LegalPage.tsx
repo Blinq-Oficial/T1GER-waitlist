@@ -1,4 +1,5 @@
 import { ArrowLeft, Mail } from 'lucide-react';
+import AnalyticsPreferences from '../analytics/AnalyticsPreferences';
 
 type LegalPageProps = {
   type: 'terms' | 'privacy';
@@ -70,6 +71,8 @@ function PrivacyContent() {
       <section>
         <h2>5. Your choices and rights</h2>
         <p>You may ask to access, correct, or delete your personal information, or object to certain uses, by emailing este.t1ger.oficial.app@gmail.com. We may need to verify your identity and may retain information where the law permits or requires it. Rights vary by location.</p>
+        <p>Vercel provides aggregate page and performance measurements. Optional PostHog usage events and masked session replay stay off until you enable them and the project is connected. These controls choose what usage data you share with T1GER; they do not provide access to our analytics reports. Replays exclude account forms, chats, lessons, profiles and private work. You can change your browser’s choices here or in Web Settings.</p>
+        <AnalyticsPreferences/>
       </section>
       <section>
         <h2>6. Children and international users</h2>
@@ -96,7 +99,7 @@ export default function LegalPage({ type }: LegalPageProps) {
         <header className="mt-10 border-b border-white/10 pb-8">
           <p className="font-mono text-[10px] font-black uppercase tracking-[0.22em] text-[#FF6B00]">T1GER Legal</p>
           <h1 className="mt-3 font-outfit text-4xl font-black uppercase leading-none sm:text-6xl">{isTerms ? 'Terms & Conditions' : 'Privacy Policy'}</h1>
-          <p className="mt-4 font-mono text-xs uppercase tracking-[0.12em] text-white/40">Draft update {updatedAt}</p><p className="mt-4 text-sm leading-relaxed text-white/65">Draft for review: legal operator and full postal address pending. Location supplied: Plymouth, Michigan, United States. This is not a final legal notice.</p><p className="mt-3 text-sm text-white/65">Web learning accounts also use the <a className="underline" href="/app/privacy">Web privacy notice</a> and <a className="underline" href="/app/terms">Web terms</a>.</p>
+          <p className="mt-4 font-mono text-xs uppercase tracking-[0.12em] text-white/40">Draft update {isTerms ? updatedAt : 'October 11, 2026'}</p><p className="mt-4 text-sm leading-relaxed text-white/65">Draft for review: legal operator and full postal address pending. Location supplied: Plymouth, Michigan, United States. This is not a final legal notice.</p><p className="mt-3 text-sm text-white/65">Web learning accounts also use the <a className="underline" href="/app/privacy">Web privacy notice</a> and <a className="underline" href="/app/terms">Web terms</a>.</p>
         </header>
         <article className="legal-copy space-y-8 py-10">
           {isTerms ? <TermsContent /> : <PrivacyContent />}

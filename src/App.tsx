@@ -1,13 +1,11 @@
 import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import SmoothScroll from './components/animations/SmoothScroll';
-import CustomCursor from './components/animations/CustomCursor';
 import Sidebar from './components/navigation/Sidebar';
 import SectionHero from './components/sections/SectionHero';
 import EarlyAdopterModal from './components/modals/EarlyAdopterModal';
 import LegalPage from './components/legal/LegalPage';
 import EarlyAccessSuccess from './components/early-access/EarlyAccessSuccess';
 import SectionWeb from './components/sections/SectionWeb';
-import AnalyticsPreferences from './components/analytics/AnalyticsPreferences';
 import { behaviorPage, behaviorEvent } from './lib/behaviorAnalytics';
 
 const SectionAbout = lazy(() => import('./components/sections/SectionAbout'));
@@ -47,13 +45,12 @@ export default function App() {
     document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute('href', `https://t1ger.app${path === '/' ? '/' : path}`);
   }, [path]);
 
-  if (path === '/early-access/success') return <><CustomCursor /><EarlyAccessSuccess /></>;
-  if (path === '/terms') return <><CustomCursor /><LegalPage type="terms" /></>;
-  if (path === '/privacy') return <><CustomCursor /><LegalPage type="privacy" /></>;
+  if (path === '/early-access/success') return <EarlyAccessSuccess />;
+  if (path === '/terms') return <LegalPage type="terms" />;
+  if (path === '/privacy') return <LegalPage type="privacy" />;
 
   return (
     <SmoothScroll>
-      <CustomCursor />
       <div className="relative w-full min-h-screen text-white font-sans">
         <a href="#main-content" className="skip-link">Skip to main content</a>
         <div className="fixed inset-0 z-0 bg-[#050505]">
@@ -82,10 +79,9 @@ export default function App() {
               isSignedUp={isSignedUp}
               waitlistPosition={waitlistPosition}
               waitlistShareUrl={waitlistShareUrl}
-              onOpenEarlyAdopter={() => setIsEarlyAdopterOpen(true)}
             />
             <SectionFAQ />
-            <Footer /><div className="landing-analytics-choices"><AnalyticsPreferences/></div>
+            <Footer />
           </Suspense>
         </main>
         <EarlyAdopterModal isOpen={isEarlyAdopterOpen} onClose={() => setIsEarlyAdopterOpen(false)} />

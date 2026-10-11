@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Copy, Loader2, MessageCircle, Send, Share2, ShieldCheck, Zap } from 'lucide-react';
+import { ArrowRight, Check, Copy, Loader2, MessageCircle, Monitor, Send, Share2, ShieldCheck } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
 import { trackEvent } from '../../lib/analytics';
 
@@ -9,10 +9,9 @@ interface Props {
   isSignedUp: boolean;
   waitlistPosition: number;
   waitlistShareUrl: string;
-  onOpenEarlyAdopter: () => void;
 }
 
-export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, waitlistShareUrl, onOpenEarlyAdopter }: Props) {
+export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, waitlistShareUrl }: Props) {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
@@ -85,21 +84,29 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
       className="relative flex min-h-[82vh] items-center justify-center overflow-hidden bg-[#020202] px-6 py-24 sm:px-12 md:pl-40"
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(255,107,0,0.12),transparent_42%)]" aria-hidden="true" />
-      <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center text-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center text-center">
         {!isSignedUp ? (
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-10%' }}
             transition={{ duration: 0.7 }}
-            className="w-full"
+            className="mobile-access-layout"
           >
-            <p className="font-mono text-[11px] font-black uppercase tracking-[0.22em] text-[#FF6B00]">MOBILE IS NEXT</p>
-            <h2 className="mt-4 font-outfit text-[clamp(3rem,10vw,7rem)] font-black uppercase leading-[0.88] tracking-tighter text-white">
-              Take it<br /><span className="text-[#CCFF00]">with you.</span>
+            <aside className="mobile-access-web" aria-label="Web app available now">
+              <span>WEB APP · AVAILABLE NOW</span><Monitor size={42} strokeWidth={1.5} aria-hidden="true"/>
+              <h2>Your first lesson<br/>starts here.</h2>
+              <p>Learn Investing, AI, and Psychology in your browser. Create your account and start today.</p>
+              <a href="/app/" className="mobile-to-web">Open T1GER <ArrowRight size={20} aria-hidden="true"/></a>
+              <small>Free to start. No download or mobile waitlist required.</small>
+            </aside>
+            <div className="mobile-access-form">
+            <p className="font-mono text-[11px] font-black uppercase tracking-[0.22em] text-[#FF6B00]">IOS & ANDROID · COMING NEXT</p>
+            <h2>
+              Take it <span className="text-[#CCFF00]">with you.</span>
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-white/65 sm:text-base">
-              Join the iOS & Android waitlist for mobile launch updates. Web is available now; no waitlist is required to learn.
+              The native mobile apps are not available yet. Leave your email and we’ll let you know when they launch.
             </p>
 
             <form onSubmit={handleSubmit} noValidate className="mx-auto mt-10 max-w-xl text-left">
@@ -137,10 +144,7 @@ export default function SectionJoin({ onSuccess, isSignedUp, waitlistPosition, w
               {errorText && <p id="join-email-error" role="alert" className="mt-3 text-center font-mono text-xs text-[#FF8A3D]">{errorText}</p>}
             <p className="mt-4 text-center text-xs text-white/60">By joining, you request mobile updates. Read our <a className="underline" href="/privacy">Privacy policy</a>.</p></form>
 
-            <button type="button" onClick={onOpenEarlyAdopter} className="mx-auto mt-7 inline-flex min-h-11 items-center gap-2 rounded-full border border-[#FF6B00]/35 px-5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-white/70 transition-colors hover:border-[#FF6B00] hover:text-white">
-              <Zap className="h-4 w-4 text-[#FF6B00]" aria-hidden="true" />
-              Founder reservations paused
-            </button>
+            </div>
           </motion.div>
         ) : (
           <motion.div

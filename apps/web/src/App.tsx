@@ -19,7 +19,6 @@ import { getApplyDesign } from './product/applyMissionDesign';
 import { appHref, appRoute } from './basePath';
 import Learn from './LearningHome';
 import { Tiger, TigerPortrait } from './Visual';
-import AnalyticsPreferences from '../../../src/components/analytics/AnalyticsPreferences';
 import { behaviorEvent, behaviorPage, pauseBehaviorReplay } from '../../../src/lib/behaviorAnalytics';
 import { learningRhythm } from './product/learningRhythm';
 import DomainArtwork from './DomainArtwork';
@@ -86,7 +85,6 @@ function AuthScreen({ theme, onToggleTheme, initialMode = 'signup', onBack, draf
         {error && <p className="error" role="alert">{error}{error.includes('already has an account') && <button type="button" className="text-link" onClick={() => switchMode('signin')}>Sign in with this email</button>}</p>}
         {mode === 'reset' && <p className="switch"><button type="button" onClick={() => switchMode('signin')}>Back to sign in</button></p>}
       </>}
-      <div className="auth-analytics"><AnalyticsPreferences/></div>
     </div></div>
   </div>;
 }

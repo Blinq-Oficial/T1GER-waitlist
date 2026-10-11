@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, Loader2, Mail, Sparkles, ChevronRight, ShieldCheck, Zap } from 'lucide-react';
 import { joinWaitlist } from '../../lib/waitlistSignup';
 import { trackEvent } from '../../lib/analytics';
@@ -104,22 +104,6 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
 
     animate();
   };
-
-  // Mouse-follow glow
-  const mouseX = useMotionValue(0.5);
-  const mouseY = useMotionValue(0.5);
-  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 30 });
-  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 30 });
-
-  useEffect(() => {
-    if (!window.matchMedia('(pointer: fine)').matches) return;
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX / window.innerWidth);
-      mouseY.set(e.clientY / window.innerHeight);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
 
   useEffect(() => {
     if (isSignedUp) successRef.current?.focus();
@@ -346,18 +330,6 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
             `,
           }}
         />
-        <motion.div
-          className="absolute w-[600px] h-[600px] rounded-full pointer-events-none"
-          style={{
-            background: 'radial-gradient(circle, oklch(65% 0.22 45 / 0.04) 0%, transparent 60%)',
-            left: smoothX,
-            top: smoothY,
-            x: '-50%',
-            y: '-50%',
-            translateX: '-50%',
-            translateY: '-50%',
-          }}
-        />
       </div>
 
 
@@ -454,11 +426,11 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                   className="mt-10 grid w-full max-w-[760px] items-stretch gap-3 text-left md:mt-8 md:grid-cols-2 md:gap-5"
                 >
                   <a href="/app/" className="web-start-card">
-                    <span>AVAILABLE ON WEB · FREE TO START</span>
-                    <strong>A useful idea.<br/>Your next move.</strong>
+                    <span>AVAILABLE NOW IN YOUR BROWSER</span>
+                    <strong>Start learning today.</strong>
                     <p>Investing, AI, and Psychology. Learn, apply, and remember.</p>
-                    <span className="web-start-action">Start learning free <ArrowUpRight size={22}/></span>
-                    <small>Already have an account? Continue right where you left off.</small>
+                    <span className="web-start-action">Open T1GER <ArrowUpRight size={22}/></span>
+                    <small>Free to start. No download or mobile waitlist required.</small>
                   </a>
 
                   <form
@@ -467,7 +439,7 @@ export default function SectionHero({ onSuccess, isSignedUp, waitlistPosition, w
                     className="relative order-2 flex min-h-[116px] flex-col overflow-hidden rounded-[8px] border border-[#CCFF00]/40 bg-black/70 p-3 backdrop-blur-md sm:min-h-[154px] sm:p-4"
                   >
                     <BorderBeam size={160} duration={10} colorFrom="#CCFF00" colorTo="#FF6B00" />
-                    <span className="font-mono text-[8px] font-black uppercase tracking-[0.18em] text-[#CCFF00] sm:text-[9px]">Free · No card required</span>
+                    <span className="font-mono text-[8px] font-black uppercase tracking-[0.18em] text-[#CCFF00] sm:text-[9px]">iOS & Android · Coming soon</span>
                     <span className="mt-1 flex items-center gap-1.5 font-outfit text-[1.35rem] font-black uppercase leading-none text-white sm:mt-1.5 sm:gap-2 sm:text-[1.55rem]">
                       <Mail className="h-4 w-4 text-[#CCFF00] sm:h-5 sm:w-5" aria-hidden="true" />
                       Mobile waitlist
