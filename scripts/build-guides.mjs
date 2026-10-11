@@ -1,0 +1,49 @@
+import { mkdir, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
+import { guides, updated } from '../content/guides.mjs';
+
+const origin = 'https://t1ger.app';
+const languages = ['en', 'es'];
+const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+const json = value => JSON.stringify(value).replace(/</g, '\\u003c');
+export const guidePath = (guide, language) => `/guides/${language}/${guide[language].slug}`;
+const copy = {
+  en: { hub: 'Useful ideas, ready to try.', description: 'Free guides to money, AI and everyday thinking. Read an idea, try a question and continue with an interactive T1GER lesson.', open: 'Open the app', library: 'Free learning guides', practice: 'Try it yourself', answer: 'Check the explanation', sources: 'Sources behind this guide', credit: 'An original T1GER explanation with illustrative examples, informed by the sources below. The sources do not endorse T1GER.', next: 'Turn the idea into practice.', cta: 'Choose your path', note: 'Start on the web. Native mobile apps are coming next.', privacy: 'Privacy', terms: 'Terms', related: 'Keep exploring', read: 'Read the guide', date: 'Updated', language: 'Choose your language', minutes: 'About 4 minutes to read', interface: 'The app interface is currently in English. The optional AI mentor can reply in English or Spanish.' },
+  es: { hub: 'Ideas útiles, listas para probar.', description: 'Guías gratuitas sobre dinero, IA y cómo pensamos. Aprende una idea, prueba una pregunta y continúa con una lección interactiva de T1GER.', open: 'Abrir la app', library: 'Guías gratuitas', practice: 'Pruébalo tú', answer: 'Ver la explicación', sources: 'Fuentes de esta guía', credit: 'Una explicación original de T1GER con ejemplos ilustrativos, basada en las fuentes siguientes. Las fuentes no avalan T1GER.', next: 'Lleva la idea a la práctica.', cta: 'Elegir mi camino', note: 'Empieza en la web. Las apps nativas para celular llegarán más adelante.', privacy: 'Privacidad', terms: 'Términos', related: 'Sigue explorando', read: 'Leer la guía', date: 'Actualizado', language: 'Elegir idioma', minutes: 'Unos 4 minutos de lectura', interface: 'La interfaz de la app está actualmente en inglés. El mentor de IA opcional puede responder en inglés o español.' },
+};
+function page({ language, path, title, description, alternate, content, schema }) {
+  const c = copy[language];
+  return `<!doctype html>
+<html lang="${language}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>${escape(title)} | T1GER</title><meta name="description" content="${escape(description)}"><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#faf8f5"><link rel="canonical" href="${origin}${path}">${alternate.map(([lang, url]) => `<link rel="alternate" hreflang="${lang}" href="${origin}${url}">`).join('')}<link rel="icon" href="/favicon-32.png"><link rel="stylesheet" href="/guides.css"><meta property="og:type" content="${schema['@type'] === 'Article' ? 'article' : 'website'}"><meta property="og:site_name" content="T1GER"><meta property="og:url" content="${origin}${path}"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:image" content="${origin}/og-image.jpg"><meta name="twitter:card" content="summary_large_image"><script type="application/ld+json">${json(schema)}</script><script src="/guide-metrics.js" defer></script></head>
+<body><a class="skip" href="#content">${language === 'es' ? 'Ir al contenido' : 'Skip to content'}</a><header><a class="wordmark" href="/">T1GER</a><nav aria-label="${c.language}">${alternate.filter(([lang]) => lang !== 'x-default').map(([lang, url]) => `<a href="${url}" lang="${lang}" ${lang === language ? 'aria-current="page"' : ''}>${lang.toUpperCase()}</a>`).join('')}<a class="button small" href="/app/">${c.open} <span aria-hidden="true">↗</span></a></nav></header>
+<main id="content">${content}</main><footer><a href="/guides/${language}">${c.library}</a><a href="/privacy">${c.privacy}</a><a href="/terms">${c.terms}</a><span>© 2026 T1GER</span></footer></body></html>`;
+}
+const cards = language => guides.map(guide => `<a class="guide-card ${guide.theme}" href="${guidePath(guide, language)}"><span class="topic">${escape(guide[language].topic)}</span><h2>${escape(guide[language].title)}</h2><p>${escape(guide[language].summary)}</p><span class="card-link">${copy[language].read} <span aria-hidden="true">→</span></span></a>`).join('');
+export function renderHub(language = 'en', root = false) {
+  const c = copy[language], path = root ? '/guides' : `/guides/${language}`;
+  return page({ language, path, title: c.library, description: c.description,
+    alternate: [['en', '/guides/en'], ['es', '/guides/es'], ['x-default', '/guides']],
+    schema: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: c.library, description: c.description, url: origin + path, inLanguage: language },
+    content: `<section class="hub-intro"><span class="eyebrow">${c.library}</span><h1>${c.hub}</h1><p>${c.description}</p>${root ? '<div class="language-choice"><a href="/guides/en">English →</a><a href="/guides/es" lang="es">Español →</a></div>' : ''}</section><section class="cards" aria-label="${c.library}">${cards(language)}</section>${cta(language)}` });
+}
+function cta(language) { const c = copy[language]; return `<aside class="cta"><img src="/app/mascot/t1ger-avatar.png" width="80" height="80" alt="" loading="lazy"><div><h2>${c.next}</h2><p>${c.note}</p><a class="button" href="/app/">${c.cta} <span aria-hidden="true">→</span></a><small>${c.interface}</small></div></aside>`; }
+export function renderArticle(guide, language) {
+  const d = guide[language], c = copy[language], path = guidePath(guide, language);
+  const schema = { '@context': 'https://schema.org', '@type': 'Article', headline: d.title, description: d.description, mainEntityOfPage: origin + path, inLanguage: language, dateModified: updated, author: { '@type': 'Organization', name: 'T1GER', url: origin }, publisher: { '@type': 'Organization', name: 'T1GER', url: origin }, citation: guide.sources.map(source => source.url) };
+  return page({ language, path, title: d.title, description: d.description, schema,
+    alternate: [...languages.map(lang => [lang, guidePath(guide, lang)]), ['x-default', guidePath(guide, 'en')]],
+    content: `<article class="article ${guide.theme}"><nav class="breadcrumb" aria-label="${language === 'es' ? 'Ubicación' : 'Breadcrumb'}"><a href="/guides/${language}">${c.library}</a><span aria-hidden="true">/</span><span>${escape(d.topic)}</span></nav><span class="eyebrow">${escape(d.topic)}</span><h1>${escape(d.title)}</h1><p class="lead">${escape(d.summary)}</p><p class="byline">T1GER · ${c.minutes} · ${c.date} <time datetime="${updated}">${updated}</time></p><figure class="concept"><figcaption>${escape(d.visual[0])}</figcaption><div><section><span>${escape(d.visual[1])}</span><strong>${escape(d.visual[2])}</strong></section><span class="arrow" aria-hidden="true">→</span><section><span>${escape(d.visual[3])}</span><strong>${escape(d.visual[4])}</strong></section></div></figure><div class="reading">${d.sections.map(([heading, paragraphs]) => `<section><h2>${escape(heading)}</h2>${paragraphs.map(p => `<p>${escape(p)}</p>`).join('')}</section>`).join('')}<section class="practice"><span class="eyebrow">${c.practice}</span><h2>${escape(d.question)}</h2><details><summary>${c.answer}</summary><p>${escape(d.answer)}</p></details></section><section class="sources"><h2>${c.sources}</h2><p>${c.credit}</p><ul>${guide.sources.map(source => `<li><a href="${escape(source.url)}" rel="external">${escape(source.label)}</a></li>`).join('')}</ul></section></div></article>${cta(language)}<section class="related"><h2>${c.related}</h2><div class="cards">${guides.filter(g => g.id !== guide.id).map(g => `<a class="guide-card ${g.theme}" href="${guidePath(g, language)}"><span class="topic">${escape(g[language].topic)}</span><h3>${escape(g[language].title)}</h3><span class="card-link">${c.read} →</span></a>`).join('')}</div></section>` });
+}
+export async function buildGuides(root = resolve(fileURLToPath(new URL('..', import.meta.url)))) {
+  const pages = [['/guides', renderHub('en', true)], ...languages.map(lang => [`/guides/${lang}`, renderHub(lang)]), ...guides.flatMap(guide => languages.map(lang => [guidePath(guide, lang), renderArticle(guide, lang)]))];
+  for (const [path, html] of pages) { const folder = resolve(root, 'public', path.slice(1)); await mkdir(folder, { recursive: true }); await writeFile(resolve(folder, 'index.html'), html); }
+  const entries = [{ path: '/', alternates: [] }, ...pages.map(([path]) => {
+    const guide = guides.find(g => languages.some(lang => guidePath(g, lang) === path));
+    return { path, alternates: guide ? [...languages.map(lang => [lang, guidePath(guide, lang)]), ['x-default', guidePath(guide, 'en')]] : [] };
+  })];
+  // The app and draft legal screens are deliberately absent from the public learning sitemap.
+  await writeFile(resolve(root, 'public/sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${entries.map(({ path, alternates }) => `<url><loc>${origin}${path}</loc><lastmod>${updated}</lastmod>${alternates.map(([lang, url]) => `<xhtml:link rel="alternate" hreflang="${lang}" href="${origin}${url}"/>`).join('')}</url>`).join('')}</urlset>\n`);
+  console.log(`Built ${pages.length} public guide pages in English and Spanish.`);
+}
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await buildGuides();

@@ -4,10 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run build:guides",
     "dev": "vite",
+    "build:guides": "node scripts/build-guides.mjs",
     "prebuild": "npm ci --prefix apps/web",
     "build": "npm run build:waitlist && npm run build:web",
-    "build:waitlist": "tsc -b && vite build",
+    "build:waitlist": "npm run build:guides && tsc -b && vite build",
     "build:web": "npm --prefix apps/web run build:subpath",
     "lint": "eslint src api",
     "lint:web": "npm --prefix apps/web run lint",

@@ -1,0 +1,80 @@
+/* Shared mobile rules load last; route-specific lesson/chat styles remain scoped. */
+body { min-width:0; }
+html { scroll-padding-block:80px 100px; }
+img,svg,canvas { max-width:100%; }
+
+@media(max-width:900px) {
+  .page,.workspace,.lesson-shell,.gold-shell { min-width:0; }
+  .page { padding-bottom:calc(100px + env(safe-area-inset-bottom)); }
+  .topbar { height:calc(64px + env(safe-area-inset-top)); padding-top:env(safe-area-inset-top); padding-left:max(12px,env(safe-area-inset-left)); padding-right:max(12px,env(safe-area-inset-right)); gap:8px; }
+  .topbar .account-stats { gap:6px; min-width:0; }
+  .topbar .stat-pill { min-height:44px; padding:7px 8px; gap:4px; font-size:12px; white-space:nowrap; }
+  .topbar .theme-toggle { width:44px; min-height:44px; padding:8px; flex:none; }
+  .topbar .theme-toggle span { display:none; }
+  .topbar-avatar { width:40px; height:44px; flex:none; }
+  .sidebar { padding-bottom:calc(8px + env(safe-area-inset-bottom)); }
+  .sidebar nav a { min-height:52px; }
+  input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select { font-size:16px; }
+  .form-stack input,.form-stack textarea { font-size:16px; }
+  input[type=range] { min-height:44px; }
+  .form-stack,.profile-grid,.profile-grid>*,.settings-row>* { min-width:0; }
+  .profile-grid p,.settings-row strong,.artifact-note { overflow-wrap:anywhere; }
+  .settings-row { gap:16px; }
+  .welcome-page { padding-top:calc(20px + env(safe-area-inset-top)); padding-bottom:calc(24px + env(safe-area-inset-bottom)); }
+  .welcome-head button,.welcome-foot a,.setup-actions nav a,.profile-legal a { min-height:44px; display:inline-flex; align-items:center; }
+  .setup-v2 { padding-top:calc(20px + env(safe-area-inset-top)); }
+  .setup-actions { padding-bottom:calc(10px + env(safe-area-inset-bottom)); }
+  .setup-actions nav { padding-top:0; }
+  .lesson-header { height:calc(66px + env(safe-area-inset-top)); padding-top:env(safe-area-inset-top); }
+  .lesson-body,.gold-shell { padding-bottom:calc(32px + env(safe-area-inset-bottom)); }
+  dialog { max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow-y:auto; overscroll-behavior:contain; }
+  .app-shell .mentor-studio.page { height:var(--mentor-available-height,calc(100dvh - 64px - 90px - env(safe-area-inset-bottom))); padding:0 16px 8px; }
+  .app-shell:has(.mentor-studio[data-keyboard-open='true']) .sidebar { display:none; }
+  .mentor-studio[data-keyboard-open='true'] .mentor-header { min-height:48px; }
+  .mentor-studio .mentor-controls select { min-height:44px; font-size:16px; }
+  .mentor-studio .mentor-privacy summary { min-height:44px; }
+  .mentor-studio .mentor-empty { justify-content:flex-start; }
+}
+@media(max-width:380px) {
+  .learning-home .daily-hero { grid-template-columns:minmax(0,1fr); gap:12px; padding:18px; }
+  .learning-home .daily-hero-copy { order:0; grid-row:1; }
+  .learning-home .daily-character.portrait-scene { order:1; grid-row:2; height:170px; min-height:0; }
+  .learning-home .daily-character .tiger-companion { width:170px; height:170px; }
+  .learning-home .current-stage { padding:14px; }
+  .topbar { gap:5px; }
+  .topbar::before { font-size:12px; letter-spacing:.04em; }
+  .topbar-spacer { min-width:0; }
+  .topbar .stat-pill { padding:6px; font-size:11px; }
+  .topbar .stat-pill svg { width:16px; }
+  .welcome-hero { gap:20px; padding:24px 0 32px; }
+  .welcome-scene { min-height:185px; }
+  .welcome-scene>.tiger-companion { width:190px; }
+  .welcome-orbit { width:180px; height:180px; }
+  .welcome-bubble { top:-8px; font-size:11px; padding:8px 12px; }
+  .welcome-subject { width:56px; padding:2px 0 5px; border-radius:14px; }
+  .welcome-subject .domain-art { width:52px; height:36px; }
+  .welcome-subject.money { top:55px; }.welcome-subject.ai { top:65px; }.welcome-subject.mind { right:22px; bottom:0; }
+  .welcome-copy h1 { font-size:34px; margin:12px 0 16px; }
+  .welcome-copy>p:not(.eyebrow) { font-size:15px; margin-bottom:20px; }
+  .learning-heading { margin-bottom:20px; }
+  .learning-heading h1 { font-size:34px; }
+  .mentor-empty h2 { font-size:26px; }
+  .mentor-orb { width:140px; height:100px; }
+  .setup-path,.setup-rhythm { padding:12px; gap:8px; }
+  .setup-path .domain-art { width:48px; }
+  .setup-v2 h1 { font-size:25px; }
+  .opening-plan { grid-template-columns:1fr; }
+  .gold-copy h1 { font-size:30px; }
+  .gold-phases span { font-size:10px; }
+}
+@media(pointer:coarse) {
+  button,a,summary { touch-action:manipulation; }
+  .button:hover:not(:disabled) { transform:none!important; }
+  .sidebar,.topbar,.lesson-header { backdrop-filter:none!important; -webkit-backdrop-filter:none!important; background:var(--canvas)!important; }
+}
+@media(max-height:500px) and (max-width:900px) {
+  .setup-actions { position:static; }
+  .mentor-empty .mentor-orb { display:none; }
+  .mentor-header { min-height:52px; }
+  .mentor-controls { padding-top:0; }
+}

@@ -16,6 +16,7 @@ export default function Footer() {
     { label: 'Mobile waitlist', href: '#join' },
     { label: 'FAQ', href: '#faq' },
     { label: 'Open app', href: '/app/' },
+    { label: 'Free guides · EN / ES', href: '/guides' },
   ];
 
   const socialLinks = [

@@ -1,0 +1,12 @@
+{
+  "id": "/app/",
+  "name": "T1GER — Learn, Apply, Master",
+  "short_name": "T1GER",
+  "description": "Short lessons, useful applications and memory reviews.",
+  "start_url": "/app/",
+  "scope": "/app/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [{ "src": "/app/mascot/t1ger-avatar.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+}

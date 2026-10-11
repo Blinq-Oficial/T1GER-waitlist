@@ -1,5 +1,17 @@
 import { expect, test } from 'vitest';
-import { animationDuration, animationPose, blendPose, celebrationPose, completionAnimation, CELEBRATION_SECONDS, type MascotAnimation } from './mascotMotion';
+import { animationDuration, animationPose, blendPose, celebrationPose, completionAnimation, mascotFrameDue, CELEBRATION_SECONDS, type MascotAnimation } from './mascotMotion';
+
+test('phone idle rendering halves 60Hz GPU work without delaying active reactions or the first frame', () => {
+  let previous = 0, rendered = 0;
+  for (let frame = 1; frame <= 60; frame++) {
+    const now = frame * 1000 / 60;
+    if (mascotFrameDue(true, false, previous, now)) { rendered++; previous = now; }
+  }
+  expect(rendered).toBe(30);
+  expect(mascotFrameDue(true, true, 100, 116)).toBe(true);
+  expect(mascotFrameDue(false, false, 100, 116)).toBe(true);
+  expect(mascotFrameDue(true, false, 0, 1)).toBe(true);
+});
 
 test('celebration anticipates, lifts, lands and settles without discontinuities', () => {
   expect(celebrationPose(.52).y).toBeLessThan(0);

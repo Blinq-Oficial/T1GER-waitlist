@@ -8,6 +8,7 @@ import { Tiger, TigerPortrait } from './Visual';
 import { hasMentorConsent, mentorConsentVersion, mentorError } from './product/webProgress';
 import { appHref } from './basePath';
 import './mentor.css';
+import { mentorViewportLayout, submitMentorOnEnter } from './mobileViewport';
 
 type Message = { role: 'user' | 'model'; text: string };
 const mentorAvailable = import.meta.env.VITE_MENTOR_AVAILABLE !== 'false';
@@ -28,6 +29,26 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
   const consentDialog = useRef<HTMLDialogElement>(null);
   const end = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
+  const studio = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const element = studio.current;
+    if (!viewport || !element) return;
+    let navigationHeight = 72;
+    const update = () => {
+      if (window.innerWidth > 900) { element.style.removeProperty('--mentor-available-height'); delete element.dataset.keyboardOpen; return; }
+      const navigation = document.getElementById('main-navigation');
+      const measured = navigation?.getBoundingClientRect().height;
+      if (measured) navigationHeight = measured;
+      const layout = mentorViewportLayout({ height: viewport.height, offsetTop: viewport.offsetTop, layoutHeight: window.innerHeight, studioTop: element.getBoundingClientRect().top, navigationHeight, scale: viewport.scale, editing: document.activeElement === input.current });
+      element.style.setProperty('--mentor-available-height', `${layout.height}px`);
+      element.dataset.keyboardOpen = String(layout.keyboardOpen);
+    };
+    update();
+    viewport.addEventListener('resize', update); viewport.addEventListener('scroll', update);
+    window.addEventListener('resize', update); element.addEventListener('focusin', update); element.addEventListener('focusout', update);
+    return () => { viewport.removeEventListener('resize', update); viewport.removeEventListener('scroll', update); window.removeEventListener('resize', update); element.removeEventListener('focusin', update); element.removeEventListener('focusout', update); };
+  }, []);
   useEffect(() => {
     if (!pendingQuestion) return;
     const timer = window.setTimeout(() => setReplySlow(true), 15000);
@@ -106,7 +127,7 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
     { icon: Puzzle, title: 'Try an exercise', text: 'Give me a small educational exercise for ' + pathTitle + '.' },
     { icon: Sparkles, title: 'A real-life example', text: 'Show how an idea from ' + pathTitle + ' could be useful in everyday life. Keep it educational.' },
   ];
-  return <section className="page mentor-studio" aria-labelledby="mentor-title">
+  return <section ref={studio} className="page mentor-studio" aria-labelledby="mentor-title">
     <header className="mentor-header"><button className="icon-button mentor-back" onClick={() => go('/learn')} aria-label="Back to learning"><ArrowLeft size={20}/></button><div className="mentor-identity"><TigerPortrait/><div><h1 id="mentor-title">T1GER AI</h1><p>Your learning companion <span>· Beta</span></p></div></div><button className="icon-button mentor-new" disabled={locked || !messages.length} aria-label="Start a new conversation" title="Start a new conversation. Saved chats stay in your account." onClick={() => { setMessages([]); setError(''); input.current?.focus(); }}><MessageCirclePlus size={22}/></button></header>
     <div className="mentor-scroll">
       {!mentorAvailable && <p className="notice" role="status">Your mentor is getting ready. Keep learning while we finish connecting it.</p>}
@@ -115,7 +136,7 @@ export default function Coach({ uid, pathTitle, preview, go }: { uid: string; pa
       <div className="mentor-messages" role="log" aria-label="Conversation with your AI mentor" aria-live="polite" aria-relevant="additions">{displayedMessages.map((message, index) => <article className={'mentor-message ' + message.role} key={index}>{message.role === 'model' && <TigerPortrait/>}<div><span className="mentor-speaker">{message.role === 'user' ? 'You' : 'T1GER'}</span><div className="mentor-reply">{message.text.split(/\n\n+/).map((paragraph, i) => <p key={i}>{paragraph.replace(/^#{1,4}\s+/gm, '').split(/(\*\*[^*]+\*\*)/g).map((part, j) => part.startsWith('**') && part.endsWith('**') ? <strong key={j}>{part.slice(2, -2)}</strong> : part)}</p>)}</div></div></article>)}{pendingQuestion && <MentorThinking slow={replySlow}/>}</div><div ref={end}/>
     </div>
     <div className="mentor-bottom">{error && <div className="mentor-error" role="alert"><p>{error}</p>{historyFailed && <button className="button subtle" onClick={() => window.location.reload()}>Reload conversations</button>}</div>}{saveError && <div className="mentor-error" role="alert"><p>{saveError}</p><button className="button subtle" disabled={busy} onClick={async () => { if (!unsaved) return; setBusy(true); try { await persist(unsaved); setUnsaved(null); setSaveError(''); } catch { setSaveError('Still unable to save. Your reply remains on this page.'); } finally { setBusy(false); } }}>Retry saving</button></div>}
-      <form className="mentor-composer" onSubmit={send}><label className="sr-only" htmlFor="coach-question">Your question</label><textarea ref={input} id="coach-question" value={pendingQuestion ? '' : draft} onChange={event => setDraft(event.target.value)} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} maxLength={3000} rows={1} placeholder={pendingQuestion ? 'Your mentor is working on a reply…' : 'Ask anything about your learning…'} disabled={locked || !mentorAvailable}/><button type="submit" className="button primary mentor-send" aria-label={busy ? 'Waiting for your mentor' : 'Send question'} disabled={!mentorAvailable || !draft.trim() || locked}><ArrowUp size={23}/></button></form>
+      <form className="mentor-composer" onSubmit={send}><label className="sr-only" htmlFor="coach-question">Your question</label><textarea ref={input} id="coach-question" value={pendingQuestion ? '' : draft} onChange={event => setDraft(event.target.value)} onKeyDown={event => { if (submitMentorOnEnter({ key: event.key, shift: event.shiftKey, composing: event.nativeEvent.isComposing, compact: window.innerWidth <= 900 || window.matchMedia('(pointer: coarse)').matches, modifier: event.ctrlKey || event.metaKey })) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} maxLength={3000} rows={1} placeholder={pendingQuestion ? 'Your mentor is working on a reply…' : 'Ask anything about your learning…'} disabled={locked || !mentorAvailable}/><button type="submit" className="button primary mentor-send" aria-label={busy ? 'Waiting for your mentor' : 'Send question'} disabled={!mentorAvailable || !draft.trim() || locked}><ArrowUp size={23}/></button></form>
       <div className="mentor-controls"><label>Reply in <select disabled={busy} value={language} onChange={event => setLanguage(event.target.value as 'en' | 'es')} aria-label="Mentor response language"><option value="en">English</option><option value="es">Español</option></select></label><span>AI can make mistakes.</span><details className="mentor-privacy"><summary>AI &amp; privacy</summary><div><p>Your question and up to eight recent messages go to OpenRouter and Novita AI. For adults 18+. Keep private information out of your questions. Free replies depend on daily limits and provider capacity.</p><a href={appHref('/privacy')} target="_blank" rel="noreferrer">Privacy notice</a><a href="https://openrouter.ai/terms" target="_blank" rel="noreferrer">OpenRouter terms</a><a href="https://novita.ai/legal/terms-of-service" target="_blank" rel="noreferrer">Novita terms</a>{adultConfirmed && <button type="button" onClick={() => void resetMentorChoice()} disabled={busy}>Reset my AI choice</button>}</div></details></div>
     </div>
     <dialog ref={consentDialog} className="mentor-intro" aria-labelledby="mentor-intro-title" aria-describedby="mentor-intro-description" onCancel={event => { if (busy) event.preventDefault(); }}>

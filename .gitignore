@@ -25,5 +25,6 @@ dist-ssr
 *.sw?
 .vercel
 /.codex/
+/public/guides/
 .env*
 !.env.example

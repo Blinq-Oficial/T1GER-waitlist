@@ -1,18 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://t1ger.app/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://t1ger.app/terms</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://t1ger.app/privacy</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-</urlset>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"><url><loc>https://t1ger.app/</loc><lastmod>2026-10-11</lastmod></url><url><loc>https://t1ger.app/guides</loc><lastmod>2026-10-11</lastmod></url><url><loc>https://t1ger.app/guides/en</loc><lastmod>2026-10-11</lastmod></url><url><loc>https://t1ger.app/guides/es</loc><lastmod>2026-10-11</lastmod></url><url><loc>https://t1ger.app/guides/en/inflation-and-buying-power</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://t1ger.app/guides/en/inflation-and-buying-power"/><xhtml:link rel="alternate" hreflang="es" href="https://t1ger.app/guides/es/inflacion-y-poder-adquisitivo"/><xhtml:link rel="alternate" hreflang="x-default" href="https://t1ger.app/guides/en/inflation-and-buying-power"/></url><url><loc>https://t1ger.app/guides/es/inflacion-y-poder-adquisitivo</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://t1ger.app/guides/en/inflation-and-buying-power"/><xhtml:link rel="alternate" hreflang="es" href="https://t1ger.app/guides/es/inflacion-y-poder-adquisitivo"/><xhtml:link rel="alternate" hreflang="x-default" href="https://t1ger.app/guides/en/inflation-and-buying-power"/></url><url><loc>https://t1ger.app/guides/en/write-better-ai-prompts</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://t1ger.app/guides/en/write-better-ai-prompts"/><xhtml:link rel="alternate" hreflang="es" href="https://t1ger.app/guides/es/como-escribir-prompts-utiles"/><xhtml:link rel="alternate" hreflang="x-default" href="https://t1ger.app/guides/en/write-better-ai-prompts"/></url><url><loc>https://t1ger.app/guides/es/como-escribir-prompts-utiles</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://t1ger.app/guides/en/write-better-ai-prompts"/><xhtml:link rel="alternate" hreflang="es" href="https://t1ger.app/guides/es/como-escribir-prompts-utiles"/><xhtml:link rel="alternate" hreflang="x-default" href="https://t1ger.app/guides/en/write-better-ai-prompts"/></url><url><loc>https://t1ger.app/guides/en/confirmation-bias-in-everyday-decisions</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://t1ger.app/guides/en/confirmation-bias-in-everyday-decisions"/><xhtml:link rel="alternate" hreflang="es" href="https://t1ger.app/guides/es/sesgo-de-confirmacion-en-decisiones"/><xhtml:link rel="alternate" hreflang="x-default" href="https://t1ger.app/guides/en/confirmation-bias-in-everyday-decisions"/></url><url><loc>https://t1ger.app/guides/es/sesgo-de-confirmacion-en-decisiones</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="en" href="https://t1ger.app/guides/en/confirmation-bias-in-everyday-decisions"/><xhtml:link rel="alternate" hreflang="es" href="https://t1ger.app/guides/es/sesgo-de-confirmacion-en-decisiones"/><xhtml:link rel="alternate" hreflang="x-default" href="https://t1ger.app/guides/en/confirmation-bias-in-everyday-decisions"/></url></urlset>

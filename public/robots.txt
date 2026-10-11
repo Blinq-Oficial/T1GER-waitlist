@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /__/auth/
 
 Sitemap: https://t1ger.app/sitemap.xml

@@ -1,4 +1,7 @@
 export const CELEBRATION_SECONDS = 3.2;
+export function mascotFrameDue(compact: boolean, active: boolean, previous: number, now: number) {
+  return !compact || active || !previous || now - previous >= 32;
+}
 // One authored shot: anticipate, launch, turn, land, settle. Times are seconds.
 const celebrationKeys = [
   [0, 0, 1, 1, 0, 0, 0, 1, 0],

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { animationDuration, animationPose, blendPose, type MascotAnimation } from './mascotMotion';
+import { animationDuration, animationPose, blendPose, mascotFrameDue, type MascotAnimation } from './mascotMotion';
 import { centerMascot, mascotFrame } from './mascotFraming';
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}mascot/${name}`;
@@ -25,6 +25,7 @@ export default function Mascot3D({ celebrate = false, animation = celebrate ? 'c
   useEffect(() => {
     const element = host.current!;
     const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+    const compactScreen = matchMedia('(max-width: 900px), (pointer: coarse)');
     let renderer: THREE.WebGLRenderer;
     try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'low-power' }); }
     catch { setFailed(true); controls.current.onUnavailable?.(); return; }
@@ -78,6 +79,11 @@ export default function Mascot3D({ celebrate = false, animation = celebrate ? 'c
     const render = (timestamp: number) => {
       frameId = 0;
       if (disposed || !visible || document.hidden || !model) return;
+      // Resting motion needs only 30 GPU frames/sec on phones; active animations keep their cadence.
+      const unchanged = controls.current.replay === lastReplay && controls.current.animation === lastAnimation;
+      if (!mascotFrameDue(compactScreen.matches, !unchanged || shotTime < animationDuration(controls.current.animation), previousTime, timestamp)) {
+        frameId = requestAnimationFrame(render); return;
+      }
       const delta = previousTime ? Math.min((timestamp - previousTime) / 1000, .05) : 0;
       previousTime = timestamp;
       const control = controls.current;

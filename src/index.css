@@ -648,3 +648,13 @@ html.lenis, html.lenis body {
 .mobile-access-form h2 { font:800 clamp(32px,3.5vw,48px)/1.1 'Outfit',sans-serif; letter-spacing:-.035em; margin:16px 0 20px; }
 @media(max-width:1100px) { .mobile-access-layout { grid-template-columns:minmax(0,1fr); gap:44px; max-width:640px; margin-inline:auto; } }
 @media(max-width:767px) { .mobile-access-web { padding:28px; } .mobile-access-web>svg { margin:24px 0 18px; } }
+@media(max-width:767px) {
+  .landing-mobile-header { top:calc(12px + env(safe-area-inset-top)); left:max(16px,env(safe-area-inset-left)); right:max(16px,env(safe-area-inset-right)); }
+  .landing-mobile-header button,.landing-mobile-menu button,footer a { min-height:44px; }
+  footer a { display:inline-flex; align-items:center; }
+  input[type=range] { min-height:44px; }
+  button,a,summary { touch-action:manipulation; }
+}
+@media(max-height:500px) and (max-width:767px) {
+  .landing-mobile-menu { justify-content:flex-start; gap:8px; padding-top:calc(90px + env(safe-area-inset-top)); padding-bottom:24px; }
+}

@@ -118,7 +118,7 @@ export default function Sidebar({ isPreloaded }: Props) {
         initial={{ y: -80 }}
         animate={isPreloaded ? { y: 0 } : { y: -80 }}
         transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-        className="fixed top-3 left-4 right-4 h-14 md:hidden z-[60] flex items-center justify-between px-5 rounded-full border border-white/10 backdrop-blur-xl bg-black/60 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+        className="landing-mobile-header fixed top-3 left-4 right-4 h-14 md:hidden z-[60] flex items-center justify-between px-5 rounded-full border border-white/10 backdrop-blur-xl bg-black/60 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
       >
         <button
           onClick={() => scrollTo('#hero')}
@@ -157,7 +157,7 @@ export default function Sidebar({ isPreloaded }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[55] overflow-y-auto bg-[#050505]/95 backdrop-blur-2xl flex flex-col items-center justify-center gap-4 py-20 md:hidden"
+            className="landing-mobile-menu fixed inset-0 z-[55] overflow-y-auto bg-[#050505]/95 backdrop-blur-2xl flex flex-col items-center justify-center gap-4 py-20 md:hidden"
           >
             {navLinks.map((link, i) => {
               const isActive = activeId === link.id;
