@@ -15,6 +15,7 @@
   ],
   "headers": [
     { "source": "/app", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }] },
+    { "source": "/app/", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }] },
     { "source": "/app/:path*", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }] },
     { "source": "/terms", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }] },
     { "source": "/privacy", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }] },

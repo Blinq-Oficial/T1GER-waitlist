@@ -24,7 +24,7 @@ test('Each educational guide has translated, reciprocal canonicals and readable 
 
 test('Authenticated and legal screens cannot enter the public learning search index', () => {
   const config = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url)));
-  for (const route of ['/app', '/app/:path*', '/privacy', '/terms']) {
+  for (const route of ['/app', '/app/', '/app/:path*', '/privacy', '/terms']) {
     assert.ok(config.headers.find(rule => rule.source === route)?.headers.some(header => header.key === 'X-Robots-Tag' && header.value.includes('noindex')));
   }
   const sitemap = readFileSync(new URL('../public/sitemap.xml', import.meta.url), 'utf8');
