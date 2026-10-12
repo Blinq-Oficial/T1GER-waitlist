@@ -1,4 +1,48 @@
 /* One learning action at a time. All colours follow the shared light/dark tokens. */
+/* A stable action first, followed by the route and supporting progress. */
+.learning-home .learning-heading{margin-bottom:24px}
+.learning-home .learning-heading h1{font-size:clamp(32px,4vw,48px);line-height:1.08}
+.learning-home .current-stage{margin-bottom:14px}
+.learning-home .daily-hero{padding:28px;gap:24px;min-height:270px}
+.learning-home .daily-hero-copy .eyebrow{min-height:0;max-width:none}
+.learning-home .daily-hero-copy h2{margin:12px 0;font-size:clamp(27px,3vw,34px)}
+.learning-home .daily-hero-copy>p{line-height:1.6;margin-bottom:22px;max-width:42ch}
+.learning-home .daily-hero-copy .button{min-height:54px}
+.learning-home .course-heading{gap:14px;flex-wrap:wrap}
+.find-current{margin-left:auto;min-height:44px;white-space:nowrap}
+.stage-guide{margin:0 18px 16px;border:1px solid var(--line);border-radius:16px;background:var(--raised)}
+.stage-guide summary{display:flex;gap:10px;align-items:center;min-height:48px;padding:12px 16px;cursor:pointer;font-size:14px;font-weight:600;list-style:none}
+.stage-guide summary::-webkit-details-marker{display:none}
+.stage-guide summary>svg:last-child{margin-left:auto;transition:transform .2s ease}
+.stage-guide[open] summary>svg:last-child{transform:rotate(180deg)}
+.stage-guide ul{list-style:none;margin:0;padding:0 16px 16px;display:grid;gap:14px}
+.stage-guide li{border-top:1px solid var(--line);padding-top:14px}
+.stage-guide strong{font-size:15px}.stage-guide p{color:var(--soft);font-size:14px;line-height:1.55;margin:6px 0 0}
+@media(max-width:800px){
+ .learning-home .learning-heading{margin-bottom:18px;align-items:flex-start}
+ .learning-home .learning-heading h1{font-size:32px}
+ .learning-home .learning-heading .eyebrow{font-size:12px;margin-bottom:8px}
+ .learning-home .intention-pill{font-size:12px;padding:8px 10px;white-space:nowrap}
+ .learning-home .daily-hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr);padding:22px;gap:14px;min-height:0;overflow:hidden}
+ .learning-home .daily-hero-copy{grid-row:1;position:relative;z-index:1}
+ .learning-home .daily-hero-copy h2{font-size:28px;max-width:none}
+ .learning-home .daily-hero-copy>p{font-size:15px;margin-bottom:18px}
+ .learning-home .daily-hero .button{width:100%}
+ .learning-home .learning-dashboard .daily-character.portrait-scene{position:relative;grid-row:2;inset:auto;margin:0 auto;width:160px;height:155px}
+ .learning-home .daily-character.portrait-scene .tiger-companion{width:145px;height:145px;margin:0}
+ .learning-home .daily-character .character-caption{font-size:11px;top:0}
+ .learning-home .daily-character .portrait-halo{inset:16px}
+ .learning-home .learning-quick-actions{gap:10px}
+ .learning-home .course-heading h2{font-size:22px}
+ .learning-home .stage-guide{margin:0 12px 16px}
+}
+@media(max-width:380px){
+ .learning-home .learning-heading{display:block}
+ .learning-home .intention-pill{display:inline-flex;margin-top:10px}
+ .learning-home .daily-hero{padding:18px}
+ .learning-home .hero-duration{font-size:11px}
+ .learning-home .course-heading .find-current{margin-left:0}
+}
 .familiar-visual { margin:22px 0; padding:22px; border:1px solid var(--line-strong); background:var(--raised); border-radius:20px; }
 .familiar-visual figcaption { display:flex; gap:8px; align-items:center; color:var(--soft); font-size:12px; margin-bottom:20px; }
 .familiar-visual>div { display:grid; grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr); align-items:center; gap:16px; }

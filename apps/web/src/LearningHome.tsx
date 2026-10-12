@@ -25,6 +25,7 @@ export default function LearningHome({ track, brain, missions, dueCount, openLes
   const goals = dailyLearningGoals(brain, missions, profile.timeZone);
   const [selected, setSelected] = useState<JourneyNode | null>(null);
   const lessonDialog = useRef<HTMLDialogElement>(null);
+  const currentNode = useRef<HTMLButtonElement>(null);
   const selectedAction = selected && getJourneyAction(selected, pendingApply(selected.lesson.id));
   function continueStep(node: JourneyNode) {
     const step = getJourneyAction(node, pendingApply(node.lesson.id));
@@ -32,6 +33,10 @@ export default function LearningHome({ track, brain, missions, dueCount, openLes
     lessonDialog.current?.close();
     if (step.destination === 'review') go('/master');
     else openLesson(node.lesson.id);
+  }
+  function findCurrentStep() {
+    currentNode.current?.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    currentNode.current?.focus({ preventScroll: true });
   }
   return <div className="page learning-home">
     <header className="learning-heading"><div><p className="eyebrow">Your learning, one step at a time</p><h1>{next ? 'Your next step.' : 'Look how far you’ve come.'}</h1><p>{track.title.en}</p></div><span className="intention-pill"><Clock size={16}/>{dailyTime} min a day</span></header>
@@ -48,10 +53,10 @@ export default function LearningHome({ track, brain, missions, dueCount, openLes
       <button onClick={() => go('/library')}><span className="quick-icon mint"><Library size={20}/></span><span><strong>Your saved tools</strong><small>{savedToolCount ? `${savedToolCount} ready to use again` : 'Keep what you make in Apply'}</small></span><ArrowRight size={17}/></button>
     </div>
     <section className="learning-route" aria-label="Learning path">
-      <div className="course-heading"><DomainIcon domain={track.id}/><div><span>Your path · {done} of {nodes.length} applied</span><h2>{track.title.en}</h2></div><button className="icon-button" onClick={() => go('/discover')} aria-label="Choose learning path"><ChevronDown size={19}/></button></div>
-      {sections.map((section, index) => <section className={`route-unit ${section.id === currentSection.id ? 'active-unit' : ''}`} key={section.id}><header className="unit-banner"><span>Stage {index + 1}{section.id === currentSection.id ? ' · Your current stage' : ''}</span><h3>{section.title.en}</h3><p>{section.description.en}</p></header><ol className="lesson-map">{nodes.filter(node => section.lessonIds.includes(node.lesson.id)).map(node => {
+      <div className="course-heading"><DomainIcon domain={track.id}/><div><span>Your path · {done} of {nodes.length} applied</span><h2>{track.title.en}</h2></div>{next && <button className="text-link find-current" onClick={findCurrentStep}>My next step<ArrowRight size={17}/></button>}</div>
+      {sections.map((section, index) => <section className={`route-unit ${section.id === currentSection.id ? 'active-unit' : ''}`} key={section.id}><header className="unit-banner"><span>Stage {index + 1}{section.id === currentSection.id ? ' · Your current stage' : ''}</span><h3>{section.title.en}</h3><p>{section.description.en}</p></header><details className="stage-guide"><summary><BookOpen size={17}/>What you’ll learn<ChevronDown size={16}/></summary><ul>{nodes.filter(node => section.lessonIds.includes(node.lesson.id)).map(node => <li key={node.lesson.id}><strong>{node.lesson.title.en}</strong><p>{node.lesson.objective.en}</p></li>)}</ul></details><ol className="lesson-map">{nodes.filter(node => section.lessonIds.includes(node.lesson.id)).map(node => {
         const Icon = node.state === 'completed' ? Check : node.state === 'locked' ? Lock : node.state === 'review' ? RotateCcw : Play;
-        return <li key={node.lesson.id} className={`map-stop ${node.state}`}><div className="node-position"><button className="path-node" aria-label={`Preview ${node.lesson.title.en}${node.state === 'locked' ? ' — locked' : ''}`} aria-haspopup="dialog" aria-current={node.state === 'current' || node.state === 'review' ? 'step' : undefined} onClick={() => { setSelected(node); lessonDialog.current?.showModal(); }}><Icon size={28} fill={node.state === 'current' ? 'currentColor' : 'none'} strokeWidth={2.5}/></button><div className="node-caption"><strong>{node.lesson.title.en}</strong><span>{node.state === 'completed' ? 'Applied · revisit anytime' : node.state === 'locked' ? 'Tap to see what’s ahead' : node.state === 'review' ? 'A review is due first' : pendingApply(node.lesson.id) ? getJourneyAction(node, true).label : 'Your next idea · about 4 min'}</span></div></div></li>;
+        return <li key={node.lesson.id} className={`map-stop ${node.state}`}><div className="node-position"><button ref={node.lesson.id === next?.lesson.id ? currentNode : undefined} className="path-node" aria-label={`Preview ${node.lesson.title.en}${node.state === 'locked' ? ' — locked' : ''}`} aria-haspopup="dialog" aria-current={node.state === 'current' || node.state === 'review' ? 'step' : undefined} onClick={() => { setSelected(node); lessonDialog.current?.showModal(); }}><Icon size={28} fill={node.state === 'current' ? 'currentColor' : 'none'} strokeWidth={2.5}/></button><div className="node-caption"><strong>{node.lesson.title.en}</strong><span>{node.state === 'completed' ? 'Applied · revisit anytime' : node.state === 'locked' ? 'Tap to see what’s ahead' : node.state === 'review' ? 'A review is due first' : pendingApply(node.lesson.id) ? getJourneyAction(node, true).label : 'Your next idea · about 4 min'}</span></div></div></li>;
       })}</ol></section>)}
       <div className="path-finish"><Flag size={26}/><span>{done === nodes.length ? 'You made it. Keep these ideas fresh in Master.' : `${nodes.length} useful ideas. A stronger way to think.`}</span></div>
     </section></div><aside className="learning-side">
