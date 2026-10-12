@@ -3,6 +3,24 @@ import { dailyLearningGoals, learningRhythm } from './learningRhythm';
 import { DEFAULT_BRAIN_STATE } from './brainService';
 
 describe('Learning rhythm display', () => {
+  it('includes saved Apply history across devices without counting ordinary Learn records', () => {
+    const now = new Date('2026-10-11T12:00:00Z');
+    const record = { missionId: 'field-learn-money-01', completed: true, score: 100, competency: 'investing' as const, difficulty: 'easy' as const, timestamp: now.getTime() - 1000 };
+    const rhythm = learningRhythm({ streak: 2, timeZone: 'UTC' }, [], now, [record, { ...record, missionId: 'learn-money-01' }, { ...record, timestamp: now.getTime() + 1000 }]);
+    expect(rhythm.activeDays).toBe(1);
+    expect(rhythm.doneToday).toBe(true);
+    expect(rhythm.streak).toBe(2);
+    expect(learningRhythm({ streak: 2, timeZone: 'UTC' }, [], now, [{ ...record, missionId: 'learn-money-01' }]).activeDays).toBe(0);
+  });
+  it('ignores future and unrepresentable completion times', () => {
+    const now = new Date('2026-10-11T12:00:00Z');
+    const missions = [now.getTime() + 1000, 9e15, Infinity].map((at, index) => ({ id: String(index), lessonId: 'learn-money-01', status: 'completed' as const, completedAt: at }));
+    const rhythm = learningRhythm({ streak: 3, timeZone: 'UTC' }, missions, now);
+    expect(rhythm.doneToday).toBe(false);
+    expect(rhythm.activeDays).toBe(0);
+    expect(rhythm.streak).toBe(0);
+    expect(dailyLearningGoals(DEFAULT_BRAIN_STATE, missions, 'UTC', now).completed).toBe(0);
+  });
   it('counts daily challenges from saved completions in the learner timezone, excluding pending and future work', () => {
     const now = new Date('2026-10-06T02:00:00Z');
     const record = { missionId: 'learn-money-01', completed: true, score: 100, competency: 'investing' as const, difficulty: 'easy' as const, timestamp: Date.parse('2026-10-05T20:00:00Z') };

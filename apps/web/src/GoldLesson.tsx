@@ -4,7 +4,6 @@ import type { AtomicLesson, SavedLearningArtifact } from './product/interactiveC
 import type { BrainState } from './product/brainService';
 import { completeApply, explainError, isComplete, prepareApply, type Mission } from './state';
 import { calculateCompoundProjection } from './projection';
-import { Tiger } from './Visual';
 import LearningCelebration from './LearningCelebration';
 import { ChoiceInteraction, CompoundingComparison, RetrievalInteraction, TeachingFeedback, TransferScenario, WorkedExample } from './LearningInteractions';
 import { addLearningEvent, assessRetrieval, canAdvanceStep, coherentRule, compoundingConcept, delayedSeries, equalTimingPlans, generateGoldSession, goldRewardTitle, goldSteps, manipulationComplete, newGoldDraft, practiceScore, predictionReasons, retainLearningEvents, retrievalEvidence, retrievalVariants, structuredRule, targetMonthly, usd, validGoldDraft, validPrediction, type GoldDraft, type RetrievalResponse } from './product/learningEngine';

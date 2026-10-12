@@ -10,9 +10,8 @@ export function dayKey(date: Date, timeZone?: string): string {
 }
 
 function timestamp(value: Mission['completedAt']): number | null {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (value && typeof value === 'object' && Number.isFinite(value.seconds)) return value.seconds * 1000;
-  return null;
+  const at = typeof value === 'number' ? value : value && typeof value === 'object' ? value.seconds * 1000 : NaN;
+  return Number.isFinite(at) && Number.isFinite(new Date(at).getTime()) ? at : null;
 }
 
 /** Read persisted completions only; these goals do not grant extra XP or rewards. */
@@ -26,7 +25,7 @@ export function dailyLearningGoals(brain: Pick<BrainState, 'missionHistory'>, mi
 }
 
 /** Display only. The server remains authoritative for streaks, XP and rewards. */
-export function learningRhythm(profile: Pick<Profile, 'streak' | 'lastVerifiedMissionDay' | 'timeZone'>, missions: Mission[], now = new Date()) {
+export function learningRhythm(profile: Pick<Profile, 'streak' | 'lastVerifiedMissionDay' | 'timeZone'>, missions: Mission[], now = new Date(), history: BrainState['missionHistory'] = []) {
   const today = dayKey(now, profile.timeZone);
   const anchor = new Date(today + 'T12:00:00Z');
   const days = Array.from({ length: 7 }, (_, index) => {
@@ -34,8 +33,12 @@ export function learningRhythm(profile: Pick<Profile, 'streak' | 'lastVerifiedMi
     return { key: date.toISOString().slice(0, 10), label: new Intl.DateTimeFormat('en', { weekday: 'short', timeZone: 'UTC' }).format(date) };
   });
   const completedDays = new Set(missions.filter(isComplete).flatMap(mission => {
-    const at = timestamp(mission.completedAt); return at === null ? [] : [dayKey(new Date(at), profile.timeZone)];
+    const at = timestamp(mission.completedAt); return at === null || at > now.getTime() ? [] : [dayKey(new Date(at), profile.timeZone)];
   }));
+  history.filter(record => record.completed && record.missionId.startsWith('field-learn-')).forEach(record => {
+    const at = timestamp(record.timestamp);
+    if (at !== null && at <= now.getTime()) completedDays.add(dayKey(new Date(at), profile.timeZone));
+  });
   if (profile.lastVerifiedMissionDay && profile.lastVerifiedMissionDay <= today) completedDays.add(profile.lastVerifiedMissionDay);
   const last = [...completedDays].filter(key => key <= today).sort().at(-1);
   const alive = last === today || last === days[5].key;
