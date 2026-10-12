@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, Check, RotateCcw } from 'lucide-react';
 import type { AtomicLesson } from './product/interactiveCurriculumTypes';
 import LessonOpening, { LessonReading } from './LessonOpening';
@@ -10,12 +10,14 @@ export default function GuestIdea({ lesson, themeAction, back, createAccount }: 
   lesson: AtomicLesson; themeAction: ReactNode; back: () => void; createAccount: () => void;
 }) {
   const [finished, setFinished] = useState(false);
+  const resultTitle = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { if (finished) resultTitle.current?.focus({ preventScroll:true }); }, [finished]);
   return <div className="guest-idea">
     <header className="guest-idea-header"><button className="back-button" onClick={back}><ArrowLeft size={18}/>My path</button><span>T1GER</span>{themeAction}</header>
     <div className="guest-idea-progress" aria-label={finished ? 'First idea explored' : 'Explore your first idea'}><span className="filled"/><span className={finished ? 'filled' : ''}/></div>
     <main key={finished ? 'takeaway' : 'sample'} className="guest-idea-body">
       {!finished ? <><p className="guest-idea-note"><BookOpen size={16}/>Your first idea · no account needed</p><LessonOpening lesson={lesson} sample onContinue={() => { setFinished(true); window.scrollTo(0,0); behaviorEvent('first_idea_completed', { lesson_id: lesson.id }); }}/></> : <section className="guest-idea-result">
-        <Tiger animation="correct"/><p className="eyebrow">A SMALL START, ALREADY USEFUL</p><h1>That’s your first idea.</h1>
+        <Tiger animation="correct"/><p className="eyebrow">A SMALL START, ALREADY USEFUL</p><h1 ref={resultTitle} tabIndex={-1}>That’s your first idea.</h1>
         <div className="guest-takeaway"><Check size={22}/><div><span>WHAT YOU JUST EXPLORED</span><p>{lesson.learningDesign.summaryPoints[0].en}</p></div></div>
         <p>Keep going with a full interactive lesson, a tool you can save, and a review when it’s due.</p>
         <button className="button primary large" onClick={createAccount}>Keep learning free<ArrowRight size={19}/></button>

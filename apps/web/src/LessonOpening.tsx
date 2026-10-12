@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, BookOpen, Check, Clock3, Lightbulb, Target } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BatteryLow, BookOpen, Check, Clock3, Coins, Headphones, Lightbulb, MessageSquare, Target } from 'lucide-react';
 import type { AtomicLesson } from './product/interactiveCurriculumTypes';
 import DomainArtwork from './DomainArtwork';
 import { TigerPortrait } from './Visual';
@@ -60,14 +60,28 @@ export function LessonReading({ lesson }: { lesson: AtomicLesson }) {
   </aside>;
 }
 
+function FamiliarVisual({ lessonId }: { lessonId: string }) {
+  if (lessonId === 'learn-money-01') return <figure className="familiar-visual money-example"><figcaption><Coins size={18}/>Same $10 wallet</figcaption><div><section><span>$2 each</span><div className="snack-dots" aria-hidden="true">{Array.from({ length:5 }, (_, index) => <i key={index}/>)}</div><strong>5 snacks</strong></section><ArrowRight aria-hidden="true"/><section><span>$2.50 each</span><div className="snack-dots" aria-hidden="true">{Array.from({ length:4 }, (_, index) => <i key={index}/>)}</div><strong>4 snacks</strong></section></div></figure>;
+  if (lessonId === 'learn-psychology-v1-01') return <figure className="familiar-visual"><figcaption><Headphones size={18}/>One purchase. Two things to check.</figcaption><div><section><Check size={26}/><strong>Great sound</strong><span>5 positive reviews</span></section><span className="familiar-divider">+</span><section><BatteryLow size={26}/><strong>Battery concern</strong><span>2 reviews to investigate</span></section></div></figure>;
+  if (lessonId === 'learn-ai-01') return <figure className="familiar-visual ai-example"><figcaption><MessageSquare size={18}/>Give AI a useful brief</figcaption><div><section><span>Vague</span><strong>“Write an email”</strong></section><ArrowRight aria-hidden="true"/><section><span>A clearer brief</span><strong>Goal · context · format</strong></section></div></figure>;
+  return null;
+}
+
 /** A supported first encounter. This warm-up never awards XP or a mastery score. */
 export default function LessonOpening({ lesson, onContinue, sample = false }: { lesson: AtomicLesson; onContinue: () => void; sample?: boolean }) {
   const beginning = beginnings[lesson.id as keyof typeof beginnings];
   const [example, setExample] = useState(false);
   const [choice, setChoice] = useState<number | null>(null);
+  const [checked, setChecked] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { heading.current?.focus({ preventScroll: true }); window.scrollTo(0, 0); }, [example]);
-  const feedback = choice === null ? null : beginning?.options[choice];
+  const feedback = !checked || choice === null ? null : beginning?.options[choice];
+  function checkOrContinue() {
+    if (choice === null) return;
+    if (!checked) { setChecked(true); return; }
+    if (feedback?.correct) { onContinue(); return; }
+    setChecked(false); setChoice(null);
+  }
   return <div className="lesson-opening">
     <div className="opening-guide"><TigerPortrait/><p>{example ? 'You have the clue. Let’s try one small choice.' : 'Let’s start with something familiar. I’ll guide you.'}</p></div>
     <p className="eyebrow">{example ? 'TRY IT TOGETHER' : `LESSON ${lesson.order} · START HERE`}</p>
@@ -78,11 +92,11 @@ export default function LessonOpening({ lesson, onContinue, sample = false }: { 
       <p className="opening-reassurance">No prior knowledge needed. Mistakes are part of learning.</p>
       <button className="button primary large" onClick={() => beginning ? setExample(true) : onContinue()}>Let’s begin<ArrowRight size={19}/></button>
     </> : beginning && <>
-      <div className="opening-example"><p>{beginning.scene}</p><div><Lightbulb size={20}/><p>{beginning.clue}</p></div></div>
-      <fieldset className="opening-options"><legend>{beginning.question}</legend>{beginning.options.map((option, index) => <label className={choice === index ? 'selected' : ''} key={option.label}><input type="radio" name="lesson-warmup" checked={choice === index} onChange={() => setChoice(index)}/><span>{option.label}</span>{choice === index && <Check size={18}/>}</label>)}</fieldset>
+      <div className="opening-example"><p>{beginning.scene}</p><FamiliarVisual lessonId={lesson.id}/><div><Lightbulb size={20}/><p>{beginning.clue}</p></div></div>
+      <fieldset className="opening-options"><legend>{beginning.question}</legend>{beginning.options.map((option, index) => <label className={choice === index ? 'selected' : ''} key={option.label}><input type="radio" name="lesson-warmup" checked={choice === index} disabled={checked} onChange={() => setChoice(index)}/><span>{option.label}</span>{choice === index && <Check size={18}/>}</label>)}</fieldset>
       {feedback && <div className={`opening-feedback ${feedback.correct ? 'understood' : ''}`} role="status"><strong>{feedback.correct ? 'You spotted it.' : 'Let’s look at the clue.'}</strong><p>{feedback.feedback}</p></div>}
-      <button className="button primary large" disabled={choice === null} onClick={onContinue}>{sample ? 'Keep the idea' : 'Explore the idea'}<ArrowRight size={19}/></button>
-      <button className="opening-back" onClick={() => { setExample(false); setChoice(null); }}><ArrowLeft size={16}/> Why this matters</button>
+      <button className="button primary large" disabled={choice === null} onClick={checkOrContinue}>{!checked ? 'Check my answer' : feedback?.correct ? sample ? 'Keep the idea' : 'Explore the idea' : 'Try with the clue'}<ArrowRight size={19}/></button>
+      <button className="opening-back" onClick={() => { setExample(false); setChoice(null); setChecked(false); }}><ArrowLeft size={16}/> Why this matters</button>
     </>}
   </div>;
 }

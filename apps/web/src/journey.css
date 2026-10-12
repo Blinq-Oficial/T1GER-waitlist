@@ -1,4 +1,28 @@
 /* One learning action at a time. All colours follow the shared light/dark tokens. */
+.familiar-visual { margin:22px 0; padding:22px; border:1px solid var(--line-strong); background:var(--raised); border-radius:20px; }
+.familiar-visual figcaption { display:flex; gap:8px; align-items:center; color:var(--soft); font-size:12px; margin-bottom:20px; }
+.familiar-visual>div { display:grid; grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr); align-items:center; gap:16px; }
+.familiar-visual section { display:flex; flex-direction:column; gap:10px; align-items:center; text-align:center; min-width:0; }
+.familiar-visual section>svg { color:var(--accent-light); }
+.familiar-visual span { color:var(--soft); font-size:12px; line-height:1.5; }
+.familiar-visual strong { font-size:17px; line-height:1.35; }
+.familiar-visual .familiar-divider { text-align:center; font-size:22px; }
+.snack-dots { display:flex; justify-content:center; gap:5px; flex-wrap:wrap; }
+.snack-dots i { width:18px; height:26px; border-radius:7px; background:linear-gradient(160deg,#ffc075,#f38828); border:1px solid #c56619; box-shadow:inset 0 2px 0 #ffe0a2; }
+.challenge-instruction { color:var(--soft); font-size:14px; line-height:1.6; margin:-6px 0 18px; }
+.challenge-hint { border:1px solid var(--line); border-radius:14px; margin-bottom:22px; padding:0 16px; }
+.challenge-hint summary { min-height:48px; display:flex; align-items:center; cursor:pointer; font-size:13px; color:var(--soft); }
+.challenge-hint p { font-size:14px; line-height:1.65; padding-bottom:14px; }
+.challenge-options { border:0; padding:0; margin:0; }
+.challenge-choice { position:relative; display:flex; align-items:center; gap:14px; padding:18px 20px; min-height:64px; border:1px solid var(--line-strong); border-bottom-width:3px; border-radius:16px; background:var(--raised); color:var(--ink); text-align:left; font-size:15px; cursor:pointer; }
+.challenge-choice input { position:absolute; opacity:0; width:1px; height:1px; }
+.challenge-choice .choice-marker { display:grid; place-items:center; flex:none; width:27px; height:27px; border:1px solid var(--line-strong); border-radius:8px; color:var(--soft); font-size:12px; }
+.challenge-choice.selected { border-color:var(--accent); background:var(--tint); }
+.challenge-choice.correct { border-color:#458b6c; }.challenge-choice.incorrect { border-color:#ab6b62; }
+.challenge-choice>svg { margin-left:auto; flex:none; color:#458b6c; }
+.challenge-choice:focus-within { outline:3px solid var(--accent-light); outline-offset:3px; }
+.opening-options input:disabled+span { opacity:1; }
+@media(max-width:380px) { .familiar-visual { padding:16px; }.familiar-visual>div { gap:8px; }.familiar-visual strong { font-size:14px; }.snack-dots { gap:3px; }.snack-dots i { width:13px; height:21px; } }
 .guest-idea { min-height:100dvh; }
 .guest-idea-header { display:flex; align-items:center; justify-content:space-between; gap:16px; max-width:1100px; margin:auto; padding:20px 28px; padding-top:calc(20px + env(safe-area-inset-top)); }
 .guest-idea-header>span { font-weight:800; letter-spacing:.06em; }
