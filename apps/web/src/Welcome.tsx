@@ -9,7 +9,7 @@ export default function Welcome({ themeAction, start, signIn }: { themeAction: R
     <header className="welcome-head"><a className="brand" href="/"><span>T1GER</span></a><div>{themeAction}<button className="text-link" onClick={signIn}>Sign in</button></div></header>
     <section className="welcome-hero">
       <div className="welcome-copy"><p className="eyebrow">A little curiosity. A useful new skill.</p><h1>Learn something<br/>you can <em>use.</em></h1><p>Explore money, AI, and the way you think. Short lessons. Real applications. Ideas that stay with you.</p>
-        <button className="button primary large" onClick={start}>Build my path <ArrowRight size={20}/></button><span className="welcome-reassurance">Choose your path first. Your first lesson is free.</span>
+        <button className="button primary large" onClick={start}>Build my path <ArrowRight size={20}/></button><span className="welcome-reassurance">Choose a path. Try a useful idea before creating your account.</span>
       </div>
       <div className="welcome-scene" aria-hidden="true"><div className="welcome-orbit"/><span className="welcome-bubble">Let's make curiosity count.</span><Tiger animation="welcome"/><div className="welcome-subject money"><DomainArtwork domain="smart-money"/><span>Money</span></div><div className="welcome-subject ai"><DomainArtwork domain="ai-automation"/><span>AI</span></div><div className="welcome-subject mind"><DomainArtwork domain="mindset-stoic"/><span>Mind</span></div></div>
     </section>

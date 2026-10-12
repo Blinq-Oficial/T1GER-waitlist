@@ -12,6 +12,7 @@ import type { InteractiveTrack } from './product/interactiveCurriculumTypes';
 import { buildMasterySnapshot } from './product/masteryService';
 import Onboarding from './Onboarding';
 import Welcome from './Welcome';
+import GuestIdea from './GuestIdea';
 import type { OnboardingDraft } from './onboardingDraft';
 import { getJourneyNodes } from './product/learningJourney';
 import type { SavedLearningArtifact } from './product/interactiveCurriculumTypes';
@@ -131,7 +132,7 @@ export default function App() {
   const preview = import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === '1';
   const learner = useLearner(preview); const [parts, setParts] = useState(route); const [onboardedAccount, setOnboardedAccount] = useState('');
   const [online, setOnline] = useState(navigator.onLine);
-  const [entry, setEntry] = useState<'welcome' | 'setup' | 'account'>(() => new URLSearchParams(window.location.search).get('signin') === '1' ? 'account' : 'welcome');
+  const [entry, setEntry] = useState<'welcome' | 'setup' | 'sample' | 'account'>(() => new URLSearchParams(window.location.search).get('signin') === '1' ? 'account' : 'welcome');
   const [accessMode, setAccessMode] = useState<'signin' | 'signup'>(() => new URLSearchParams(window.location.search).get('signin') === '1' ? 'signin' : 'signup');
   const [chosenSetup, setChosenSetup] = useState<OnboardingDraft | undefined>();
   useEffect(() => { window.scrollTo(0, 0); }, [entry]);
@@ -147,12 +148,12 @@ export default function App() {
   const activeNav = ['profile', 'focus', 'library', 'progress', 'settings', 'companion'].includes(destination) ? 'more' : destination;
   if (parts[0] === 'mascot') return <Suspense fallback={<LoadingCanvas label="Loading mascot"/>}><MascotStudy/></Suspense>;
   if (parts[0] === 'privacy' || parts[0] === 'terms') return <LegalPage kind={parts[0]} themeAction={<ThemeToggle theme={theme} onToggle={toggleTheme}/>}/>;
-  if (!configured && !preview) return <AuthScreen theme={theme} onToggleTheme={toggleTheme}/>;
   if (learner.loading) return <LoadingCanvas label="Loading your path" mode="initial"/>;
   if (!learner.user) {
     const themeAction = <ThemeToggle theme={theme} onToggle={toggleTheme}/>;
     if (entry === 'welcome') return <Welcome themeAction={themeAction} start={() => { pauseBehaviorReplay(); setEntry('setup'); }} signIn={() => { pauseBehaviorReplay(); setAccessMode('signin'); setEntry('account'); }}/>;
-    if (entry === 'setup') return <Onboarding user={null} profile={null} preview={false} initialDraft={chosenSetup} themeAction={themeAction} onDone={() => {}} onExit={draft => { setChosenSetup(draft); setEntry('welcome'); }} onCreateAccount={draft => { setChosenSetup(draft); setAccessMode('signup'); setEntry('account'); }}/>;
+    if (entry === 'setup') return <Onboarding user={null} profile={null} preview={false} initialDraft={chosenSetup} themeAction={themeAction} onDone={() => {}} onExit={draft => { setChosenSetup(draft); setEntry('welcome'); }} onTryIdea={draft => { setChosenSetup(draft); behaviorEvent('first_idea_started', { lesson_id: trackFor(draft.primary).lessons[0].id }); setEntry('sample'); }}/>;
+    if (entry === 'sample' && chosenSetup) return <GuestIdea lesson={trackFor(chosenSetup.primary).lessons[0]} themeAction={themeAction} back={() => setEntry('setup')} createAccount={() => { setAccessMode('signup'); setEntry('account'); }}/>;
     return <AuthScreen theme={theme} onToggleTheme={toggleTheme} initialMode={accessMode} draft={chosenSetup} onBack={() => setEntry(chosenSetup ? 'setup' : 'welcome')}/>;
   }
   if (learner.error) return <div className="loading-screen error-screen"><div className="brand"><span>T1GER</span></div><p className="eyebrow">CONNECTION INTERRUPTED</p><h1>We couldn't load your path.</h1><p>{learner.error}</p><button className="button primary" onClick={() => window.location.reload()}>Try again <ArrowRight size={17}/></button></div>;

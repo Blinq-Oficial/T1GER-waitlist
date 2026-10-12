@@ -16,9 +16,9 @@ export const interests = [
 ] as const;
 const steps: SetupStep[] = ['interests', 'rhythm', 'ready'];
 
-export default function Onboarding({ user, profile, preview, themeAction, onDone, onExit, onCreateAccount, initialDraft }: {
+export default function Onboarding({ user, profile, preview, themeAction, onDone, onExit, onCreateAccount, onTryIdea, initialDraft }: {
   user: User | null; profile: Profile | null; preview: boolean; themeAction: ReactNode;
-  onDone: (lessonId: string) => void; onExit?: (draft: OnboardingDraft) => void; onCreateAccount?: (draft: OnboardingDraft) => void; initialDraft?: OnboardingDraft;
+  onDone: (lessonId: string) => void; onExit?: (draft: OnboardingDraft) => void; onCreateAccount?: (draft: OnboardingDraft) => void; onTryIdea?: (draft: OnboardingDraft) => void; initialDraft?: OnboardingDraft;
 }) {
   const key = onboardingKey(user?.uid);
   const [draft, setDraft] = useState(() => {
@@ -40,7 +40,7 @@ export default function Onboarding({ user, profile, preview, themeAction, onDone
   }
   function choose(primary: Interest) { setDraft(current => ({ ...current, interests: [primary], primary })); }
   async function start() {
-    if (!user) { onCreateAccount?.(draft); return; }
+    if (!user) { (onTryIdea || onCreateAccount)?.(draft); return; }
     setBusy(true); setError('');
     try {
       if (!preview) await finishOnboarding(user, user.displayName?.trim() || 'T1GER learner', primary.id, { interests: draft.interests, dailyTime: draft.dailyTime });
@@ -64,6 +64,6 @@ export default function Onboarding({ user, profile, preview, themeAction, onDone
       {error && <p className="error" role="alert">{error}</p>}
       {preview && <p className="preview-note">Design preview · Account progress is not saved.</p>}
     </section>
-    <footer className="setup-actions"><div><p>{draft.step === 'ready' ? user ? `${draft.dailyTime} minutes a day. One useful step at a time.` : 'Your choices are ready. Create a free account to keep your progress.' : 'You can change your choices later.'}</p><button className="button primary large" disabled={busy || (draft.step === 'interests' && !draft.interests.length)} onClick={() => draft.step === 'ready' ? void start() : go(steps[index + 1])}>{busy ? 'Saving your path…' : draft.step === 'ready' ? user ? 'Start first lesson' : 'Create account & start' : 'Continue'}<ArrowRight size={19}/></button></div><nav><a href={appHref('/privacy')}>Privacy</a><span>·</span><a href={appHref('/terms')}>Terms</a></nav></footer>
+    <footer className="setup-actions"><div><p>{draft.step === 'ready' ? user ? `${draft.dailyTime} minutes a day. One useful step at a time.` : onTryIdea ? 'Try one useful idea first. Create your account afterward to keep going.' : 'Your choices are ready. Create a free account to keep your progress.' : 'You can change your choices later.'}</p><button className="button primary large" disabled={busy || (draft.step === 'interests' && !draft.interests.length)} onClick={() => draft.step === 'ready' ? void start() : go(steps[index + 1])}>{busy ? 'Saving your path…' : draft.step === 'ready' ? user ? 'Start first lesson' : onTryIdea ? 'Try my first idea' : 'Create account & start' : 'Continue'}<ArrowRight size={19}/></button></div><nav><a href={appHref('/privacy')}>Privacy</a><span>·</span><a href={appHref('/terms')}>Terms</a></nav></footer>
   </main>;
 }

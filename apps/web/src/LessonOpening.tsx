@@ -61,7 +61,7 @@ export function LessonReading({ lesson }: { lesson: AtomicLesson }) {
 }
 
 /** A supported first encounter. This warm-up never awards XP or a mastery score. */
-export default function LessonOpening({ lesson, onContinue }: { lesson: AtomicLesson; onContinue: () => void }) {
+export default function LessonOpening({ lesson, onContinue, sample = false }: { lesson: AtomicLesson; onContinue: () => void; sample?: boolean }) {
   const beginning = beginnings[lesson.id as keyof typeof beginnings];
   const [example, setExample] = useState(false);
   const [choice, setChoice] = useState<number | null>(null);
@@ -74,14 +74,14 @@ export default function LessonOpening({ lesson, onContinue }: { lesson: AtomicLe
     <h1 ref={heading} tabIndex={-1}>{example ? beginning?.title : beginning?.purpose || lesson.title.en}</h1>
     {!example ? <>
       <p className="opening-purpose">{beginning?.why || lesson.objective.en}</p>
-      <div className="opening-plan"><DomainArtwork domain={lesson.trackId}/><div><strong>One useful idea. One step at a time.</strong><span><Clock3 size={15}/> About 4 minutes</span><ol><li><Lightbulb size={17}/> {beginning ? 'Explore a familiar example' : 'Understand a useful idea'}</li><li><BookOpen size={17}/> Read, then try it yourself</li><li><Target size={17}/> Make something you can use</li></ol></div></div>
+      <div className="opening-plan"><DomainArtwork domain={lesson.trackId}/><div><strong>One useful idea. One step at a time.</strong><span><Clock3 size={15}/> {sample ? 'A short example to get started' : 'About 4 minutes'}</span><ol><li><Lightbulb size={17}/> {beginning ? 'Explore a familiar example' : 'Understand a useful idea'}</li><li><BookOpen size={17}/> Read, then try it yourself</li>{!sample && <li><Target size={17}/> Make something you can use</li>}</ol></div></div>
       <p className="opening-reassurance">No prior knowledge needed. Mistakes are part of learning.</p>
       <button className="button primary large" onClick={() => beginning ? setExample(true) : onContinue()}>Let’s begin<ArrowRight size={19}/></button>
     </> : beginning && <>
       <div className="opening-example"><p>{beginning.scene}</p><div><Lightbulb size={20}/><p>{beginning.clue}</p></div></div>
       <fieldset className="opening-options"><legend>{beginning.question}</legend>{beginning.options.map((option, index) => <label className={choice === index ? 'selected' : ''} key={option.label}><input type="radio" name="lesson-warmup" checked={choice === index} onChange={() => setChoice(index)}/><span>{option.label}</span>{choice === index && <Check size={18}/>}</label>)}</fieldset>
       {feedback && <div className={`opening-feedback ${feedback.correct ? 'understood' : ''}`} role="status"><strong>{feedback.correct ? 'You spotted it.' : 'Let’s look at the clue.'}</strong><p>{feedback.feedback}</p></div>}
-      <button className="button primary large" disabled={choice === null} onClick={onContinue}>Explore the idea<ArrowRight size={19}/></button>
+      <button className="button primary large" disabled={choice === null} onClick={onContinue}>{sample ? 'Keep the idea' : 'Explore the idea'}<ArrowRight size={19}/></button>
       <button className="opening-back" onClick={() => { setExample(false); setChoice(null); }}><ArrowLeft size={16}/> Why this matters</button>
     </>}
   </div>;
