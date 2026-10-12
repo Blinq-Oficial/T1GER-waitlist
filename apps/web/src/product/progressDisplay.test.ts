@@ -3,7 +3,8 @@ import { compactCount, practiceMilestone } from './progressDisplay';
 describe('small-screen progress counts', () => {
   it('keeps small counts exact and bounds long counters', () => {
     expect(compactCount(105)).toBe('105');
-    expect(compactCount(9999)).toBe('9,999');
+    expect(compactCount(9999)).toBe('10K');
+    expect(compactCount(1234)).toBe('1.2K');
     expect(compactCount(1250000)).toBe('1.3M');
   });
   it('does not display invalid or negative counters', () => {

@@ -45,6 +45,7 @@ Los resultados estáticos y las capturas se guardaron en `.codex/research/rea-fi
 - Tamaños probados: 320×740, 390×844 y 1280×900. No se observó desbordamiento horizontal en las vistas comprobadas. Se revisaron composiciones en claro y oscuro. La inspección de bounds detectó y corrigió transforms antiguos que desplazaban el halo móvil respecto al personaje.
 - Ninguna sesión de diseño escribe progreso de producción. No se crearon nuevas cuentas reales ni se aceptaron términos en las pruebas.
 - Lint de waitlist y compilación de waitlist aprobados. El cierre de verificación de CSS corrige los selectores de transiciones de la muestra y de las barras de fases.
+- La prueba del ejemplo de dinero detectó que el resumen final heredaba un punto de la lección completa sobre reservas, que todavía no se había explicado. Se corrigió para resumir exactamente el ejemplo realizado; los tres caminos tienen un takeaway específico. Los contadores se compactan desde 1.000 para prevenir presión sobre la barra superior del teléfono.
 
 ## Criterios de publicación
 
